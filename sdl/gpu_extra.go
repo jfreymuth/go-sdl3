@@ -9,53 +9,122 @@ package sdl
 // #cgo nocallback SDL_PushGPUComputeUniformData
 // #include <SDL3/SDL.h>
 import "C"
-import "unsafe"
+import (
+	"unsafe"
+)
 
-func GPUTransferSize[T any](m *TransferBufferMapping) int {
-	var t T
-	return m.transferBuffer.size / int(unsafe.Sizeof(t))
+// GPUGenericTransferBufferMapping is a generic variant of
+// [GPUTransferBufferMapping].
+type GPUGenericTransferBufferMapping[T any] struct {
+	Position int
+	m        *GPUTransferBufferMapping
+	data     []T
 }
 
-func GPUTransferPut[T any](m *TransferBufferMapping, offset int, t T) {
-	if m.p == nil {
+// NewGPUGenericTransferBufferMapping creates a generic interface for an
+// existing mapping.
+//
+// Both the original and the generic mapping can be used at the same time (but
+// not concurrently), but Unmap should only be called on one of then.
+func NewGPUGenericTransferBufferMapping[T any](m *GPUTransferBufferMapping) *GPUGenericTransferBufferMapping[T] {
+	var t T
+	return &GPUGenericTransferBufferMapping[T]{
+		m:    m,
+		data: unsafe.Slice((*T)(m.p), m.transferBuffer.size/int(unsafe.Sizeof(t))),
+	}
+}
+
+// Mapped reports wether the mapping is valid.
+func (m *GPUGenericTransferBufferMapping[T]) Mapped() bool {
+	return m.m.Mapped()
+}
+
+// TransferBuffer returns the [GPUTransferBuffer] from which this mapping was
+// created.
+func (m *GPUGenericTransferBufferMapping[T]) TransferBuffer() *GPUTransferBuffer {
+	return m.m.TransferBuffer()
+}
+
+// Unmaps a previously mapped transfer buffer.
+//
+// This function is available since SDL 3.2.0.
+//
+// https://wiki.libsdl.org/SDL3/SDL_UnmapGPUTransferBuffer
+func (m *GPUGenericTransferBufferMapping[T]) Unmap() {
+	m.m.Unmap()
+}
+
+// Size returns the size of the mapped memory in units of the generic type
+// parameter.
+func (m *GPUGenericTransferBufferMapping[T]) Size() int {
+	return len(m.data)
+}
+
+// WriteAt writes data into the mapped memory region at the given offset.
+func (m *GPUGenericTransferBufferMapping[T]) WriteAt(offset int, t []T) {
+	if m.m.p == nil {
 		return
 	}
-	unsafe.Slice((*T)(m.p), m.transferBuffer.size/int(unsafe.Sizeof(t)))[offset] = t
+	copy(m.data[offset:], t)
 }
 
-func GPUTransferPutSlice[T any](m *TransferBufferMapping, offset int, t []T) {
-	if m.p == nil {
+// Write writes a slice into the mapped memory region and advances the current
+// position.
+func (m *GPUGenericTransferBufferMapping[T]) Write(t []T) {
+	if m.m.p == nil {
 		return
 	}
-	copy(unsafe.Slice((*T)(m.p), m.transferBuffer.size/int(unsafe.Sizeof(t)))[offset:], t)
+	m.Position += copy(m.data[m.Position:], t)
 }
 
-func GPUTransferGet[T any](m *TransferBufferMapping, offset int) T {
+// WriteOne writes a single element into the mapped memory region and advances
+// the current position.
+func (m *GPUGenericTransferBufferMapping[T]) WriteOne(t T) {
+	if m.m.p == nil {
+		return
+	}
+	m.data[m.Position] = t
+	m.Position++
+}
+
+// ReadAt reads data from the mapped memory region at the given offset.
+func (m *GPUGenericTransferBufferMapping[T]) ReadAt(offset int, t []T) {
+	if m.m.p == nil {
+		return
+	}
+	copy(t, m.data[offset:])
+}
+
+// Read reads a slice from the mapped memory region and advances the current
+// position.
+func (m *GPUGenericTransferBufferMapping[T]) Read(t []T) {
+	if m.m.p == nil {
+		return
+	}
+	m.Position += copy(t, m.data[m.Position:])
+}
+
+// ReadOne reads a single element from the mapped memory region and advances
+// the current position.
+func (m *GPUGenericTransferBufferMapping[T]) ReadOne() T {
 	var t T
-	if m.p == nil {
+	if m.m.p == nil {
 		return t
 	}
-	return unsafe.Slice((*T)(m.p), m.transferBuffer.size/int(unsafe.Sizeof(t)))[offset]
-}
-
-func GPUTransferGetSlice[T any](m *TransferBufferMapping, offset int, t []T) {
-	if m.p == nil {
-		return
-	}
-	copy(t, unsafe.Slice((*T)(m.p), m.transferBuffer.size/int(unsafe.Sizeof(t)))[offset:])
+	t = m.data[m.Position]
+	m.Position++
+	return t
 }
 
 // Pushes data to a vertex uniform slot on the command buffer.
 //
 // Subsequent draw calls will use this uniform data.
 //
-// command_buffer: a command buffer.
+// cmd: a command buffer.
 //
-// slot_index: the vertex uniform slot to push data to.
+// slotIndex: the vertex uniform slot to push data to.
 //
-// data: client data to write.
-//
-// length: the length of the data to write.
+// t: client data to write.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -68,13 +137,11 @@ func GPUPushVertexUniform[T any](cmd *GPUCommandBuffer, slotIndex int, t T) {
 //
 // Subsequent draw calls will use this uniform data.
 //
-// command_buffer: a command buffer.
+// cmd: a command buffer.
 //
-// slot_index: the fragment uniform slot to push data to.
+// slotIndex: the vertex uniform slot to push data to.
 //
-// data: client data to write.
-//
-// length: the length of the data to write.
+// t: client data to write.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -87,13 +154,11 @@ func GPUPushFragmentUniform[T any](cmd *GPUCommandBuffer, slotIndex int, t T) {
 //
 // Subsequent draw calls will use this uniform data.
 //
-// command_buffer: a command buffer.
+// cmd: a command buffer.
 //
-// slot_index: the uniform slot to push data to.
+// slotIndex: the vertex uniform slot to push data to.
 //
-// data: client data to write.
-//
-// length: the length of the data to write.
+// t: client data to write.
 //
 // This function is available since SDL 3.2.0.
 //

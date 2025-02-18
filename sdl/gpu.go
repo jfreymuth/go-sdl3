@@ -518,7 +518,7 @@ type GPUBuffer C.struct_SDL_GPUBuffer
 type GPUTransferBuffer struct {
 	internal *C.struct_SDL_GPUTransferBuffer
 	size     int
-	mapping  *TransferBufferMapping
+	mapping  *GPUTransferBufferMapping
 }
 
 // An opaque handle representing a texture.
@@ -3496,7 +3496,7 @@ func (pass *GPUComputePass) End() {
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_MapGPUTransferBuffer
-func (device *GPUDevice) MapTransferBuffer(transferBuffer *GPUTransferBuffer, cycle bool) (*TransferBufferMapping, error) {
+func (device *GPUDevice) MapTransferBuffer(transferBuffer *GPUTransferBuffer, cycle bool) (*GPUTransferBufferMapping, error) {
 	if transferBuffer.mapping != nil {
 		transferBuffer.mapping.p = nil
 		transferBuffer.mapping = nil
@@ -3505,49 +3505,57 @@ func (device *GPUDevice) MapTransferBuffer(transferBuffer *GPUTransferBuffer, cy
 	if p == nil {
 		return nil, getError()
 	}
-	m := &TransferBufferMapping{device, transferBuffer, p}
+	m := &GPUTransferBufferMapping{device, transferBuffer, p}
 	transferBuffer.mapping = m
 	return m, nil
 }
 
-type TransferBufferMapping struct {
+// GPUTransferBufferMapping represents an region of memory mapped from a
+// transfer buffer.
+type GPUTransferBufferMapping struct {
 	device         *GPUDevice
 	transferBuffer *GPUTransferBuffer
 	p              unsafe.Pointer
 }
 
-func (m *TransferBufferMapping) Mapped() bool {
+// Mapped reports wether the mapping is valid.
+func (m *GPUTransferBufferMapping) Mapped() bool {
 	return m.p != nil
 }
 
-func (m *TransferBufferMapping) Put(offset int, data []byte) {
+// WriteAt writes data into the mapped memory region at the given offset.
+func (m *GPUTransferBufferMapping) WriteAt(offset int, data []byte) {
 	if m.p == nil {
 		return
 	}
 	copy(unsafe.Slice((*byte)(m.p), m.transferBuffer.size)[offset:], data)
 }
 
-func (m *TransferBufferMapping) Get(offset int, data []byte) {
+// ReadAt reads data from the mapped memory region at the given offset.
+func (m *GPUTransferBufferMapping) ReadAt(offset int, data []byte) {
 	if m.p == nil {
 		return
 	}
 	copy(data, unsafe.Slice((*byte)(m.p), m.transferBuffer.size)[offset:])
 }
 
-func (m *TransferBufferMapping) Size() int {
+// Size returns the size of the mapped memory in bytes.
+func (m *GPUTransferBufferMapping) Size() int {
 	return m.transferBuffer.size
+}
+
+// TransferBuffer returns the [GPUTransferBuffer] from which this mapping was
+// created.
+func (m *GPUTransferBufferMapping) TransferBuffer() *GPUTransferBuffer {
+	return m.transferBuffer
 }
 
 // Unmaps a previously mapped transfer buffer.
 //
-// device: a GPU context.
-//
-// transfer_buffer: a previously mapped transfer buffer.
-//
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_UnmapGPUTransferBuffer
-func (m *TransferBufferMapping) Unmap() {
+func (m *GPUTransferBufferMapping) Unmap() {
 	C.SDL_UnmapGPUTransferBuffer((*C.SDL_GPUDevice)(m.device), m.transferBuffer.internal)
 	m.p = nil
 	m.transferBuffer.mapping = nil
