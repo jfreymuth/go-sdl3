@@ -264,7 +264,7 @@ import (
 // The video subsystem covers a lot of functionality, out of necessity, so it
 // is worth perusing the list of functions just to see what's available, but
 // most apps can get by with simply creating a window and listening for
-// events, so start with SDL_CreateWindow() and SDL_PollEvent().
+// events, so start with [CreateWindow] and [PollEvent].
 
 // This is a unique ID for a display for the time it is connected to the
 // system, and is never reused for the lifetime of the application.
@@ -287,12 +287,12 @@ type DisplayID uint32
 // https://wiki.libsdl.org/SDL3/SDL_WindowID
 type WindowID uint32
 
-// The pointer to the global `wl_display` object used by the Wayland video
+// The pointer to the global wl_display object used by the Wayland video
 // backend.
 //
 // Can be set before the video subsystem is initialized to import an external
-// `wl_display` object from an application or toolkit for use in SDL, or read
-// after initialization to export the `wl_display` used by the Wayland video
+// wl_display object from an application or toolkit for use in SDL, or read
+// after initialization to export the wl_display used by the Wayland video
 // backend. Setting this property after the video subsystem has been
 // initialized has no effect, and reading it when the video subsystem is
 // uninitialized will either return the user provided value, if one was set
@@ -355,7 +355,7 @@ type Window C.struct_SDL_Window
 // The flags on a window.
 //
 // These cover a lot of true/false, or on/off, window state. Some of it is
-// immutable after being set through SDL_CreateWindow(), some of it can be
+// immutable after being set through [CreateWindow], some of it can be
 // changed on existing windows by the app, and some of it might be altered by
 // the user or system outside of the app's control.
 //
@@ -366,7 +366,7 @@ type WindowFlags uint64
 
 const (
 	WindowFullscreen        WindowFlags = 0x0000000000000001 //window is in fullscreen mode
-	WindowOpengl            WindowFlags = 0x0000000000000002 //window usable with OpenGL context
+	WindowOpenGL            WindowFlags = 0x0000000000000002 //window usable with OpenGL context
 	WindowOccluded          WindowFlags = 0x0000000000000004 //window is occluded
 	WindowHidden            WindowFlags = 0x0000000000000008 //window is neither mapped onto the desktop nor shown in the taskbar/dock/window list; SDL_ShowWindow() is required for it to become visible
 	WindowBorderless        WindowFlags = 0x0000000000000010 //no window decoration
@@ -392,20 +392,20 @@ const (
 	WindowNotFocusable      WindowFlags = 0x0000000080000000 //window should not be focusable
 )
 
-// A magic value used with SDL_WINDOWPOS_UNDEFINED.
+// A magic value used with [WindowposUndefined].
 //
 // Generally this macro isn't used directly, but rather through
-// SDL_WINDOWPOS_UNDEFINED or SDL_WINDOWPOS_UNDEFINED_DISPLAY.
+// [WindowposUndefined] or [WindowposUndefinedDisplay].
 //
 // This macro is available since SDL 3.2.0.
 const WindowposUndefinedMask = 0x1FFF0000
 
 // Used to indicate that you don't care what the window position is.
 //
-// If you _really_ don't care, SDL_WINDOWPOS_UNDEFINED is the same, but always
+// If you _really_ don't care, [WindowposUndefined] is the same, but always
 // uses the primary display instead of specifying one.
 //
-// X: the SDL_DisplayID of the display to use.
+// x: the [DisplayID] of the display to use.
 //
 // This macro is available since SDL 3.2.0.
 //
@@ -423,7 +423,7 @@ const WindowposUndefined = WindowposUndefinedMask
 
 // A macro to test if the window position is marked as "undefined."
 //
-// X: the window position value.
+// x: the window position value.
 //
 // This macro is available since SDL 3.2.0.
 //
@@ -432,20 +432,20 @@ func WindowposIsUndefined(x int) bool {
 	return x&0xFFFF0000 == WindowposUndefinedMask
 }
 
-// A magic value used with SDL_WINDOWPOS_CENTERED.
+// A magic value used with [WindowposCentered].
 //
 // Generally this macro isn't used directly, but rather through
-// SDL_WINDOWPOS_CENTERED or SDL_WINDOWPOS_CENTERED_DISPLAY.
+// [WindowposCentered] or [WindowposCenteredDisplay].
 //
 // This macro is available since SDL 3.2.0.
 const WindowposCenteredMask = 0x2FFF0000
 
 // Used to indicate that the window position should be centered.
 //
-// SDL_WINDOWPOS_CENTERED is the same, but always uses the primary display
+// [WindowposCentered] is the same, but always uses the primary display
 // instead of specifying one.
 //
-// X: the SDL_DisplayID of the display to use.
+// x: the [DisplayID] of the display to use.
 //
 // This macro is available since SDL 3.2.0.
 //
@@ -463,7 +463,7 @@ const WindowposCentered = WindowposCenteredMask
 
 // A macro to test if the window position is marked as "centered."
 //
-// X: the window position value.
+// x: the window position value.
 //
 // This macro is available since SDL 3.2.0.
 //
@@ -532,19 +532,13 @@ type EGLint C.SDL_EGLint
 // This is called when SDL is attempting to create an EGL context, to let the
 // app add extra attributes to its eglGetPlatformDisplay() call.
 //
-// The callback should return a pointer to an EGL attribute array terminated
-// with `EGL_NONE`. If this function returns NULL, the SDL_CreateWindow
-// process will fail gracefully.
-//
-// The returned pointer should be allocated with SDL_malloc() and will be
-// passed to SDL_free().
+// The callback should return a slice EGL attributes. If this function returns
+// nil, the [CreateWindow] process will fail gracefully.
 //
 // The arrays returned by each callback will be appended to the existing
 // attribute arrays defined by SDL.
 //
-// userdata: an app-controlled pointer that is passed to the callback.
-//
-// Returns a newly-allocated array of attributes, terminated with `EGL_NONE`.
+// Returns a slice of attributes.
 //
 // This datatype is available since SDL 3.2.0.
 //
@@ -557,15 +551,11 @@ type EGLAttribArrayCallback func() []EGLAttrib
 // app add extra attributes to its eglCreateWindowSurface() or
 // eglCreateContext calls.
 //
-// For convenience, the EGLDisplay and EGLConfig to use are provided to the
+// For convenience, the [EGLDisplay] and [EGLConfig] to use are provided to the
 // callback.
 //
-// The callback should return a pointer to an EGL attribute array terminated
-// with `EGL_NONE`. If this function returns NULL, the SDL_CreateWindow
-// process will fail gracefully.
-//
-// The returned pointer should be allocated with SDL_malloc() and will be
-// passed to SDL_free().
+// The callback should return a slice EGL attributes. If this function returns
+// nil, the [CreateWindow] process will fail gracefully.
 //
 // The arrays returned by each callback will be appended to the existing
 // attribute arrays defined by SDL.
@@ -576,7 +566,7 @@ type EGLAttribArrayCallback func() []EGLAttrib
 //
 // config: the EGL config to be used.
 //
-// Returns a newly-allocated array of attributes, terminated with `EGL_NONE`.
+// Returns a slice of attributes.
 //
 // This datatype is available since SDL 3.2.0.
 //
@@ -588,7 +578,7 @@ type EGLIntArrayCallback func(display EGLDisplay, config EGLConfig) []EGLint
 // While you can set most OpenGL attributes normally, the attributes listed
 // above must be known before SDL creates the window that will be used with
 // the OpenGL context. These attributes are set and read with
-// SDL_GL_SetAttribute() and SDL_GL_GetAttribute().
+// [GL_SetAttribute] and [GL_GetAttribute].
 //
 // In some cases, these attributes are minimum requests; the GL does not
 // promise to give you exactly what you asked for. It's possible to ask for a
@@ -622,18 +612,18 @@ const (
 	GLRetainedBacking                        // not used (deprecated).
 	GLContextMajorVersion                    // OpenGL context major version.
 	GLContextMinorVersion                    // OpenGL context minor version.
-	GLContextFlags                           // some combination of 0 or more of elements of the SDL_GLContextFlag enumeration; defaults to 0.
-	GLContextProfileMask                     // type of GL context (Core, Compatibility, ES). See SDL_GLProfile; default value depends on platform.
+	GLContextFlags                           // some combination of 0 or more of elements of the [GLContextFlag] enumeration; defaults to 0.
+	GLContextProfileMask                     // type of GL context (Core, Compatibility, ES). See [GLProfile]; default value depends on platform.
 	GLShareWithCurrentContext                // OpenGL context sharing; defaults to 0.
 	GLFramebufferSrgbCapable                 // requests sRGB capable visual; defaults to 0.
-	GLContextReleaseBehavior                 // sets context the release behavior. See SDL_GLContextReleaseFlag; defaults to FLUSH.
-	GLContextResetNotification               // set context reset notification. See SDL_GLContextResetNotification; defaults to NO_NOTIFICATION.
+	GLContextReleaseBehavior                 // sets context the release behavior. See [GLContextReleaseFlag]; defaults to FLUSH.
+	GLContextResetNotification               // set context reset notification. See [GLContextResetNotificationType]; defaults to NO_NOTIFICATION.
 	GLContextNoError
 	GLFloatbuffers
 	GLEglPlatform
 )
 
-// Possible values to be set for the SDL_GL_CONTEXT_PROFILE_MASK attribute.
+// Possible values to be set for the [GLContextProfileMask] attribute.
 //
 // This datatype is available since SDL 3.2.0.
 //
@@ -646,7 +636,7 @@ const (
 	GLContextProfileEs            GLProfile = 0x0004 //GLX_CONTEXT_ES2_PROFILE_BIT_EXT
 )
 
-// Possible flags to be set for the SDL_GL_CONTEXT_FLAGS attribute.
+// Possible flags to be set for the [GLContextFlags] attribute.
 //
 // This datatype is available since SDL 3.2.0.
 //
@@ -660,7 +650,7 @@ const (
 	GLContextResetIsolationFlag    GLContextFlag = 0x0008
 )
 
-// Possible values to be set for the SDL_GL_CONTEXT_RELEASE_BEHAVIOR
+// Possible values to be set for the [GLContextReleaseBehavior]
 // attribute.
 //
 // This datatype is available since SDL 3.2.0.
@@ -673,7 +663,7 @@ const (
 	GLContextReleaseBehaviorFlush GLContextReleaseFlag = 0x0001
 )
 
-// Possible values to be set SDL_GL_CONTEXT_RESET_NOTIFICATION attribute.
+// Possible values to be set [GLContextResetNotification] attribute.
 //
 // This datatype is available since SDL 3.2.0.
 //
@@ -753,12 +743,7 @@ func GetSystemTheme() SystemTheme {
 
 // Get a list of currently connected displays.
 //
-// count: a pointer filled in with the number of displays returned, may
-// be NULL.
-//
-// Returns a 0 terminated array of display instance IDs or NULL on failure;
-// call SDL_GetError() for more information. This should be freed
-// with SDL_free() when it is no longer needed.
+// Returns a slice of display instance IDs or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -781,8 +766,7 @@ func GetDisplays() ([]DisplayID, error) {
 
 // Return the primary display.
 //
-// Returns the instance ID of the primary display on success or 0 on failure;
-// call SDL_GetError() for more information.
+// Returns the instance ID of the primary display or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -801,23 +785,22 @@ func GetPrimaryDisplay() (DisplayID, error) {
 //
 // The following read-only properties are provided by SDL:
 //
-// - `SDL_PROP_DISPLAY_HDR_ENABLED_BOOLEAN`: true if the display has HDR
-// headroom above the SDR white point. This is for informational and
-// diagnostic purposes only, as not all platforms provide this information
-// at the display level.
+//   - [PropDisplayHdrEnabledBoolean]: true if the display has HDR
+//     headroom above the SDR white point. This is for informational and
+//     diagnostic purposes only, as not all platforms provide this information
+//     at the display level.
 //
 // On KMS/DRM:
 //
-// - `SDL_PROP_DISPLAY_KMSDRM_PANEL_ORIENTATION_NUMBER`: the "panel
-// orientation" property for the display in degrees of clockwise rotation.
-// Note that this is provided only as a hint, and the application is
-// responsible for any coordinate transformations needed to conform to the
-// requested display orientation.
+//   - [PropDisplayKmsdrmPanelOrientationNumber]: the "panel
+//     orientation" property for the display in degrees of clockwise rotation.
+//     Note that this is provided only as a hint, and the application is
+//     responsible for any coordinate transformations needed to conform to the
+//     requested display orientation.
 //
 // displayID: the instance ID of the display to query.
 //
-// Returns a valid property ID on success or 0 on failure; call
-// SDL_GetError() for more information.
+// Returns a valid property ID or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -835,12 +818,11 @@ func (displayID DisplayID) Properties() (PropertiesID, error) {
 const PropDisplayHdrEnabledBoolean = "SDL.display.HDR_enabled"
 const PropDisplayKmsdrmPanelOrientationNumber = "SDL.display.KMSDRM.panel_orientation"
 
-// Get the name of a display in UTF-8 encoding.
+// Get the name of a display.
 //
 // displayID: the instance ID of the display to query.
 //
-// Returns the name of a display or NULL on failure; call SDL_GetError() for
-// more information.
+// Returns the name of a display or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -862,10 +844,7 @@ func (displayID DisplayID) Name() (string, error) {
 //
 // displayID: the instance ID of the display to query.
 //
-// rect: the SDL_Rect structure filled in with the display bounds.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns the display bounds or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -883,7 +862,7 @@ func (displayID DisplayID) Bounds() (Rect, error) {
 // Get the usable desktop area represented by a display, in screen
 // coordinates.
 //
-// This is the same area as SDL_GetDisplayBounds() reports, but with portions
+// This is the same area as [DisplayID.Bounds] reports, but with portions
 // reserved by the system removed. For example, on Apple's macOS, this
 // subtracts the area occupied by the menu bar and dock.
 //
@@ -893,10 +872,7 @@ func (displayID DisplayID) Bounds() (Rect, error) {
 //
 // displayID: the instance ID of the display to query.
 //
-// rect: the SDL_Rect structure filled in with the display bounds.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns the display bounds or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -915,8 +891,8 @@ func (displayID DisplayID) UsableBounds() (Rect, error) {
 //
 // displayID: the instance ID of the display to query.
 //
-// Returns the SDL_DisplayOrientation enum value of the display, or
-// `SDL_ORIENTATION_UNKNOWN` if it isn't available.
+// Returns the [DisplayOrientation] enum value of the display, or
+// [OrientationUnknown] if it isn't available.
 //
 // This function should only be called on the main thread.
 //
@@ -931,8 +907,8 @@ func (displayID DisplayID) NaturalOrientation() DisplayOrientation {
 //
 // displayID: the instance ID of the display to query.
 //
-// Returns the SDL_DisplayOrientation enum value of the display, or
-// `SDL_ORIENTATION_UNKNOWN` if it isn't available.
+// Returns the [DisplayOrientation] enum value of the display, or
+// [OrientationUnknown] if it isn't available.
 //
 // This function should only be called on the main thread.
 //
@@ -950,7 +926,7 @@ func (displayID DisplayID) CurrentOrientation() DisplayOrientation {
 // display scale, which means that the user expects UI elements to be twice as
 // big on this display, to aid in readability.
 //
-// After window creation, SDL_GetWindowDisplayScale() should be used to query
+// After window creation, [Window.DisplayScale] should be used to query
 // the content scale factor for individual windows instead of querying the
 // display for a window and calling this function, as the per-window content
 // scale factor may differ from the base value of the display it is on,
@@ -958,8 +934,7 @@ func (displayID DisplayID) CurrentOrientation() DisplayOrientation {
 //
 // displayID: the instance ID of the display to query.
 //
-// Returns the content scale of the display, or 0.0f on failure; call
-// SDL_GetError() for more information.
+// Returns the content scale of the display or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -978,22 +953,16 @@ func (displayID DisplayID) ContentScale() (float32, error) {
 //
 // The display modes are sorted in this priority:
 //
-// - w -> largest to smallest
-// - h -> largest to smallest
-// - bits per pixel -> more colors to fewer colors
-// - packed pixel layout -> largest to smallest
-// - refresh rate -> highest to lowest
-// - pixel density -> lowest to highest
+//   - w -> largest to smallest
+//   - h -> largest to smallest
+//   - bits per pixel -> more colors to fewer colors
+//   - packed pixel layout -> largest to smallest
+//   - refresh rate -> highest to lowest
+//   - pixel density -> lowest to highest
 //
 // displayID: the instance ID of the display to query.
 //
-// count: a pointer filled in with the number of display modes returned,
-// may be NULL.
-//
-// Returns a NULL terminated array of display mode pointers or NULL on
-// failure; call SDL_GetError() for more information. This is a
-// single allocation that should be freed with SDL_free() when it is
-// no longer needed.
+// Returns a slice of display mode pointers or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -1026,8 +995,8 @@ func (displayID DisplayID) FullscreenDisplayModes() ([]*DisplayMode, error) {
 
 // Get the closest match to the requested display mode.
 //
-// The available display modes are scanned and `closest` is filled in with the
-// closest mode matching the requested mode and returned. The mode format and
+// The available display modes are scanned and the
+// closest mode matching the requested mode is returned. The mode format and
 // refresh rate default to the desktop mode if they are set to 0. The modes
 // are scanned with size being first priority, format being second priority,
 // and finally checking the refresh rate. If all the available modes are too
@@ -1039,17 +1008,14 @@ func (displayID DisplayID) FullscreenDisplayModes() ([]*DisplayMode, error) {
 //
 // h: the height in pixels of the desired display mode.
 //
-// refresh_rate: the refresh rate of the desired display mode, or 0.0f
+// refreshRate: the refresh rate of the desired display mode, or 0.0f
 // for the desktop refresh rate.
 //
-// include_high_density_modes: boolean to include high density modes in
+// includeHighDensityModes: boolean to include high density modes in
 // the search.
 //
-// closest: a pointer filled in with the closest display mode equal to
-// or larger than the desired mode.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns the closest display mode equal to or larger than the desired
+// mode or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -1077,15 +1043,14 @@ func (displayID DisplayID) ClosestFullscreenDisplayMode(w int, h int, refreshRat
 
 // Get information about the desktop's display mode.
 //
-// There's a difference between this function and SDL_GetCurrentDisplayMode()
+// There's a difference between this function and [DisplayID.CurrentDisplayMode]
 // when SDL runs fullscreen and has changed the resolution. In that case this
 // function will return the previous native display mode, and not the current
 // display mode.
 //
 // displayID: the instance ID of the display to query.
 //
-// Returns a pointer to the desktop display mode or NULL on failure; call
-// SDL_GetError() for more information.
+// Returns a pointer to the desktop display mode or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -1112,15 +1077,14 @@ func (displayID DisplayID) DesktopDisplayMode() (*DisplayMode, error) {
 
 // Get information about the current display mode.
 //
-// There's a difference between this function and SDL_GetDesktopDisplayMode()
+// There's a difference between this function and [DisplayID.DesktopDisplayMode]
 // when SDL runs fullscreen and has changed the resolution. In that case this
 // function will return the current display mode, and not the previous native
 // display mode.
 //
 // displayID: the instance ID of the display to query.
 //
-// Returns a pointer to the desktop display mode or NULL on failure; call
-// SDL_GetError() for more information.
+// Returns a pointer to the desktop display mode or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -1149,8 +1113,7 @@ func (displayID DisplayID) CurrentDisplayMode() (*DisplayMode, error) {
 //
 // point: the point to query.
 //
-// Returns the instance ID of the display containing the point or 0 on
-// failure; call SDL_GetError() for more information.
+// Returns the instance ID of the display containing the point or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -1170,8 +1133,7 @@ func GetDisplayForPoint(point Point) (DisplayID, error) {
 // rect: the rect to query.
 //
 // Returns the instance ID of the display entirely containing the rect or
-// closest to the center of the rect on success or 0 on failure; call
-// SDL_GetError() for more information.
+// closest to the center of the rect on success an error.
 //
 // This function should only be called on the main thread.
 //
@@ -1191,8 +1153,7 @@ func GetDisplayForRect(rect Rect) (DisplayID, error) {
 // window: the window to query.
 //
 // Returns the instance ID of the display containing the center of the window
-// on success or 0 on failure; call SDL_GetError() for more
-// information.
+// on success or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -1215,8 +1176,7 @@ func GetDisplayForWindow(window *Window) (DisplayID, error) {
 //
 // window: the window to query.
 //
-// Returns the pixel density or 0.0f on failure; call SDL_GetError() for more
-// information.
+// Returns the pixel density or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -1246,15 +1206,14 @@ func (window *Window) PixelDensity() (float32, error) {
 //
 // window: the window to query.
 //
-// Returns the display scale, or 0.0f on failure; call SDL_GetError() for
-// more information.
+// Returns the display scale, or an error.
 //
 // This function should only be called on the main thread.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetWindowDisplayScale
-func (window *Window) GetWindowDisplayScale() (float32, error) {
+func (window *Window) DisplayScale() (float32, error) {
 	scale := C.SDL_GetWindowDisplayScale((*C.SDL_Window)(window))
 	if scale == 0 {
 		return 0, getError()
@@ -1266,27 +1225,26 @@ func (window *Window) GetWindowDisplayScale() (float32, error) {
 //
 // This only affects the display mode used when the window is fullscreen. To
 // change the window size when the window is not fullscreen, use
-// SDL_SetWindowSize().
+// [Window.SetSize]().
 //
 // If the window is currently in the fullscreen state, this request is
 // asynchronous on some windowing systems and the new mode dimensions may not
 // be applied immediately upon the return of this function. If an immediate
-// change is required, call SDL_SyncWindow() to block until the changes have
+// change is required, call [Window.Sync] to block until the changes have
 // taken effect.
 //
-// When the new mode takes effect, an SDL_EVENT_WINDOW_RESIZED and/or an
-// SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED event will be emitted with the new mode
+// When the new mode takes effect, an [EventWindowResized] and/or an
+// [EventWindowPixelSizeChanged] event will be emitted with the new mode
 // dimensions.
 //
 // window: the window to affect.
 //
-// mode: a pointer to the display mode to use, which can be NULL for
+// mode: a pointer to the display mode to use, which can be nil for
 // borderless fullscreen desktop mode, or one of the fullscreen
-// modes returned by SDL_GetFullscreenDisplayModes() to set an
+// modes returned by [DisplayID.FullscreenDisplayModes] to set an
 // exclusive fullscreen mode.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -1318,7 +1276,7 @@ func (window *Window) SetFullscreenMode(mode *DisplayMode) error {
 //
 // window: the window to query.
 //
-// Returns a pointer to the exclusive fullscreen mode to use or NULL for
+// Returns a pointer to the exclusive fullscreen mode to use or nil for
 // borderless fullscreen desktop mode.
 //
 // This function should only be called on the main thread.
@@ -1348,11 +1306,7 @@ func (window *Window) FullscreenMode() *DisplayMode {
 //
 // window: the window to query.
 //
-// size: the size of the ICC profile.
-//
-// Returns the raw ICC profile data on success or NULL on failure; call
-// SDL_GetError() for more information. This should be freed with
-// SDL_free() when it is no longer needed.
+// Returns the raw ICC profile data on success or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -1374,9 +1328,7 @@ func (window *Window) ICCProfile() ([]byte, error) {
 //
 // window: the window to query.
 //
-// Returns the pixel format of the window on success or
-// SDL_PIXELFORMAT_UNKNOWN on failure; call SDL_GetError() for more
-// information.
+// Returns the pixel format of the window on success or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -1393,13 +1345,7 @@ func (window *Window) PixelFormat() (PixelFormat, error) {
 
 // Get a list of valid windows.
 //
-// count: a pointer filled in with the number of windows returned, may
-// be NULL.
-//
-// Returns a NULL terminated array of SDL_Window pointers or NULL on failure;
-// call SDL_GetError() for more information. This is a single
-// allocation that should be freed with SDL_free() when it is no
-// longer needed.
+// Returns a alice of [Window] pointers or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -1422,65 +1368,65 @@ func GetWindows() ([]*Window, error) {
 
 // Create a window with the specified dimensions and flags.
 //
-// `flags` may be any of the following OR'd together:
+// flags may be any of the following OR'd together:
 //
-// - `SDL_WINDOW_FULLSCREEN`: fullscreen window at desktop resolution
-// - `SDL_WINDOW_OPENGL`: window usable with an OpenGL context
-// - `SDL_WINDOW_OCCLUDED`: window partially or completely obscured by another
-// window
-// - `SDL_WINDOW_HIDDEN`: window is not visible
-// - `SDL_WINDOW_BORDERLESS`: no window decoration
-// - `SDL_WINDOW_RESIZABLE`: window can be resized
-// - `SDL_WINDOW_MINIMIZED`: window is minimized
-// - `SDL_WINDOW_MAXIMIZED`: window is maximized
-// - `SDL_WINDOW_MOUSE_GRABBED`: window has grabbed mouse focus
-// - `SDL_WINDOW_INPUT_FOCUS`: window has input focus
-// - `SDL_WINDOW_MOUSE_FOCUS`: window has mouse focus
-// - `SDL_WINDOW_EXTERNAL`: window not created by SDL
-// - `SDL_WINDOW_MODAL`: window is modal
-// - `SDL_WINDOW_HIGH_PIXEL_DENSITY`: window uses high pixel density back
-// buffer if possible
-// - `SDL_WINDOW_MOUSE_CAPTURE`: window has mouse captured (unrelated to
-// MOUSE_GRABBED)
-// - `SDL_WINDOW_ALWAYS_ON_TOP`: window should always be above others
-// - `SDL_WINDOW_UTILITY`: window should be treated as a utility window, not
-// showing in the task bar and window list
-// - `SDL_WINDOW_TOOLTIP`: window should be treated as a tooltip and does not
-// get mouse or keyboard focus, requires a parent window
-// - `SDL_WINDOW_POPUP_MENU`: window should be treated as a popup menu,
-// requires a parent window
-// - `SDL_WINDOW_KEYBOARD_GRABBED`: window has grabbed keyboard input
-// - `SDL_WINDOW_VULKAN`: window usable with a Vulkan instance
-// - `SDL_WINDOW_METAL`: window usable with a Metal instance
-// - `SDL_WINDOW_TRANSPARENT`: window with transparent buffer
-// - `SDL_WINDOW_NOT_FOCUSABLE`: window should not be focusable
+//   - [WindowFullscreen]: fullscreen window at desktop resolution
+//   - [WindowOpenGL]: window usable with an OpenGL context
+//   - [WindowOccluded]: window partially or completely obscured by another
+//     window
+//   - [WindowHidden]: window is not visible
+//   - [WindowBorderless]: no window decoration
+//   - [WindowResizable]: window can be resized
+//   - [WindowMinimized]: window is minimized
+//   - [WindowMaximized]: window is maximized
+//   - [WindowMouseGrabbed]: window has grabbed mouse focus
+//   - [WindowInputFocus]: window has input focus
+//   - [WindowMouseFocus]: window has mouse focus
+//   - [WindowExternal]: window not created by SDL
+//   - [WindowModal]: window is modal
+//   - [WindowHighPixelDensity]: window uses high pixel density back
+//     buffer if possible
+//   - [WindowMouseCapture]: window has mouse captured (unrelated to
+//     MOUSE_GRABBED)
+//   - [WindowAlwaysOnTop]: window should always be above others
+//   - [WindowUtility]: window should be treated as a utility window, not
+//     showing in the task bar and window list
+//   - [WindowTooltip]: window should be treated as a tooltip and does not
+//     get mouse or keyboard focus, requires a parent window
+//   - [WindowPopupMenu]: window should be treated as a popup menu,
+//     requires a parent window
+//   - [WindowKeyboardGrabbed]: window has grabbed keyboard input
+//   - [WindowVulkan]: window usable with a Vulkan instance
+//   - [WindowMetal]: window usable with a Metal instance
+//   - [WindowTransparent]: window with transparent buffer
+//   - [WindowNotFocusable]: window should not be focusable
 //
-// The SDL_Window is implicitly shown if SDL_WINDOW_HIDDEN is not set.
+// The [Window] is implicitly shown if [WindowHidden] is not set.
 //
 // On Apple's macOS, you **must** set the NSHighResolutionCapable Info.plist
 // property to YES, otherwise you will not receive a High-DPI OpenGL canvas.
 //
 // The window pixel size may differ from its window coordinate size if the
-// window is on a high pixel density display. Use SDL_GetWindowSize() to query
+// window is on a high pixel density display. Use [Window.Size] to query
 // the client area's size in window coordinates, and
-// SDL_GetWindowSizeInPixels() or SDL_GetRenderOutputSize() to query the
+// [Window.SizeInPixels] or [Renderer.OutputSize] to query the
 // drawable size in pixels. Note that the drawable size can vary after the
 // window is created and should be queried again if you get an
-// SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED event.
+// [EventWindowPixelSizeChanged] event.
 //
-// If the window is created with any of the SDL_WINDOW_OPENGL or
-// SDL_WINDOW_VULKAN flags, then the corresponding LoadLibrary function
-// (SDL_GL_LoadLibrary or SDL_Vulkan_LoadLibrary) is called and the
-// corresponding UnloadLibrary function is called by SDL_DestroyWindow().
+// If the window is created with any of the [WindowOpenGL] or
+// [WindowVulkan] flags, then the corresponding LoadLibrary function
+// ([GL_LoadLibrary] or [Vulkan_LoadLibrary]) is called and the
+// corresponding UnloadLibrary function is called by [Window.Destroy].
 //
-// If SDL_WINDOW_VULKAN is specified and there isn't a working Vulkan driver,
-// SDL_CreateWindow() will fail, because SDL_Vulkan_LoadLibrary() will fail.
+// If [WindowVulkan] is specified and there isn't a working Vulkan driver,
+// [CreateWindow] will fail, because [Vulkan_LoadLibrary] will fail.
 //
-// If SDL_WINDOW_METAL is specified on an OS that does not support Metal,
-// SDL_CreateWindow() will fail.
+// If [WindowMetal] is specified on an OS that does not support Metal,
+// [CreateWindow] will fail.
 //
-// If you intend to use this window with an SDL_Renderer, you should use
-// SDL_CreateWindowAndRenderer() instead of this function, to avoid window
+// If you intend to use this window with a [Renderer], you should use
+// [CreateWindowAndRenderer] instead of this function, to avoid window
 // flicker.
 //
 // On non-Apple devices, SDL requires you to either not link to the Vulkan
@@ -1493,10 +1439,9 @@ func GetWindows() ([]*Window, error) {
 //
 // h: the height of the window.
 //
-// flags: 0, or one or more SDL_WindowFlags OR'd together.
+// flags: 0, or one or more [WindowFlags] OR'd together.
 //
-// Returns the window that was created or NULL on failure; call
-// SDL_GetError() for more information.
+// Returns the window that was created or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -1515,24 +1460,24 @@ func CreateWindow(title string, w int, h int, flags WindowFlags) (*Window, error
 //
 // The flags parameter **must** contain at least one of the following:
 //
-// - `SDL_WINDOW_TOOLTIP`: The popup window is a tooltip and will not pass any
-// input events.
-// - `SDL_WINDOW_POPUP_MENU`: The popup window is a popup menu. The topmost
-// popup menu will implicitly gain the keyboard focus.
+//   - [WindowTooltip]: The popup window is a tooltip and will not pass any
+//     input events.
+//   - [WindowPopupMenu]: The popup window is a popup menu. The topmost
+//     popup menu will implicitly gain the keyboard focus.
 //
 // The following flags are not relevant to popup window creation and will be
 // ignored:
 //
-// - `SDL_WINDOW_MINIMIZED`
-// - `SDL_WINDOW_MAXIMIZED`
-// - `SDL_WINDOW_FULLSCREEN`
-// - `SDL_WINDOW_BORDERLESS`
+//   - [WindowMinimized]
+//   - [WindowMaximized]
+//   - [WindowFullscreen]
+//   - [WindowBorderless]
 //
 // The following flags are incompatible with popup window creation and will
 // cause it to fail:
 //
-// - `SDL_WINDOW_UTILITY`
-// - `SDL_WINDOW_MODAL`
+//   - [WindowUtility]
+//   - [WindowModal]
 //
 // The parent parameter **must** be non-null and a valid window. The parent of
 // a popup window can be either a regular, toplevel window, or another popup
@@ -1549,7 +1494,7 @@ func CreateWindow(title string, w int, h int, flags WindowFlags) (*Window, error
 // recursively hidden or destroyed as well. Child popup windows not explicitly
 // hidden will be restored when the parent is shown.
 //
-// parent: the parent of the window, must not be NULL.
+// parent: the parent of the window, must not be nil.
 //
 // offset_x: the x position of the popup window relative to the origin
 // of the parent.
@@ -1561,11 +1506,10 @@ func CreateWindow(title string, w int, h int, flags WindowFlags) (*Window, error
 //
 // h: the height of the window.
 //
-// flags: SDL_WINDOW_TOOLTIP or SDL_WINDOW_POPUP_MENU, and zero or more
-// additional SDL_WindowFlags OR'd together.
+// flags: [WindowTooltip] or [WindowPopupMenu], and zero or more
+// additional [WindowFlags] OR'd together.
 //
-// Returns the window that was created or NULL on failure; call
-// SDL_GetError() for more information.
+// Returns the window that was created or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -1584,112 +1528,111 @@ func CreatePopupWindow(parent *Window, offset_x int, offset_y int, w int, h int,
 //
 // These are the supported properties:
 //
-// - `SDL_PROP_WINDOW_CREATE_ALWAYS_ON_TOP_BOOLEAN`: true if the window should
-// be always on top
-// - `SDL_PROP_WINDOW_CREATE_BORDERLESS_BOOLEAN`: true if the window has no
-// window decoration
-// - `SDL_PROP_WINDOW_CREATE_EXTERNAL_GRAPHICS_CONTEXT_BOOLEAN`: true if the
-// window will be used with an externally managed graphics context.
-// - `SDL_PROP_WINDOW_CREATE_FOCUSABLE_BOOLEAN`: true if the window should
-// accept keyboard input (defaults true)
-// - `SDL_PROP_WINDOW_CREATE_FULLSCREEN_BOOLEAN`: true if the window should
-// start in fullscreen mode at desktop resolution
-// - `SDL_PROP_WINDOW_CREATE_HEIGHT_NUMBER`: the height of the window
-// - `SDL_PROP_WINDOW_CREATE_HIDDEN_BOOLEAN`: true if the window should start
-// hidden
-// - `SDL_PROP_WINDOW_CREATE_HIGH_PIXEL_DENSITY_BOOLEAN`: true if the window
-// uses a high pixel density buffer if possible
-// - `SDL_PROP_WINDOW_CREATE_MAXIMIZED_BOOLEAN`: true if the window should
-// start maximized
-// - `SDL_PROP_WINDOW_CREATE_MENU_BOOLEAN`: true if the window is a popup menu
-// - `SDL_PROP_WINDOW_CREATE_METAL_BOOLEAN`: true if the window will be used
-// with Metal rendering
-// - `SDL_PROP_WINDOW_CREATE_MINIMIZED_BOOLEAN`: true if the window should
-// start minimized
-// - `SDL_PROP_WINDOW_CREATE_MODAL_BOOLEAN`: true if the window is modal to
-// its parent
-// - `SDL_PROP_WINDOW_CREATE_MOUSE_GRABBED_BOOLEAN`: true if the window starts
-// with grabbed mouse focus
-// - `SDL_PROP_WINDOW_CREATE_OPENGL_BOOLEAN`: true if the window will be used
-// with OpenGL rendering
-// - `SDL_PROP_WINDOW_CREATE_PARENT_POINTER`: an SDL_Window that will be the
-// parent of this window, required for windows with the "tooltip", "menu",
-// and "modal" properties
-// - `SDL_PROP_WINDOW_CREATE_RESIZABLE_BOOLEAN`: true if the window should be
-// resizable
-// - `SDL_PROP_WINDOW_CREATE_TITLE_STRING`: the title of the window, in UTF-8
-// encoding
-// - `SDL_PROP_WINDOW_CREATE_TRANSPARENT_BOOLEAN`: true if the window show
-// transparent in the areas with alpha of 0
-// - `SDL_PROP_WINDOW_CREATE_TOOLTIP_BOOLEAN`: true if the window is a tooltip
-// - `SDL_PROP_WINDOW_CREATE_UTILITY_BOOLEAN`: true if the window is a utility
-// window, not showing in the task bar and window list
-// - `SDL_PROP_WINDOW_CREATE_VULKAN_BOOLEAN`: true if the window will be used
-// with Vulkan rendering
-// - `SDL_PROP_WINDOW_CREATE_WIDTH_NUMBER`: the width of the window
-// - `SDL_PROP_WINDOW_CREATE_X_NUMBER`: the x position of the window, or
-// `SDL_WINDOWPOS_CENTERED`, defaults to `SDL_WINDOWPOS_UNDEFINED`. This is
-// relative to the parent for windows with the "tooltip" or "menu" property
-// set.
-// - `SDL_PROP_WINDOW_CREATE_Y_NUMBER`: the y position of the window, or
-// `SDL_WINDOWPOS_CENTERED`, defaults to `SDL_WINDOWPOS_UNDEFINED`. This is
-// relative to the parent for windows with the "tooltip" or "menu" property
-// set.
+//   - [PropWindowCreateAlwaysOnTopBoolean]: true if the window should
+//     be always on top
+//   - [PropWindowCreateBorderlessBoolean]: true if the window has no
+//     window decoration
+//   - [PropWindowCreateExternalGraphicsContextBoolean]: true if the
+//     window will be used with an externally managed graphics context.
+//   - [PropWindowCreateFocusableBoolean]: true if the window should
+//     accept keyboard input (defaults true)
+//   - [PropWindowCreateFullscreenBoolean]: true if the window should
+//     start in fullscreen mode at desktop resolution
+//   - [PropWindowCreateHeightNumber]: the height of the window
+//   - [PropWindowCreateHiddenBoolean]: true if the window should start
+//     hidden
+//   - [PropWindowCreateHighPixelDensityBoolean]: true if the window
+//     uses a high pixel density buffer if possible
+//   - [PropWindowCreateMaximizedBoolean]: true if the window should
+//     start maximized
+//   - [PropWindowCreateMenuBoolean]: true if the window is a popup menu
+//   - [PropWindowCreateMetalBoolean]: true if the window will be used
+//     with Metal rendering
+//   - [PropWindowCreateMinimizedBoolean]: true if the window should
+//     start minimized
+//   - [PropWindowCreateModalBoolean]: true if the window is modal to
+//     its parent
+//   - [PropWindowCreateMouseGrabbedBoolean]: true if the window starts
+//     with grabbed mouse focus
+//   - [PropWindowCreateOpenGLBoolean]: true if the window will be used
+//     with OpenGL rendering
+//   - [PropWindowCreateParentPointer]: a [Window] that will be the
+//     parent of this window, required for windows with the "tooltip", "menu",
+//     and "modal" properties
+//   - [PropWindowCreateResizableBoolean]: true if the window should be
+//     resizable
+//   - [PropWindowCreateTitleString]: the title of the window, in UTF-8
+//     encoding
+//   - [PropWindowCreateTransparentBoolean]: true if the window show
+//     transparent in the areas with alpha of 0
+//   - [PropWindowCreateTooltipBoolean]: true if the window is a tooltip
+//   - [PropWindowCreateUtilityBoolean]: true if the window is a utility
+//     window, not showing in the task bar and window list
+//   - [PropWindowCreateVulkanBoolean]: true if the window will be used
+//     with Vulkan rendering
+//   - [PropWindowCreateWidthNumber]: the width of the window
+//   - [PropWindowCreateXNumber]: the x position of the window, or
+//     [WindowposCentered], defaults to [WindowposUndefined]. This is
+//     relative to the parent for windows with the "tooltip" or "menu" property
+//     set.
+//   - [PropWindowCreateYNumber]: the y position of the window, or
+//     [WindowposCentered], defaults to [WindowposUndefined]. This is
+//     relative to the parent for windows with the "tooltip" or "menu" property
+//     set.
 //
 // These are additional supported properties on macOS:
 //
-// - `SDL_PROP_WINDOW_CREATE_COCOA_WINDOW_POINTER`: the
-// `(__unsafe_unretained)` NSWindow associated with the window, if you want
-// to wrap an existing window.
-// - `SDL_PROP_WINDOW_CREATE_COCOA_VIEW_POINTER`: the `(__unsafe_unretained)`
-// NSView associated with the window, defaults to `[window contentView]`
+//   - [PropWindowCreateCocoaWindowPointer]: the
+//     (__unsafe_unretained) NSWindow associated with the window, if you want
+//     to wrap an existing window.
+//   - [PropWindowCreateCocoaViewPointer]: the (__unsafe_unretained)
+//     NSView associated with the window, defaults to [window contentView]
 //
 // These are additional supported properties on Wayland:
 //
-// - `SDL_PROP_WINDOW_CREATE_WAYLAND_SURFACE_ROLE_CUSTOM_BOOLEAN` - true if
-// the application wants to use the Wayland surface for a custom role and
-// does not want it attached to an XDG toplevel window. See
-// [README/wayland](README/wayland) for more information on using custom
-// surfaces.
-// - `SDL_PROP_WINDOW_CREATE_WAYLAND_CREATE_EGL_WINDOW_BOOLEAN` - true if the
-// application wants an associated `wl_egl_window` object to be created and
-// attached to the window, even if the window does not have the OpenGL
-// property or `SDL_WINDOW_OPENGL` flag set.
-// - `SDL_PROP_WINDOW_CREATE_WAYLAND_WL_SURFACE_POINTER` - the wl_surface
-// associated with the window, if you want to wrap an existing window. See
-// [README/wayland](README/wayland) for more information.
+//   - [PropWindowCreateWaylandSurfaceRoleCustomBoolean] - true if
+//     the application wants to use the Wayland surface for a custom role and
+//     does not want it attached to an XDG toplevel window. See
+//     [README/wayland](README/wayland) for more information on using custom
+//     surfaces.
+//   - [PropWindowCreateWaylandCreateEglWindowBoolean] - true if the
+//     application wants an associated wl_egl_window object to be created and
+//     attached to the window, even if the window does not have the OpenGL
+//     property or [WindowOpenGL] flag set.
+//   - [PropWindowCreateWaylandWlSurfacePointer] - the wl_surface
+//     associated with the window, if you want to wrap an existing window. See
+//     [README/wayland](README/wayland) for more information.
 //
 // These are additional supported properties on Windows:
 //
-// - `SDL_PROP_WINDOW_CREATE_WIN32_HWND_POINTER`: the HWND associated with the
-// window, if you want to wrap an existing window.
-// - `SDL_PROP_WINDOW_CREATE_WIN32_PIXEL_FORMAT_HWND_POINTER`: optional,
-// another window to share pixel format with, useful for OpenGL windows
+//   - [PropWindowCreateWIN32HwndPointer]: the HWND associated with the
+//     window, if you want to wrap an existing window.
+//   - [PropWindowCreateWIN32PixelFormatHwndPointer]: optional,
+//     another window to share pixel format with, useful for OpenGL windows
 //
 // These are additional supported properties with X11:
 //
-// - `SDL_PROP_WINDOW_CREATE_X11_WINDOW_NUMBER`: the X11 Window associated
-// with the window, if you want to wrap an existing window.
+//   - [PropWindowCreateX11WindowNumber]: the X11 Window associated
+//     with the window, if you want to wrap an existing window.
 //
 // The window is implicitly shown if the "hidden" property is not set.
 //
 // Windows with the "tooltip" and "menu" properties are popup windows and have
-// the behaviors and guidelines outlined in SDL_CreatePopupWindow().
+// the behaviors and guidelines outlined in [CreatePopupWindow].
 //
-// If this window is being created to be used with an SDL_Renderer, you should
+// If this window is being created to be used with an [Renderer], you should
 // not add a graphics API specific property
-// (`SDL_PROP_WINDOW_CREATE_OPENGL_BOOLEAN`, etc), as SDL will handle that
+// ([PropWindowCreateOpenGLBoolean], etc), as SDL will handle that
 // internally when it chooses a renderer. However, SDL might need to recreate
 // your window at that point, which may cause the window to appear briefly,
 // and then flicker as it is recreated. The correct approach to this is to
-// create the window with the `SDL_PROP_WINDOW_CREATE_HIDDEN_BOOLEAN` property
+// create the window with the [PropWindowCreateHiddenBoolean] property
 // set to true, then create the renderer, then show the window with
-// SDL_ShowWindow().
+// [Window.Show].
 //
 // props: the properties to use.
 //
-// Returns the window that was created or NULL on failure; call
-// SDL_GetError() for more information.
+// Returns the window that was created or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -1719,7 +1662,7 @@ const PropWindowCreateMetalBoolean = "SDL.window.create.metal"
 const PropWindowCreateMinimizedBoolean = "SDL.window.create.minimized"
 const PropWindowCreateModalBoolean = "SDL.window.create.modal"
 const PropWindowCreateMouseGrabbedBoolean = "SDL.window.create.mouse_grabbed"
-const PropWindowCreateOpenglBoolean = "SDL.window.create.opengl"
+const PropWindowCreateOpenGLBoolean = "SDL.window.create.opengl"
 const PropWindowCreateParentPointer = "SDL.window.create.parent"
 const PropWindowCreateResizableBoolean = "SDL.window.create.resizable"
 const PropWindowCreateTitleString = "SDL.window.create.title"
@@ -1741,13 +1684,12 @@ const PropWindowCreateX11WindowNumber = "SDL.window.create.x11.window"
 
 // Get the numeric ID of a window.
 //
-// The numeric ID is what SDL_WindowEvent references, and is necessary to map
-// these events to specific SDL_Window objects.
+// The numeric ID is what [WindowEvent] references, and is necessary to map
+// these events to specific [Window] objects.
 //
 // window: the window to query.
 //
-// Returns the ID of the window on success or 0 on failure; call
-// SDL_GetError() for more information.
+// Returns the ID of the window on success or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -1764,13 +1706,12 @@ func (window *Window) ID() (WindowID, error) {
 
 // Get a window from a stored ID.
 //
-// The numeric ID is what SDL_WindowEvent references, and is necessary to map
-// these events to specific SDL_Window objects.
+// The numeric ID is what [WindowEvent] references, and is necessary to map
+// these events to specific [Window] objects.
 //
 // id: the ID of the window.
 //
-// Returns the window associated with `id` or NULL if it doesn't exist; call
-// SDL_GetError() for more information.
+// Returns the window associated with id or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -1789,7 +1730,7 @@ func GetWindowFromID(id WindowID) (*Window, error) {
 //
 // window: the window to query.
 //
-// Returns the parent of the window on success or NULL if the window has no
+// Returns the parent of the window on success or nil if the window has no
 // parent.
 //
 // This function should only be called on the main thread.
@@ -1805,117 +1746,116 @@ func (window *Window) Parent() *Window {
 //
 // The following read-only properties are provided by SDL:
 //
-// - `SDL_PROP_WINDOW_SHAPE_POINTER`: the surface associated with a shaped
-// window
-// - `SDL_PROP_WINDOW_HDR_ENABLED_BOOLEAN`: true if the window has HDR
-// headroom above the SDR white point. This property can change dynamically
-// when SDL_EVENT_WINDOW_HDR_STATE_CHANGED is sent.
-// - `SDL_PROP_WINDOW_SDR_WHITE_LEVEL_FLOAT`: the value of SDR white in the
-// SDL_COLORSPACE_SRGB_LINEAR colorspace. On Windows this corresponds to the
-// SDR white level in scRGB colorspace, and on Apple platforms this is
-// always 1.0 for EDR content. This property can change dynamically when
-// SDL_EVENT_WINDOW_HDR_STATE_CHANGED is sent.
-// - `SDL_PROP_WINDOW_HDR_HEADROOM_FLOAT`: the additional high dynamic range
-// that can be displayed, in terms of the SDR white point. When HDR is not
-// enabled, this will be 1.0. This property can change dynamically when
-// SDL_EVENT_WINDOW_HDR_STATE_CHANGED is sent.
+//   - [PropWindowShapePointer]: the surface associated with a shaped
+//     window
+//   - [PropWindowHDREnabledBoolean]: true if the window has HDR
+//     headroom above the SDR white point. This property can change dynamically
+//     when [EventWindowHDRStateChanged] is sent.
+//   - [PropWindowSDRWhiteLevelFloat]: the value of SDR white in the
+//     [ColorspaceSRGBLinear] colorspace. On Windows this corresponds to the
+//     SDR white level in scRGB colorspace, and on Apple platforms this is
+//     always 1.0 for EDR content. This property can change dynamically when
+//     [EventWindowHDRStateChanged] is sent.
+//   - [PropWindowHDRHeadroomFloat]: the additional high dynamic range
+//     that can be displayed, in terms of the SDR white point. When HDR is not
+//     enabled, this will be 1.0. This property can change dynamically when
+//     [EventWindowHDRStateChanged] is sent.
 //
 // On Android:
 //
-// - `SDL_PROP_WINDOW_ANDROID_WINDOW_POINTER`: the ANativeWindow associated
-// with the window
-// - `SDL_PROP_WINDOW_ANDROID_SURFACE_POINTER`: the EGLSurface associated with
-// the window
+//   - [PropWindowAndroidWindowPointer]: the ANativeWindow associated
+//     with the window
+//   - [PropWindowAndroidSurfacePointer]: the [EGLSurface] associated with
+//     the window
 //
 // On iOS:
 //
-// - `SDL_PROP_WINDOW_UIKIT_WINDOW_POINTER`: the `(__unsafe_unretained)`
-// UIWindow associated with the window
-// - `SDL_PROP_WINDOW_UIKIT_METAL_VIEW_TAG_NUMBER`: the NSInteger tag
-// associated with metal views on the window
-// - `SDL_PROP_WINDOW_UIKIT_OPENGL_FRAMEBUFFER_NUMBER`: the OpenGL view's
-// framebuffer object. It must be bound when rendering to the screen using
-// OpenGL.
-// - `SDL_PROP_WINDOW_UIKIT_OPENGL_RENDERBUFFER_NUMBER`: the OpenGL view's
-// renderbuffer object. It must be bound when SDL_GL_SwapWindow is called.
-// - `SDL_PROP_WINDOW_UIKIT_OPENGL_RESOLVE_FRAMEBUFFER_NUMBER`: the OpenGL
-// view's resolve framebuffer, when MSAA is used.
+//   - [PropWindowUikitWindowPointer]: the (__unsafe_unretained)
+//     UIWindow associated with the window
+//   - [PropWindowUikitMetalViewTagNumber]: the NSInteger tag
+//     associated with metal views on the window
+//   - [PropWindowUikitOpenglFramebufferNumber]: the OpenGL view's
+//     framebuffer object. It must be bound when rendering to the screen using
+//     OpenGL.
+//   - [PropWindowUikitOpenglRenderbufferNumber]: the OpenGL view's
+//     renderbuffer object. It must be bound when [GL_SwapWindow] is called.
+//   - [PropWindowUikitOpenglResolveFramebufferNumber]: the OpenGL
+//     view's resolve framebuffer, when MSAA is used.
 //
 // On KMS/DRM:
 //
-// - `SDL_PROP_WINDOW_KMSDRM_DEVICE_INDEX_NUMBER`: the device index associated
-// with the window (e.g. the X in /dev/dri/cardX)
-// - `SDL_PROP_WINDOW_KMSDRM_DRM_FD_NUMBER`: the DRM FD associated with the
-// window
-// - `SDL_PROP_WINDOW_KMSDRM_GBM_DEVICE_POINTER`: the GBM device associated
-// with the window
+//   - [PropWindowKMSDRMDeviceIndexNumber]: the device index associated
+//     with the window (e.g. the X in /dev/dri/cardX)
+//   - [PropWindowKMSDRMDRMFDNumber]: the DRM FD associated with the
+//     window
+//   - [PropWindowKMSDRMGBMDevicePointer]: the GBM device associated
+//     with the window
 //
 // On macOS:
 //
-// - `SDL_PROP_WINDOW_COCOA_WINDOW_POINTER`: the `(__unsafe_unretained)`
-// NSWindow associated with the window
-// - `SDL_PROP_WINDOW_COCOA_METAL_VIEW_TAG_NUMBER`: the NSInteger tag
-// assocated with metal views on the window
+//   - [PropWindowCocoaWindowPointer]: the (__unsafe_unretained)
+//     NSWindow associated with the window
+//   - [PropWindowCocoaMetalViewTagNumber]: the NSInteger tag
+//     assocated with metal views on the window
 //
 // On OpenVR:
 //
-// - `SDL_PROP_WINDOW_OPENVR_OVERLAY_ID`: the OpenVR Overlay Handle ID for the
-// associated overlay window.
+//   - [PropWindowOpenVROverlayID]: the OpenVR Overlay Handle ID for the
+//     associated overlay window.
 //
 // On Vivante:
 //
-// - `SDL_PROP_WINDOW_VIVANTE_DISPLAY_POINTER`: the EGLNativeDisplayType
-// associated with the window
-// - `SDL_PROP_WINDOW_VIVANTE_WINDOW_POINTER`: the EGLNativeWindowType
-// associated with the window
-// - `SDL_PROP_WINDOW_VIVANTE_SURFACE_POINTER`: the EGLSurface associated with
-// the window
+//   - [PropWindowVivanteDisplayPointer]: the EGLNativeDisplayType
+//     associated with the window
+//   - [PropWindowVivanteWindowPointer]: the EGLNativeWindowType
+//     associated with the window
+//   - [PropWindowVivanteSurfacePointer]: the EGLSurface associated with
+//     the window
 //
 // On Windows:
 //
-// - `SDL_PROP_WINDOW_WIN32_HWND_POINTER`: the HWND associated with the window
-// - `SDL_PROP_WINDOW_WIN32_HDC_POINTER`: the HDC associated with the window
-// - `SDL_PROP_WINDOW_WIN32_INSTANCE_POINTER`: the HINSTANCE associated with
-// the window
+//   - [PropWindowWin32HWNDPointer]: the HWND associated with the window
+//   - [PropWindowWin32HDCPointer]: the HDC associated with the window
+//   - [PropWindowWin32InstancePointer]: the HINSTANCE associated with
+//     the window
 //
 // On Wayland:
 //
-// Note: The `xdg_*` window objects do not internally persist across window
+// Note: The xdg_* window objects do not internally persist across window
 // show/hide calls. They will be null if the window is hidden and must be
 // queried each time it is shown.
 //
-// - `SDL_PROP_WINDOW_WAYLAND_DISPLAY_POINTER`: the wl_display associated with
-// the window
-// - `SDL_PROP_WINDOW_WAYLAND_SURFACE_POINTER`: the wl_surface associated with
-// the window
-// - `SDL_PROP_WINDOW_WAYLAND_VIEWPORT_POINTER`: the wp_viewport associated
-// with the window
-// - `SDL_PROP_WINDOW_WAYLAND_EGL_WINDOW_POINTER`: the wl_egl_window
-// associated with the window
-// - `SDL_PROP_WINDOW_WAYLAND_XDG_SURFACE_POINTER`: the xdg_surface associated
-// with the window
-// - `SDL_PROP_WINDOW_WAYLAND_XDG_TOPLEVEL_POINTER`: the xdg_toplevel role
-// associated with the window
-// - 'SDL_PROP_WINDOW_WAYLAND_XDG_TOPLEVEL_EXPORT_HANDLE_STRING': the export
-// handle associated with the window
-// - `SDL_PROP_WINDOW_WAYLAND_XDG_POPUP_POINTER`: the xdg_popup role
-// associated with the window
-// - `SDL_PROP_WINDOW_WAYLAND_XDG_POSITIONER_POINTER`: the xdg_positioner
-// associated with the window, in popup mode
+//   - [PropWindowWaylandDisplayPointer]: the wl_display associated with
+//     the window
+//   - [PropWindowWaylandSurfacePointer]: the wl_surface associated with
+//     the window
+//   - [PropWindowWaylandViewportPointer]: the wp_viewport associated
+//     with the window
+//   - [PropWindowWaylandEGLWindowPointer]: the wl_egl_window
+//     associated with the window
+//   - [PropWindowWaylandXDGSurfacePointer]: the xdg_surface associated
+//     with the window
+//   - [PropWindowWaylandXDGToplevelPointer]: the xdg_toplevel role
+//     associated with the window
+//   - [PropWindowWaylandXDGToplevelExportHandleString]: the export
+//     handle associated with the window
+//   - [PropWindowWaylandXDGPopupPointer]: the xdg_popup role
+//     associated with the window
+//   - [PropWindowWaylandXDGPositionerPointer]: the xdg_positioner
+//     associated with the window, in popup mode
 //
 // On X11:
 //
-// - `SDL_PROP_WINDOW_X11_DISPLAY_POINTER`: the X11 Display associated with
-// the window
-// - `SDL_PROP_WINDOW_X11_SCREEN_NUMBER`: the screen number associated with
-// the window
-// - `SDL_PROP_WINDOW_X11_WINDOW_NUMBER`: the X11 Window associated with the
-// window
+//   - [PropWindowX11DisplayPointer]: the X11 Display associated with
+//     the window
+//   - [PropWindowX11ScreenNumber]: the screen number associated with
+//     the window
+//   - [PropWindowX11WindowNumber]: the X11 Window associated with the
+//     window
 //
 // window: the window to query.
 //
-// Returns a valid property ID on success or 0 on failure; call
-// SDL_GetError() for more information.
+// Returns a valid property ID on success or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -1931,9 +1871,9 @@ func (window *Window) Properties() (PropertiesID, error) {
 }
 
 const PropWindowShapePointer = "SDL.window.shape"
-const PropWindowHdrEnabledBoolean = "SDL.window.HDR_enabled"
-const PropWindowSdrWhiteLevelFloat = "SDL.window.SDR_white_level"
-const PropWindowHdrHeadroomFloat = "SDL.window.HDR_headroom"
+const PropWindowHDREnabledBoolean = "SDL.window.HDR_enabled"
+const PropWindowSDRWhiteLevelFloat = "SDL.window.SDR_white_level"
+const PropWindowHDRHeadroomFloat = "SDL.window.HDR_headroom"
 const PropWindowAndroidWindowPointer = "SDL.window.android.window"
 const PropWindowAndroidSurfacePointer = "SDL.window.android.surface"
 const PropWindowUikitWindowPointer = "SDL.window.uikit.window"
@@ -1941,27 +1881,27 @@ const PropWindowUikitMetalViewTagNumber = "SDL.window.uikit.metal_view_tag"
 const PropWindowUikitOpenglFramebufferNumber = "SDL.window.uikit.opengl.framebuffer"
 const PropWindowUikitOpenglRenderbufferNumber = "SDL.window.uikit.opengl.renderbuffer"
 const PropWindowUikitOpenglResolveFramebufferNumber = "SDL.window.uikit.opengl.resolve_framebuffer"
-const PropWindowKmsdrmDeviceIndexNumber = "SDL.window.kmsdrm.dev_index"
-const PropWindowKmsdrmDrmFdNumber = "SDL.window.kmsdrm.drm_fd"
-const PropWindowKmsdrmGbmDevicePointer = "SDL.window.kmsdrm.gbm_dev"
+const PropWindowKMSDRMDeviceIndexNumber = "SDL.window.kmsdrm.dev_index"
+const PropWindowKMSDRMDRMFDNumber = "SDL.window.kmsdrm.drm_fd"
+const PropWindowKMSDRMGBMDevicePointer = "SDL.window.kmsdrm.gbm_dev"
 const PropWindowCocoaWindowPointer = "SDL.window.cocoa.window"
 const PropWindowCocoaMetalViewTagNumber = "SDL.window.cocoa.metal_view_tag"
-const PropWindowOpenvrOverlayID = "SDL.window.openvr.overlay_id"
+const PropWindowOpenVROverlayID = "SDL.window.openvr.overlay_id"
 const PropWindowVivanteDisplayPointer = "SDL.window.vivante.display"
 const PropWindowVivanteWindowPointer = "SDL.window.vivante.window"
 const PropWindowVivanteSurfacePointer = "SDL.window.vivante.surface"
-const PropWindowWIN32HwndPointer = "SDL.window.win32.hwnd"
-const PropWindowWIN32HdcPointer = "SDL.window.win32.hdc"
-const PropWindowWIN32InstancePointer = "SDL.window.win32.instance"
+const PropWindowWin32HWNDPointer = "SDL.window.win32.hwnd"
+const PropWindowWin32HDCPointer = "SDL.window.win32.hdc"
+const PropWindowWin32InstancePointer = "SDL.window.win32.instance"
 const PropWindowWaylandDisplayPointer = "SDL.window.wayland.display"
 const PropWindowWaylandSurfacePointer = "SDL.window.wayland.surface"
 const PropWindowWaylandViewportPointer = "SDL.window.wayland.viewport"
-const PropWindowWaylandEglWindowPointer = "SDL.window.wayland.egl_window"
-const PropWindowWaylandXdgSurfacePointer = "SDL.window.wayland.xdg_surface"
-const PropWindowWaylandXdgToplevelPointer = "SDL.window.wayland.xdg_toplevel"
-const PropWindowWaylandXdgToplevelExportHandleString = "SDL.window.wayland.xdg_toplevel_export_handle"
-const PropWindowWaylandXdgPopupPointer = "SDL.window.wayland.xdg_popup"
-const PropWindowWaylandXdgPositionerPointer = "SDL.window.wayland.xdg_positioner"
+const PropWindowWaylandEGLWindowPointer = "SDL.window.wayland.egl_window"
+const PropWindowWaylandXDGSurfacePointer = "SDL.window.wayland.xdg_surface"
+const PropWindowWaylandXDGToplevelPointer = "SDL.window.wayland.xdg_toplevel"
+const PropWindowWaylandXDGToplevelExportHandleString = "SDL.window.wayland.xdg_toplevel_export_handle"
+const PropWindowWaylandXDGPopupPointer = "SDL.window.wayland.xdg_popup"
+const PropWindowWaylandXDGPositionerPointer = "SDL.window.wayland.xdg_positioner"
 const PropWindowX11DisplayPointer = "SDL.window.x11.display"
 const PropWindowX11ScreenNumber = "SDL.window.x11.screen"
 const PropWindowX11WindowNumber = "SDL.window.x11.window"
@@ -1970,7 +1910,7 @@ const PropWindowX11WindowNumber = "SDL.window.x11.window"
 //
 // window: the window to query.
 //
-// Returns a mask of the SDL_WindowFlags associated with `window`.
+// Returns a mask of the [WindowFlags] associated with window.
 //
 // This function should only be called on the main thread.
 //
@@ -1983,14 +1923,11 @@ func (window *Window) Flags() WindowFlags {
 
 // Set the title of a window.
 //
-// This string is expected to be in UTF-8 encoding.
-//
 // window: the window to change.
 //
-// title: the desired window title in UTF-8 format.
+// title: the desired window title.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -2008,8 +1945,7 @@ func (window *Window) SetTitle(title string) error {
 //
 // window: the window to query.
 //
-// Returns the title of the window in UTF-8 format or "" if there is no
-// title.
+// Returns the title of the window or "" if there is no title.
 //
 // This function should only be called on the main thread.
 //
@@ -2034,10 +1970,9 @@ func (window *Window) Title() string {
 //
 // window: the window to change.
 //
-// icon: an SDL_Surface structure containing the icon for the window.
+// icon: a [Surface] structure containing the icon for the window.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -2059,14 +1994,14 @@ func (window *Window) SetIcon(icon *Surface) error {
 // This can be used to reposition fullscreen-desktop windows onto a different
 // display, however, as exclusive fullscreen windows are locked to a specific
 // display, they can only be repositioned programmatically via
-// SDL_SetWindowFullscreenMode().
+// [Window.SetFullscreenMode].
 //
 // On some windowing systems this request is asynchronous and the new
 // coordinates may not have have been applied immediately upon the return of
-// this function. If an immediate change is required, call SDL_SyncWindow() to
+// this function. If an immediate change is required, call [Window.Sync] to
 // block until the changes have taken effect.
 //
-// When the window position changes, an SDL_EVENT_WINDOW_MOVED event will be
+// When the window position changes, an [EventWindowMoved] event will be
 // emitted with the window's new coordinates. Note that the new coordinates
 // may not match the exact coordinates requested, as some windowing systems
 // can restrict the position of the window in certain scenarios (e.g.
@@ -2076,14 +2011,13 @@ func (window *Window) SetIcon(icon *Surface) error {
 //
 // window: the window to reposition.
 //
-// x: the x coordinate of the window, or `SDL_WINDOWPOS_CENTERED` or
-// `SDL_WINDOWPOS_UNDEFINED`.
+// x: the x coordinate of the window, or [WindowposCentered] or
+// [WindowposUndefined].
 //
-// y: the y coordinate of the window, or `SDL_WINDOWPOS_CENTERED` or
-// `SDL_WINDOWPOS_UNDEFINED`.
+// y: the y coordinate of the window, or [WindowposCentered] or
+// [WindowposUndefined].
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -2102,19 +2036,9 @@ func (window *Window) SetPosition(x int, y int) error {
 // This is the current position of the window as last reported by the
 // windowing system.
 //
-// If you do not need the value for one of the positions a NULL may be passed
-// in the `x` or `y` parameter.
-//
 // window: the window to query.
 //
-// x: a pointer filled in with the x position of the window, may be
-// NULL.
-//
-// y: a pointer filled in with the y position of the window, may be
-// NULL.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns the window position on success or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -2135,14 +2059,14 @@ func (window *Window) Position() (x, y int, err error) {
 // effect.
 //
 // To change the exclusive fullscreen mode of a window, use
-// SDL_SetWindowFullscreenMode().
+// [Window.SetFullscreenMode].
 //
 // On some windowing systems, this request is asynchronous and the new window
 // size may not have have been applied immediately upon the return of this
-// function. If an immediate change is required, call SDL_SyncWindow() to
+// function. If an immediate change is required, call [Window.Sync] to
 // block until the changes have taken effect.
 //
-// When the window size changes, an SDL_EVENT_WINDOW_RESIZED event will be
+// When the window size changes, an [EventWindowResized] event will be
 // emitted with the new window dimensions. Note that the new dimensions may
 // not match the exact size requested, as some windowing systems can restrict
 // the window size in certain scenarios (e.g. constraining the size of the
@@ -2155,8 +2079,7 @@ func (window *Window) Position() (x, y int, err error) {
 //
 // h: the height of the window, must be > 0.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -2173,17 +2096,12 @@ func (window *Window) SetSize(w int, h int) error {
 // Get the size of a window's client area.
 //
 // The window pixel size may differ from its window coordinate size if the
-// window is on a high pixel density display. Use SDL_GetWindowSizeInPixels()
-// or SDL_GetRenderOutputSize() to get the real client area size in pixels.
+// window is on a high pixel density display. Use [Window.SizeInPixels]
+// or [Renderer.OutputSize] to get the real client area size in pixels.
 //
 // window: the window to query the width and height from.
 //
-// w: a pointer filled in with the width of the window, may be NULL.
-//
-// h: a pointer filled in with the height of the window, may be NULL.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns the window size or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -2209,11 +2127,7 @@ func (window *Window) Size() (w, h int, err error) {
 //
 // window: the window to query.
 //
-// rect: a pointer filled in with the client area that is safe for
-// interactive content.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns the client area that is safe for interactive content or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -2240,10 +2154,10 @@ func (window *Window) SafeArea() (Rect, error) {
 //
 // On some windowing systems, this request is asynchronous and the new window
 // aspect ratio may not have have been applied immediately upon the return of
-// this function. If an immediate change is required, call SDL_SyncWindow() to
+// this function. If an immediate change is required, call [Window.Sync] to
 // block until the changes have taken effect.
 //
-// When the window size changes, an SDL_EVENT_WINDOW_RESIZED event will be
+// When the window size changes, an [EventWindowResized] event will be
 // emitted with the new window dimensions. Note that the new dimensions may
 // not match the exact aspect ratio requested, as some windowing systems can
 // restrict the window size in certain scenarios (e.g. constraining the size
@@ -2253,14 +2167,13 @@ func (window *Window) SafeArea() (Rect, error) {
 //
 // window: the window to change.
 //
-// min_aspect: the minimum aspect ratio of the window, or 0.0f for no
+// minAspect: the minimum aspect ratio of the window, or 0.0f for no
 // limit.
 //
-// max_aspect: the maximum aspect ratio of the window, or 0.0f for no
+// maxAspect: the maximum aspect ratio of the window, or 0.0f for no
 // limit.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -2278,14 +2191,7 @@ func (window *Window) SetAspectRatio(minAspect float32, maxAspect float32) error
 //
 // window: the window to query the width and height from.
 //
-// min_aspect: a pointer filled in with the minimum aspect ratio of the
-// window, may be NULL.
-//
-// max_aspect: a pointer filled in with the maximum aspect ratio of the
-// window, may be NULL.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns the window aspect ratio or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -2302,13 +2208,9 @@ func (window *Window) AspectRatio() (minAspect, maxAspect float32, err error) {
 
 // Get the size of a window's borders (decorations) around the client area.
 //
-// Note: If this function fails (returns false), the size values will be
-// initialized to 0, 0, 0, 0 (if a non-NULL pointer is provided), as if the
-// window in question was borderless.
-//
 // Note: This function may fail on systems where the window has not yet been
 // decorated by the display server (for example, immediately after calling
-// SDL_CreateWindow). It is recommended that you wait at least until the
+// [CreateWindow]). It is recommended that you wait at least until the
 // window has been presented and composited, so that the window system has a
 // chance to decorate the window and provide the border dimensions to SDL.
 //
@@ -2318,20 +2220,7 @@ func (window *Window) AspectRatio() (minAspect, maxAspect float32, err error) {
 // window: the window to query the size values of the border
 // (decorations) from.
 //
-// top: pointer to variable for storing the size of the top border; NULL
-// is permitted.
-//
-// left: pointer to variable for storing the size of the left border;
-// NULL is permitted.
-//
-// bottom: pointer to variable for storing the size of the bottom
-// border; NULL is permitted.
-//
-// right: pointer to variable for storing the size of the right border;
-// NULL is permitted.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns the sizes of the borders or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -2350,14 +2239,7 @@ func (window *Window) BordersSize() (top, left, bottom, right int, err error) {
 //
 // window: the window from which the drawable size should be queried.
 //
-// w: a pointer to variable for storing the width in pixels, may be
-// NULL.
-//
-// h: a pointer to variable for storing the height in pixels, may be
-// NULL.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns the window size in pixels or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -2376,12 +2258,11 @@ func (window *Window) SizeInPixels() (w, h int, err error) {
 //
 // window: the window to change.
 //
-// min_w: the minimum width of the window, or 0 for no limit.
+// minW: the minimum width of the window, or 0 for no limit.
 //
-// min_h: the minimum height of the window, or 0 for no limit.
+// minH: the minimum height of the window, or 0 for no limit.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -2399,14 +2280,7 @@ func (window *Window) SetMinimumSize(minW int, minH int) error {
 //
 // window: the window to query.
 //
-// w: a pointer filled in with the minimum width of the window, may be
-// NULL.
-//
-// h: a pointer filled in with the minimum height of the window, may be
-// NULL.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns the minimum size or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -2425,12 +2299,11 @@ func (window *Window) GetMinimumSize() (w, h int, err error) {
 //
 // window: the window to change.
 //
-// max_w: the maximum width of the window, or 0 for no limit.
+// maxW: the maximum width of the window, or 0 for no limit.
 //
-// max_h: the maximum height of the window, or 0 for no limit.
+// maxH: the maximum height of the window, or 0 for no limit.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -2448,14 +2321,7 @@ func (window *Window) SetMaximumSize(maxW int, maxH int) error {
 //
 // window: the window to query.
 //
-// w: a pointer filled in with the maximum width of the window, may be
-// NULL.
-//
-// h: a pointer filled in with the maximum height of the window, may be
-// NULL.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns the maximum size of the window or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -2472,7 +2338,7 @@ func (window *Window) GetMaximumSize() (w, h int, err error) {
 
 // Set the border state of a window.
 //
-// This will add or remove the window's `SDL_WINDOW_BORDERLESS` flag and add
+// This will add or remove the window's [WindowBorderless] flag and add
 // or remove the border from the actual window. This is a no-op if the
 // window's border already matches the requested state.
 //
@@ -2482,8 +2348,7 @@ func (window *Window) GetMaximumSize() (w, h int, err error) {
 //
 // bordered: false to remove border, true to add border.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -2499,7 +2364,7 @@ func (window *Window) SetBordered(bordered bool) error {
 
 // Set the user-resizable state of a window.
 //
-// This will add or remove the window's `SDL_WINDOW_RESIZABLE` flag and
+// This will add or remove the window's [WindowResizable] flag and
 // allow/disallow user resizing of the window. This is a no-op if the window's
 // resizable state already matches the requested state.
 //
@@ -2509,8 +2374,7 @@ func (window *Window) SetBordered(bordered bool) error {
 //
 // resizable: true to allow resizing, false to disallow.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -2526,15 +2390,14 @@ func (window *Window) SetResizable(resizable bool) error {
 
 // Set the window to always be above the others.
 //
-// This will add or remove the window's `SDL_WINDOW_ALWAYS_ON_TOP` flag. This
+// This will add or remove the window's [WindowAlwaysOnTop] flag. This
 // will bring the window to the front and keep the window above the rest.
 //
 // window: the window of which to change the always on top state.
 //
-// on_top: true to set the window always on top, false to disable.
+// onTop: true to set the window always on top, false to disable.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -2552,8 +2415,7 @@ func (window *Window) SetAlwaysOnTop(onTop bool) error {
 //
 // window: the window to show.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -2571,8 +2433,7 @@ func (window *Window) Show() error {
 //
 // window: the window to hide.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -2592,13 +2453,12 @@ func (window *Window) Hide() error {
 // The result of this request is subject to desktop window manager policy,
 // particularly if raising the requested window would result in stealing focus
 // from another application. If the window is successfully raised and gains
-// input focus, an SDL_EVENT_WINDOW_FOCUS_GAINED event will be emitted, and
-// the window will have the SDL_WINDOW_INPUT_FOCUS flag set.
+// input focus, an [EventWindowFocusGained] event will be emitted, and
+// the window will have the [WindowInputFocus] flag set.
 //
 // window: the window to raise.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -2615,26 +2475,25 @@ func (window *Window) Raise() error {
 // Request that the window be made as large as possible.
 //
 // Non-resizable windows can't be maximized. The window must have the
-// SDL_WINDOW_RESIZABLE flag set, or this will have no effect.
+// [WindowResizable] flag set, or this will have no effect.
 //
 // On some windowing systems this request is asynchronous and the new window
 // state may not have have been applied immediately upon the return of this
-// function. If an immediate change is required, call SDL_SyncWindow() to
+// function. If an immediate change is required, call [Window.Sync] to
 // block until the changes have taken effect.
 //
-// When the window state changes, an SDL_EVENT_WINDOW_MAXIMIZED event will be
+// When the window state changes, an [EventWindowMaximized] event will be
 // emitted. Note that, as this is just a request, the windowing system can
 // deny the state change.
 //
 // When maximizing a window, whether the constraints set via
-// SDL_SetWindowMaximumSize() are honored depends on the policy of the window
+// [Window.SetMaximumSize] are honored depends on the policy of the window
 // manager. Win32 and macOS enforce the constraints when maximizing, while X11
 // and Wayland window managers may vary.
 //
 // window: the window to maximize.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -2655,17 +2514,16 @@ func (window *Window) Maximize() error {
 //
 // On some windowing systems this request is asynchronous and the new window
 // state may not have been applied immediately upon the return of this
-// function. If an immediate change is required, call SDL_SyncWindow() to
+// function. If an immediate change is required, call [Window.Sync] to
 // block until the changes have taken effect.
 //
-// When the window state changes, an SDL_EVENT_WINDOW_MINIMIZED event will be
+// When the window state changes, an [EventWindowMinimized] event will be
 // emitted. Note that, as this is just a request, the windowing system can
 // deny the state change.
 //
 // window: the window to minimize.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -2687,17 +2545,16 @@ func (window *Window) Minimize() error {
 //
 // On some windowing systems this request is asynchronous and the new window
 // state may not have have been applied immediately upon the return of this
-// function. If an immediate change is required, call SDL_SyncWindow() to
+// function. If an immediate change is required, call [Window.Sync] to
 // block until the changes have taken effect.
 //
-// When the window state changes, an SDL_EVENT_WINDOW_RESTORED event will be
+// When the window state changes, an [EventWindowRestored] event will be
 // emitted. Note that, as this is just a request, the windowing system can
 // deny the state change.
 //
 // window: the window to restore.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -2715,23 +2572,22 @@ func (window *Window) Restore() error {
 //
 // By default a window in fullscreen state uses borderless fullscreen desktop
 // mode, but a specific exclusive display mode can be set using
-// SDL_SetWindowFullscreenMode().
+// [Window.SetFullscreenMode].
 //
 // On some windowing systems this request is asynchronous and the new
 // fullscreen state may not have have been applied immediately upon the return
-// of this function. If an immediate change is required, call SDL_SyncWindow()
+// of this function. If an immediate change is required, call [Window.Sync]
 // to block until the changes have taken effect.
 //
-// When the window state changes, an SDL_EVENT_WINDOW_ENTER_FULLSCREEN or
-// SDL_EVENT_WINDOW_LEAVE_FULLSCREEN event will be emitted. Note that, as this
+// When the window state changes, an [EventWindowEnterFullscreen] or
+// [EventWindowLeaveFullscreen] event will be emitted. Note that, as this
 // is just a request, it can be denied by the windowing system.
 //
 // window: the window to change.
 //
 // fullscreen: true for fullscreen mode, false for windowed mode.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -2798,12 +2654,11 @@ func (window *Window) HasSurface() bool {
 //
 // You may not combine this with 3D or the rendering API on this window.
 //
-// This function is affected by `SDL_HINT_FRAMEBUFFER_ACCELERATION`.
+// This function is affected by [HintFramebufferAcceleration].
 //
 // window: the window to query.
 //
-// Returns the surface associated with the window, or NULL on failure; call
-// SDL_GetError() for more information.
+// # Returns the surface associated with the window or an error
 //
 // This function should only be called on the main thread.
 //
@@ -2821,12 +2676,12 @@ func (window *Window) Surface() (*Surface, error) {
 // Toggle VSync for the window surface.
 //
 // When a window surface is created, vsync defaults to
-// SDL_WINDOW_SURFACE_VSYNC_DISABLED.
+// [WindowSurfaceVSyncDisabled].
 //
-// The `vsync` parameter can be 1 to synchronize present with every vertical
+// The vsync parameter can be 1 to synchronize present with every vertical
 // refresh, 2 to synchronize present with every second vertical refresh, etc.,
-// SDL_WINDOW_SURFACE_VSYNC_ADAPTIVE for late swap tearing (adaptive vsync),
-// or SDL_WINDOW_SURFACE_VSYNC_DISABLED to disable. Not every value is
+// [WindowSurfaceVSyncAdaptive] for late swap tearing (adaptive vsync),
+// or [WindowSurfaceVSyncDisabled] to disable. Not every value is
 // supported by every driver, so you should check the return value to see
 // whether the requested setting is supported.
 //
@@ -2834,8 +2689,7 @@ func (window *Window) Surface() (*Surface, error) {
 //
 // vsync: the vertical refresh sync interval.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -2857,10 +2711,9 @@ const WindowSurfaceVSyncAdaptive = -1
 // window: the window to query.
 //
 // vsync: an int filled with the current vertical refresh sync interval.
-// See SDL_SetWindowSurfaceVSync() for the meaning of the value.
+// See [Window.SetSurfaceVSync] for the meaning of the value.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -2884,8 +2737,7 @@ func (window *Window) SurfaceVSync() (int, error) {
 //
 // window: the window to update.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -2913,13 +2765,10 @@ func (window *Window) UpdateSurface() error {
 //
 // window: the window to update.
 //
-// rects: an array of SDL_Rect structures representing areas of the
+// rects: a slice of [Rect] structures representing areas of the
 // surface to copy, in pixels.
 //
-// numrects: the number of rectangles.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -2941,8 +2790,7 @@ func (window *Window) UpdateSurfaceRects(rects []Rect) error {
 //
 // window: the window to update.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -2969,7 +2817,7 @@ func (window *Window) DestroySurface() error {
 // window is full-screen to ensure the user is not trapped in your
 // application. If you have a custom keyboard shortcut to exit fullscreen
 // mode, you may suppress this behavior with
-// `SDL_HINT_ALLOW_ALT_TAB_WHILE_GRABBED`.
+// [HintAllowAltTabWhileGrabbed].
 //
 // If the caller enables a grab while another window is currently grabbed, the
 // other window loses its grab in favor of the caller's window.
@@ -2978,8 +2826,7 @@ func (window *Window) DestroySurface() error {
 //
 // grabbed: this is true to grab keyboard, and false to release.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -3001,8 +2848,7 @@ func (window *Window) SetKeyboardGrab(grabbed bool) error {
 //
 // grabbed: this is true to grab mouse, and false to release.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -3048,7 +2894,7 @@ func (window *Window) GetMouseGrab() bool {
 
 // Get the window that currently has an input grab enabled.
 //
-// Returns the window if input is grabbed or NULL otherwise.
+// Returns the window if input is grabbed or nil otherwise.
 //
 // This function should only be called on the main thread.
 //
@@ -3066,20 +2912,22 @@ func GetGrabbedWindow() *Window {
 //
 // window: the window that will be associated with the barrier.
 //
-// rect: a rectangle area in window-relative coordinates. If NULL the
+// rect: a rectangle area in window-relative coordinates. If nil the
 // barrier for the specified window will be destroyed.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_SetWindowMouseRect
-func (window *Window) SetMouseRect(rect Rect) error {
-	crect := C.SDL_Rect{C.int(rect.X), C.int(rect.Y), C.int(rect.W), C.int(rect.H)}
-	if !C.SDL_SetWindowMouseRect((*C.SDL_Window)(window), &crect) {
+func (window *Window) SetMouseRect(rect *Rect) error {
+	var crect *C.SDL_Rect
+	if rect != nil {
+		crect = &C.SDL_Rect{C.int(rect.X), C.int(rect.Y), C.int(rect.W), C.int(rect.H)}
+	}
+	if !C.SDL_SetWindowMouseRect((*C.SDL_Window)(window), crect) {
 		return getError()
 	}
 	return nil
@@ -3089,7 +2937,7 @@ func (window *Window) SetMouseRect(rect Rect) error {
 //
 // window: the window to query.
 //
-// Returns a pointer to the mouse confinement rectangle of a window, or NULL
+// Returns a pointer to the mouse confinement rectangle of a window, or nil
 // if there isn't one.
 //
 // This function should only be called on the main thread.
@@ -3107,7 +2955,7 @@ func (window *Window) GetMouseRect() *Rect {
 
 // Set the opacity for a window.
 //
-// The parameter `opacity` will be clamped internally between 0.0f
+// The parameter opacity will be clamped internally between 0.0f
 // (transparent) and 1.0f (opaque).
 //
 // This function also returns false if setting the opacity isn't supported.
@@ -3116,8 +2964,7 @@ func (window *Window) GetMouseRect() *Rect {
 //
 // opacity: the opacity value (0.0f - transparent, 1.0f - opaque).
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -3138,8 +2985,7 @@ func (window *Window) SetOpacity(opacity float32) error {
 //
 // window: the window to get the current opacity value from.
 //
-// Returns the opacity, (0.0f - transparent, 1.0f - opaque), or -1.0f on
-// failure; call SDL_GetError() for more information.
+// Returns the opacity, (0.0f - transparent, 1.0f - opaque), or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -3166,7 +3012,7 @@ func (window *Window) Opacity() (float32, error) {
 // the parent is shown.
 //
 // Attempting to set the parent of a window that is currently in the modal
-// state will fail. Use SDL_SetWindowModal() to cancel the modal status before
+// state will fail. Use [Window.SetModal] to cancel the modal status before
 // attempting to change the parent.
 //
 // Popup windows cannot change parents and attempts to do so will fail.
@@ -3178,8 +3024,7 @@ func (window *Window) Opacity() (float32, error) {
 //
 // parent: the new parent window for the child window.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -3202,8 +3047,7 @@ func (window *Window) SetParent(parent *Window) error {
 //
 // modal: true to toggle modal status on, false to toggle it off.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -3223,8 +3067,7 @@ func (window *Window) SetModal(modal bool) error {
 //
 // focusable: true to allow input focus, false to not allow input focus.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -3256,8 +3099,7 @@ func (window *Window) SetFocusable(focusable bool) error {
 // y: the y coordinate of the menu, relative to the origin (top-left) of
 // the client area.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -3271,7 +3113,7 @@ func (window *Window) ShowSystemMenu(x int, y int) error {
 	return nil
 }
 
-// Possible return values from the SDL_HitTest callback.
+// Possible return values from the [HitTest] callback.
 //
 // This function should only be called on the main thread.
 //
@@ -3295,13 +3137,11 @@ const (
 
 // Callback used for hit-testing.
 //
-// win: the SDL_Window where hit-testing was set on.
+// win: the [Window] where hit-testing was set on.
 //
-// area: an SDL_Point which should be hit-tested.
+// area: a [Point] which should be hit-tested.
 //
-// data: what was passed as `callback_data` to SDL_SetWindowHitTest().
-//
-// Returns an SDL_HitTestResult value.
+// Returns a [HitTestResult] value.
 //
 // https://wiki.libsdl.org/SDL3/SDL_HitTest
 type HitTest func(win *Window, area Point) HitTestResult
@@ -3347,10 +3187,7 @@ func cb_HitTest(win *C.SDL_Window, area *C.SDL_Point, data unsafe.Pointer) C.SDL
 //
 // callback: the function to call when doing a hit-test.
 //
-// callback_data: an app-defined void pointer passed to **callback**.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -3376,19 +3213,18 @@ func (window *Window) SetHitTest(callback HitTest) error {
 // consistent cross-platform results.
 //
 // The shape is copied inside this function, so you can free it afterwards. If
-// your shape surface changes, you should call SDL_SetWindowShape() again to
+// your shape surface changes, you should call [Window.SetShape] again to
 // update the window. This is an expensive operation, so should be done
 // sparingly.
 //
-// The window must have been created with the SDL_WINDOW_TRANSPARENT flag.
+// The window must have been created with the [WindowTransparent] flag.
 //
 // window: the window.
 //
-// shape: the surface representing the shape of the window, or NULL to
+// shape: the surface representing the shape of the window, or nil to
 // remove any current shape.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -3396,7 +3232,11 @@ func (window *Window) SetHitTest(callback HitTest) error {
 //
 // https://wiki.libsdl.org/SDL3/SDL_SetWindowShape
 func (window *Window) SetShape(shape *Surface) error {
-	if !C.SDL_SetWindowShape((*C.SDL_Window)(window), shape.internal) {
+	var s *C.SDL_Surface
+	if shape != nil {
+		s = shape.internal
+	}
+	if !C.SDL_SetWindowShape((*C.SDL_Window)(window), s) {
 		return getError()
 	}
 	return nil
@@ -3408,8 +3248,7 @@ func (window *Window) SetShape(shape *Surface) error {
 //
 // operation: the operation to perform.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -3430,7 +3269,7 @@ func (window *Window) Flash(operation FlashOperation) error {
 //
 // Note that on some platforms, the visible window may not actually be removed
 // from the screen until the SDL event loop is pumped again, even though the
-// SDL_Window is no longer valid after this call.
+// [Window] is no longer valid after this call.
 //
 // window: the window to destroy.
 //
@@ -3447,7 +3286,7 @@ func (window *Window) Destroy() {
 //
 // The screensaver is disabled by default.
 //
-// The default can also be changed using `SDL_HINT_VIDEO_ALLOW_SCREENSAVER`.
+// The default can also be changed using [HintVideoAllowScreensaver].
 //
 // Returns true if the screensaver is enabled, false if it is disabled.
 //
@@ -3462,8 +3301,7 @@ func ScreenSaverEnabled() bool {
 
 // Allow the screen to be blanked by a screen saver.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -3483,10 +3321,9 @@ func EnableScreenSaver() error {
 // quits.
 //
 // The screensaver is disabled by default, but this may by changed by
-// SDL_HINT_VIDEO_ALLOW_SCREENSAVER.
+// [HintVideoAllowScreensaver].
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -3509,13 +3346,12 @@ func DisableScreenSaver() error {
 // library will be loaded upon creation of the first OpenGL window.
 //
 // If you do this, you need to retrieve all of the GL functions used in your
-// program from the dynamic library using SDL_GL_GetProcAddress().
+// program from the dynamic library using [GL_GetProcAddress]().
 //
 // path: the platform dependent OpenGL library name, or NULL to open the
 // default OpenGL library.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -3531,7 +3367,7 @@ func GL_LoadLibrary(path string) error {
 
 // Get an OpenGL function by name.
 //
-// If the GL library is loaded at runtime with SDL_GL_LoadLibrary(), then all
+// If the GL library is loaded at runtime with [GL_LoadLibrary], then all
 // GL functions must be retrieved this way. Usually this is used to retrieve
 // function pointers to OpenGL extensions.
 //
@@ -3541,7 +3377,7 @@ func GL_LoadLibrary(path string) error {
 //
 // - On Windows, function pointers are specific to the current GL context;
 // this means you need to have created a GL context and made it current
-// before calling SDL_GL_GetProcAddress(). If you recreate your context or
+// before calling [GL_GetProcAddress]. If you recreate your context or
 // create a second context, you should assume that any existing function
 // pointers aren't valid to use with it. This is (currently) a
 // Windows-specific limitation, and in practice lots of drivers don't suffer
@@ -3554,7 +3390,7 @@ func GL_LoadLibrary(path string) error {
 // look up a function that doesn't exist, you'll get a non-NULL result that
 // is _NOT_ safe to call. You must always make sure the function is actually
 // available for a given GL context before calling it, by checking for the
-// existence of the appropriate extension with SDL_GL_ExtensionSupported(),
+// existence of the appropriate extension with [GL_ExtensionSupported],
 // or verifying that the version of OpenGL you're using offers the function
 // as core functionality.
 // - Some OpenGL drivers, on all platforms, *will* return NULL if a function
@@ -3565,7 +3401,7 @@ func GL_LoadLibrary(path string) error {
 // - Just because you're on Linux/Unix, don't assume you'll be using X11.
 // Next-gen display servers are waiting to replace it, and may or may not
 // make the same promises about function pointers.
-// - OpenGL function pointers must be declared `APIENTRY` as in the example
+// - OpenGL function pointers must be declared APIENTRY as in the example
 // code. This will ensure the proper calling convention is followed on
 // platforms where this matters (Win32) thereby avoiding stack corruption.
 //
@@ -3603,7 +3439,7 @@ func EGL_GetProcAddress(proc string) unsafe.Pointer {
 	return (unsafe.Pointer)(C.SDL_EGL_GetProcAddress(tmpstring(proc)))
 }
 
-// Unload the OpenGL library previously loaded by SDL_GL_LoadLibrary().
+// Unload the OpenGL library previously loaded by [GL_LoadLibrary].
 //
 // This function should only be called on the main thread.
 //
@@ -3657,18 +3493,17 @@ func GL_ResetAttributes() {
 
 // Set an OpenGL window attribute before window creation.
 //
-// This function sets the OpenGL attribute `attr` to `value`. The requested
+// This function sets the OpenGL attribute attr to value. The requested
 // attributes should be set before creating an OpenGL window. You should use
-// SDL_GL_GetAttribute() to check the values after creating the OpenGL
+// [GL_GetAttribute] to check the values after creating the OpenGL
 // context, since the values obtained can differ from the requested ones.
 //
-// attr: an SDL_GLAttr enum value specifying the OpenGL attribute to
+// attr: an [GLAttr] enum value specifying the OpenGL attribute to
 // set.
 //
 // value: the desired value for the attribute.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -3684,13 +3519,10 @@ func GL_SetAttribute(attr GLAttr, value int32) error {
 
 // Get the actual value for an attribute from the current context.
 //
-// attr: an SDL_GLAttr enum value specifying the OpenGL attribute to
+// attr: an [GLAttr] enum value specifying the OpenGL attribute to
 // get.
 //
-// value: a pointer filled in with the current value of `attr`.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns the current value of attr or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -3710,15 +3542,14 @@ func GL_GetAttribute(attr GLAttr) (int, error) {
 // Windows users new to OpenGL should note that, for historical reasons, GL
 // functions added after OpenGL version 1.1 are not available by default.
 // Those functions must be loaded at run-time, either with an OpenGL
-// extension-handling library or with SDL_GL_GetProcAddress() and its related
+// extension-handling library or with [GL_GetProcAddress] and its related
 // functions.
 //
-// SDL_GLContext is opaque to the application.
+// [GLContext] is opaque to the application.
 //
 // window: the window to associate with the context.
 //
-// Returns the OpenGL context associated with `window` or NULL on failure;
-// call SDL_GetError() for more information.
+// Returns the OpenGL context associated with window or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -3741,8 +3572,7 @@ func GL_CreateContext(window *Window) (GLContext, error) {
 //
 // context: the OpenGL context to associate with the window.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -3758,8 +3588,7 @@ func GL_MakeCurrent(window *Window, context GLContext) error {
 
 // Get the currently active OpenGL window.
 //
-// Returns the currently active OpenGL window on success or NULL on failure;
-// call SDL_GetError() for more information.
+// Returns the currently active OpenGL window on success or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -3776,8 +3605,7 @@ func GL_GetCurrentWindow() (*Window, error) {
 
 // Get the currently active OpenGL context.
 //
-// Returns the currently active OpenGL context or NULL on failure; call
-// SDL_GetError() for more information.
+// Returns the currently active OpenGL context or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -3794,8 +3622,7 @@ func GL_GetCurrentContext() (GLContext, error) {
 
 // Get the currently active EGL display.
 //
-// Returns the currently active EGL display or NULL on failure; call
-// SDL_GetError() for more information.
+// Returns the currently active EGL display or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -3812,8 +3639,7 @@ func EGL_GetCurrentDisplay() (EGLDisplay, error) {
 
 // Get the currently active EGL config.
 //
-// Returns the currently active EGL config or NULL on failure; call
-// SDL_GetError() for more information.
+// Returns the currently active EGL config or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -3832,8 +3658,7 @@ func EGL_GetCurrentConfig() (EGLConfig, error) {
 //
 // window: the window to query.
 //
-// Returns the EGLSurface pointer associated with the window, or NULL on
-// failure.
+// Returns the [EGLSurface] pointer associated with the window or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -3890,23 +3715,19 @@ func cb_EGLContextArrayCallback(userdata uintptr, display C.SDL_EGLDisplay, conf
 	return result
 }
 
-// Sets the callbacks for defining custom EGLAttrib arrays for EGL
+// Sets the callbacks for defining custom [EGLAttrib] arrays for EGL
 // initialization.
 //
-// Callbacks that aren't needed can be set to NULL.
-//
-// NOTE: These callback pointers will be reset after SDL_GL_ResetAttributes.
+// NOTE: These callback pointers will be reset after [GL_ResetAttributes].
 //
 // platformAttribCallback: callback for attributes to pass to
-// eglGetPlatformDisplay. May be NULL.
+// eglGetPlatformDisplay.
 //
 // surfaceAttribCallback: callback for attributes to pass to
-// eglCreateSurface. May be NULL.
+// eglCreateSurface.
 //
 // contextAttribCallback: callback for attributes to pass to
-// eglCreateContext. May be NULL.
-//
-// userdata: a pointer that is passed to the callbacks.
+// eglCreateContext.
 //
 // This function should only be called on the main thread.
 //
@@ -3946,8 +3767,7 @@ var currentEGLAttributeCallbacks cgo.Handle
 // interval: 0 for immediate updates, 1 for updates synchronized with
 // the vertical retrace, -1 for adaptive vsync.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -3971,8 +3791,7 @@ func GL_SetSwapInterval(interval int32) error {
 // the vertical retrace, and -1 if late swaps happen
 // immediately instead of waiting for the next retrace.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -3998,8 +3817,7 @@ func GL_GetSwapInterval() (int, error) {
 //
 // window: the window to change.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -4017,8 +3835,7 @@ func GL_SwapWindow(window *Window) error {
 //
 // context: the OpenGL context to be deleted.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
