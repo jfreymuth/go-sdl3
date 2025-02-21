@@ -136,7 +136,7 @@ import (
 //
 // Audio functionality for the SDL library.
 //
-// All audio in SDL3 revolves around SDL_AudioStream. Whether you want to play
+// All audio in SDL3 revolves around [AudioStream]. Whether you want to play
 // or record audio, convert it, stream it, buffer it, or mix it, you're going
 // to be passing it through an audio stream.
 //
@@ -152,7 +152,7 @@ import (
 // Audio streams can also use an app-provided callback to supply data
 // on-demand, which maps pretty closely to the SDL2 audio model.
 //
-// SDL also provides a simple .WAV loader in SDL_LoadWAV (and SDL_LoadWAV_IO
+// SDL also provides a simple .WAV loader in [LoadWAV] (and [LoadWAV_IO]
 // if you aren't reading from a file) as a basic means to load sound data into
 // your program.
 //
@@ -182,11 +182,11 @@ import (
 // ## Simplified audio
 //
 // As a simplified model for when a single source of audio is all that's
-// needed, an app can use SDL_OpenAudioDeviceStream, which is a single
+// needed, an app can use [OpenAudioDeviceStream], which is a single
 // function to open an audio device, create an audio stream, bind that stream
 // to the newly-opened device, and (optionally) provide a callback for
 // obtaining audio data. When using this function, the primary interface is
-// the SDL_AudioStream and the device handle is mostly hidden away; destroying
+// the [AudioStream] and the device handle is mostly hidden away; destroying
 // a stream created through this function will also close the device, stream
 // bindings cannot be changed, etc. One other quirk of this is that the device
 // is started in a _paused_ state and must be explicitly resumed; this is
@@ -233,49 +233,47 @@ import (
 // platforms; SDL will swizzle the channels as necessary if a platform expects
 // something different.
 //
-// SDL_AudioStream can also be provided channel maps to change this ordering
+// [AudioStream] can also be provided channel maps to change this ordering
 // to whatever is necessary, in other audio processing scenarios.
 
-// Mask of bits in an SDL_AudioFormat that contains the format bit size.
+// Mask of bits in an [AudioFormat] that contains the format bit size.
 //
-// Generally one should use SDL_AUDIO_BITSIZE instead of this macro directly.
+// Generally one should use [AudioFormat.BitSize] instead of this macro directly.
 //
 // This macro is available since SDL 3.2.0.
 const AudioMaskBitSize AudioFormat = 0xFF
 
-// Mask of bits in an SDL_AudioFormat that contain the floating point flag.
+// Mask of bits in an [AudioFormat] that contain the floating point flag.
 //
-// Generally one should use SDL_AUDIO_ISFLOAT instead of this macro directly.
+// Generally one should use [AudioFormat.Float] instead of this macro directly.
 //
 // This macro is available since SDL 3.2.0.
 const AudioMaskFloat AudioFormat = 1 << 8
 
-// Mask of bits in an SDL_AudioFormat that contain the bigendian flag.
+// Mask of bits in an [AudioFormat] that contain the bigendian flag.
 //
-// Generally one should use SDL_AUDIO_ISBIGENDIAN or SDL_AUDIO_ISLITTLEENDIAN
+// Generally one should use [AudioFormat.BigEndian] or [AudioFormat.LittleEndian]
 // instead of this macro directly.
 //
 // This macro is available since SDL 3.2.0.
 const AudioMaskBigEndian AudioFormat = 1 << 12
 
-// Mask of bits in an SDL_AudioFormat that contain the signed data flag.
+// Mask of bits in an [AudioFormat] that contain the signed data flag.
 //
-// Generally one should use SDL_AUDIO_ISSIGNED instead of this macro directly.
+// Generally one should use [AudioFormat.Signed] instead of this macro directly.
 //
 // This macro is available since SDL 3.2.0.
 const AudioMaskSigned AudioFormat = 1 << 15
 
-// Define an SDL_AudioFormat value.
+// Define an [AudioFormat] value.
 //
 // SDL does not support custom audio formats, so this macro is not of much use
 // externally, but it can be illustrative as to what the various bits of an
-// SDL_AudioFormat mean.
+// [AudioFormat] mean.
 //
-// For example, SDL_AUDIO_S32LE looks like this:
+// For example, [AudioS32LE] looks like this:
 //
-// ```c
-// SDL_DEFINE_AUDIO_FORMAT(1, 0, 0, 32)
-// ```
+//	DefineAudioFormat(true, false, false, 32)
 //
 // signed: 1 for signed data, 0 for unsigned data.
 //
@@ -285,7 +283,7 @@ const AudioMaskSigned AudioFormat = 1 << 15
 //
 // size: number of bits per sample.
 //
-// Returns a format value in the style of SDL_AudioFormat.
+// Returns a format value in the style of [AudioFormat].
 //
 // It is safe to call this macro from any thread.
 //
@@ -325,11 +323,11 @@ const (
 	AudioF32BE   AudioFormat = 0x9120 //  As above, but big-endian byte order
 )
 
-// Retrieve the size, in bits, from an SDL_AudioFormat.
+// Retrieve the size, in bits, from an [AudioFormat].
 //
-// For example, `SDL_AUDIO_BITSIZE(SDL_AUDIO_S16)` returns 16.
+// For example, [AudioS16].BitSize() returns 16.
 //
-// x: an SDL_AudioFormat value.
+// x: an [AudioFormat] value.
 //
 // Returns data size in bits.
 //
@@ -342,11 +340,11 @@ func (a AudioFormat) BitSize() int {
 	return int(a & AudioMaskBitSize)
 }
 
-// Retrieve the size, in bytes, from an SDL_AudioFormat.
+// Retrieve the size, in bytes, from an [AudioFormat].
 //
-// For example, `SDL_AUDIO_BYTESIZE(SDL_AUDIO_S16)` returns 2.
+// For example, [AudioS16].ByteSize() returns 2.
 //
-// x: an SDL_AudioFormat value.
+// x: an [AudioFormat] value.
 //
 // Returns data size in bytes.
 //
@@ -359,11 +357,11 @@ func (a AudioFormat) ByteSize() int {
 	return a.BitSize() / 8
 }
 
-// Determine if an SDL_AudioFormat represents floating point data.
+// Determine if an [AudioFormat] represents floating point data.
 //
-// For example, `SDL_AUDIO_ISFLOAT(SDL_AUDIO_S16)` returns 0.
+// For example, [AudioS16].Float() returns false.
 //
-// x: an SDL_AudioFormat value.
+// x: an [AudioFormat] value.
 //
 // Returns non-zero if format is floating point, zero otherwise.
 //
@@ -376,11 +374,11 @@ func (a AudioFormat) Float() bool {
 	return a&AudioMaskFloat != 0
 }
 
-// Determine if an SDL_AudioFormat represents bigendian data.
+// Determine if an [AudioFormat] represents bigendian data.
 //
-// For example, `SDL_AUDIO_ISBIGENDIAN(SDL_AUDIO_S16LE)` returns 0.
+// For example, [AudioS16LE].BigEndian() returns false.
 //
-// x: an SDL_AudioFormat value.
+// x: an [AudioFormat] value.
 //
 // Returns non-zero if format is bigendian, zero otherwise.
 //
@@ -393,11 +391,11 @@ func (a AudioFormat) BigEndian() bool {
 	return a&AudioMaskBigEndian != 0
 }
 
-// Determine if an SDL_AudioFormat represents littleendian data.
+// Determine if an [AudioFormat] represents littleendian data.
 //
-// For example, `SDL_AUDIO_ISLITTLEENDIAN(SDL_AUDIO_S16BE)` returns 0.
+// For example, [AudioS16BE].LittleEndian() returns false.
 //
-// x: an SDL_AudioFormat value.
+// x: an [AudioFormat] value.
 //
 // Returns non-zero if format is littleendian, zero otherwise.
 //
@@ -410,11 +408,11 @@ func (a AudioFormat) LittleEndian() bool {
 	return a&AudioMaskBigEndian == 0
 }
 
-// Determine if an SDL_AudioFormat represents signed data.
+// Determine if an [AudioFormat] represents signed data.
 //
-// For example, `SDL_AUDIO_ISSIGNED(SDL_AUDIO_U8)` returns 0.
+// For example, [AudioU8].Signed() returns false.
 //
-// x: an SDL_AudioFormat value.
+// x: an [AudioFormat] value.
 //
 // Returns non-zero if format is signed, zero otherwise.
 //
@@ -427,11 +425,11 @@ func (a AudioFormat) Signed() bool {
 	return a&AudioMaskSigned != 0
 }
 
-// Determine if an SDL_AudioFormat represents integer data.
+// Determine if an [AudioFormat] represents integer data.
 //
-// For example, `SDL_AUDIO_ISINT(SDL_AUDIO_F32)` returns 0.
+// For example, [AudioF32].Int() returns false.
 //
-// x: an SDL_AudioFormat value.
+// x: an [AudioFormat] value.
 //
 // Returns non-zero if format is integer, zero otherwise.
 //
@@ -444,11 +442,11 @@ func (a AudioFormat) Int() bool {
 	return a&AudioMaskFloat == 0
 }
 
-// Determine if an SDL_AudioFormat represents unsigned data.
+// Determine if an [AudioFormat] represents unsigned data.
 //
-// For example, `SDL_AUDIO_ISUNSIGNED(SDL_AUDIO_S16)` returns 0.
+// For example, [AudioS16].Unsigned() returns false.
 //
-// x: an SDL_AudioFormat value.
+// x: an [AudioFormat] value.
 //
 // Returns non-zero if format is unsigned, zero otherwise.
 //
@@ -472,7 +470,7 @@ type AudioDeviceID uint32
 
 // A value used to request a default playback audio device.
 //
-// Several functions that require an SDL_AudioDeviceID will accept this value
+// Several functions that require an [AudioDeviceID] will accept this value
 // to signify the app just wants the system to choose a default device instead
 // of the app providing a specific one.
 //
@@ -481,7 +479,7 @@ const AudioDeviceDefaultPlayback AudioDeviceID = 0xFFFFFFFF
 
 // A value used to request a default recording audio device.
 //
-// Several functions that require an SDL_AudioDeviceID will accept this value
+// Several functions that require an [AudioDeviceID] will accept this value
 // to signify the app just wants the system to choose a default device instead
 // of the app providing a specific one.
 //
@@ -499,12 +497,12 @@ type AudioSpec struct {
 	Freq     int         //  sample rate: sample frames per second
 }
 
-// Calculate the size of each audio frame (in bytes) from an SDL_AudioSpec.
+// Calculate the size of each audio frame (in bytes) from an [AudioSpec].
 //
 // This reports on the size of an audio sample frame: stereo Sint16 data (2
 // channels of 2 bytes each) would be 4 bytes per frame, for example.
 //
-// x: an SDL_AudioSpec to query.
+// x: an [AudioSpec] to query.
 //
 // Returns the number of bytes used per sample frame.
 //
@@ -519,7 +517,7 @@ func (a AudioSpec) Framesize() int {
 
 // The opaque handle that represents an audio stream.
 //
-// SDL_AudioStream is an audio conversion interface.
+// [AudioStream] is an audio conversion interface.
 //
 // - It can handle resampling data in chunks without generating artifacts,
 // when it doesn't have the complete buffer available.
@@ -575,10 +573,10 @@ func GetNumAudioDrivers() int {
 // meant to be proper names.
 //
 // index: the index of the audio driver; the value ranges from 0 to
-// SDL_GetNumAudioDrivers() - 1.
+// [GetNumAudioDrivers] - 1.
 //
-// Returns the name of the audio driver at the requested index, or NULL if an
-// invalid index was specified.
+// Returns the name of the audio driver at the requested index, or an empty
+// string if an invalid index was specified.
 //
 // It is safe to call this function from any thread.
 //
@@ -595,8 +593,8 @@ func GetAudioDriver(index int) string {
 // "coreaudio" or "wasapi". These never have Unicode characters, and are not
 // meant to be proper names.
 //
-// Returns the name of the current audio driver or NULL if no driver has been
-// initialized.
+// Returns the name of the current audio driver or an empty string if no driver
+// has been initialized.
 //
 // It is safe to call this function from any thread.
 //
@@ -612,20 +610,12 @@ func GetCurrentAudioDriver() string {
 // This returns of list of available devices that play sound, perhaps to
 // speakers or headphones ("playback" devices). If you want devices that
 // record audio, like a microphone ("recording" devices), use
-// SDL_GetAudioRecordingDevices() instead.
+// [GetAudioRecordingDevices] instead.
 //
 // This only returns a list of physical devices; it will not have any device
-// IDs returned by SDL_OpenAudioDevice().
+// IDs returned by [OpenAudioDevice].
 //
-// If this function returns NULL, to signify an error, `*count` will be set to
-// zero.
-//
-// count: a pointer filled in with the number of devices returned, may
-// be NULL.
-//
-// Returns a 0 terminated array of device instance IDs or NULL on error; call
-// SDL_GetError() for more information. This should be freed with
-// SDL_free() when it is no longer needed.
+// Returns a 0 terminated array of device instance IDs or an error.
 //
 // It is safe to call this function from any thread.
 //
@@ -652,20 +642,12 @@ func GetAudioPlaybackDevices() ([]AudioDeviceID, error) {
 // This returns of list of available devices that record audio, like a
 // microphone ("recording" devices). If you want devices that play sound,
 // perhaps to speakers or headphones ("playback" devices), use
-// SDL_GetAudioPlaybackDevices() instead.
+// [GetAudioPlaybackDevices] instead.
 //
 // This only returns a list of physical devices; it will not have any device
-// IDs returned by SDL_OpenAudioDevice().
+// IDs returned by [OpenAudioDevice].
 //
-// If this function returns NULL, to signify an error, `*count` will be set to
-// zero.
-//
-// count: a pointer filled in with the number of devices returned, may
-// be NULL.
-//
-// Returns a 0 terminated array of device instance IDs, or NULL on failure;
-// call SDL_GetError() for more information. This should be freed
-// with SDL_free() when it is no longer needed.
+// Returns a 0 terminated array of device instance IDs, or an error.
 //
 // It is safe to call this function from any thread.
 //
@@ -691,8 +673,7 @@ func GetAudioRecordingDevices() ([]AudioDeviceID, error) {
 //
 // devid: the instance ID of the device to query.
 //
-// Returns the name of the audio device, or NULL on failure; call
-// SDL_GetError() for more information.
+// Returns the name of the audio device, or an error.
 //
 // It is safe to call this function from any thread.
 //
@@ -709,8 +690,8 @@ func (devid AudioDeviceID) Name() string {
 // using. If the device isn't yet opened, this will report the device's
 // preferred format (or a reasonable default if this can't be determined).
 //
-// You may also specify SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK or
-// SDL_AUDIO_DEVICE_DEFAULT_RECORDING here, which is useful for getting a
+// You may also specify [AudioDeviceDefaultPlayback] or
+// [AudioDeviceDefaultRecording] here, which is useful for getting a
 // reasonable recommendation before opening the system-recommended default
 // device.
 //
@@ -719,7 +700,7 @@ func (devid AudioDeviceID) Name() string {
 // to the physical hardware in each chunk. This can be converted to
 // milliseconds of audio with the following equation:
 //
-// `ms = (int) ((((Sint64) frames) * 1000) / spec.freq);`
+//	ms = (int) ((((Sint64) frames) * 1000) / spec.freq);
 //
 // Buffer size is only important if you need low-level control over the audio
 // playback timing. Most apps do not need this.
@@ -731,8 +712,8 @@ func (devid AudioDeviceID) Name() string {
 // sample_frames: pointer to store device buffer size, in sample frames.
 // Can be NULL.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns the device details and the device buffer size, in sample frames,
+// or an error.
 //
 // It is safe to call this function from any thread.
 //
@@ -754,15 +735,12 @@ func (devid AudioDeviceID) Format() (spec AudioSpec, sampleFrames int, err error
 // data in the [order that SDL expects](CategoryAudio#channel-layouts).
 //
 // Audio devices usually have no remapping applied. This is represented by
-// returning NULL, and does not signify an error.
+// returning nil, and does not signify an error.
 //
 // devid: the instance ID of the device to query.
 //
-// count: On output, set to number of channels in the map. Can be NULL.
-//
 // Returns an array of the current channel mapping, with as many elements as
-// the current output spec's channels, or NULL if default. This
-// should be freed with SDL_free() when it is no longer needed.
+// the current output spec's channels, or nil if default.
 //
 // It is safe to call this function from any thread.
 //
@@ -795,12 +773,12 @@ func (devid AudioDeviceID) ChannelMap() []int {
 // audio playing, bind a stream and supply audio data to it. Unlike SDL2,
 // there is no audio callback; you only bind audio streams and make sure they
 // have data flowing into them (however, you can simulate SDL2's semantics
-// fairly closely by using SDL_OpenAudioDeviceStream instead of this
+// fairly closely by using [OpenAudioDeviceStream] instead of this
 // function).
 //
-// If you don't care about opening a specific device, pass a `devid` of either
-// `SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK` or
-// `SDL_AUDIO_DEVICE_DEFAULT_RECORDING`. In this case, SDL will try to pick
+// If you don't care about opening a specific device, pass a devid of either
+// [AudioDeviceDefaultPlayback] or
+// [AudioDeviceDefaultRecording]. In this case, SDL will try to pick
 // the most reasonable default, and may also switch between physical devices
 // seamlessly later, if the most reasonable default changes during the
 // lifetime of this opened device (user changed the default in the OS's system
@@ -813,12 +791,12 @@ func (devid AudioDeviceID) ChannelMap() []int {
 // promise the device will honor that request for several reasons. As such,
 // it's only meant to be a hint as to what data your app will provide. Audio
 // streams will accept data in whatever format you specify and manage
-// conversion for you as appropriate. SDL_GetAudioDeviceFormat can tell you
+// conversion for you as appropriate. [AudioDeviceID.Format] can tell you
 // the preferred format for the device before opening and the actual format
 // the device is using after opening.
 //
 // It's legal to open the same device ID more than once; each successful open
-// will generate a new logical SDL_AudioDeviceID that is managed separately
+// will generate a new logical [AudioDeviceID] that is managed separately
 // from others on the same physical device. This allows libraries to open a
 // device separately from the main app and bind its own streams without
 // conflicting.
@@ -828,7 +806,7 @@ func (devid AudioDeviceID) ChannelMap() []int {
 // device. This may be useful for making logical groupings of audio streams.
 //
 // This function returns the opened device ID on success. This is a new,
-// unique SDL_AudioDeviceID that represents a logical device.
+// unique [AudioDeviceID] that represents a logical device.
 //
 // Some backends might offer arbitrary devices (for example, a networked audio
 // protocol that can connect to an arbitrary server). For these, as a change
@@ -839,18 +817,17 @@ func (devid AudioDeviceID) ChannelMap() []int {
 // need, and not something an application should specifically manage.
 //
 // When done with an audio device, possibly at the end of the app's life, one
-// should call SDL_CloseAudioDevice() on the returned device id.
+// should call [AudioDeviceID.Close] on the returned device id.
 //
 // devid: the device instance id to open, or
-// SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK or
-// SDL_AUDIO_DEVICE_DEFAULT_RECORDING for the most reasonable
+// [AudioDeviceDefaultPlayback] or
+// [AudioDeviceDefaultRecording] for the most reasonable
 // default device.
 //
-// spec: the requested device configuration. Can be NULL to use
+// spec: the requested device configuration. Can be nil to use
 // reasonable defaults.
 //
-// Returns the device ID on success or 0 on failure; call SDL_GetError() for
-// more information.
+// Returns the device ID or an error.
 //
 // It is safe to call this function from any thread.
 //
@@ -871,10 +848,10 @@ func OpenAudioDevice(devid AudioDeviceID, spec *AudioSpec) (AudioDeviceID, error
 
 // Determine if an audio device is physical (instead of logical).
 //
-// An SDL_AudioDeviceID that represents physical hardware is a physical
+// An [AudioDeviceID] that represents physical hardware is a physical
 // device; there is one for each piece of hardware that SDL can see. Logical
-// devices are created by calling SDL_OpenAudioDevice or
-// SDL_OpenAudioDeviceStream, and while each is associated with a physical
+// devices are created by calling [OpenAudioDevice] or
+// [OpenAudioDeviceStream], and while each is associated with a physical
 // device, there can be any number of logical devices on one physical device.
 //
 // For the most part, logical and physical IDs are interchangeable--if you try
@@ -929,12 +906,11 @@ func (devid AudioDeviceID) Playback() bool {
 // loading, etc.
 //
 // Physical devices can not be paused or unpaused, only logical devices
-// created through SDL_OpenAudioDevice() can be.
+// created through [OpenAudioDevice] can be.
 //
-// dev: a device opened by SDL_OpenAudioDevice().
+// dev: a device opened by [OpenAudioDevice].
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread.
 //
@@ -951,7 +927,7 @@ func (dev AudioDeviceID) Pause() error {
 // Use this function to unpause audio playback on a specified device.
 //
 // This function unpauses audio processing for a given device that has
-// previously been paused with SDL_PauseAudioDevice(). Once unpaused, any
+// previously been paused with [AudioDevice.Pause]. Once unpaused, any
 // bound audio streams will begin to progress again, and audio can be
 // generated.
 //
@@ -960,12 +936,11 @@ func (dev AudioDeviceID) Pause() error {
 // device is a legal no-op.
 //
 // Physical devices can not be paused or unpaused, only logical devices
-// created through SDL_OpenAudioDevice() can be.
+// created through [OpenAudioDevice] can be.
 //
-// dev: a device opened by SDL_OpenAudioDevice().
+// dev: a device opened by [OpenAudioDevice].
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread.
 //
@@ -985,10 +960,10 @@ func (dev AudioDeviceID) Resume() error {
 // has to bind a stream before any audio will flow.
 //
 // Physical devices can not be paused or unpaused, only logical devices
-// created through SDL_OpenAudioDevice() can be. Physical and invalid device
+// created through [OpenAudioDevice] can be. Physical and invalid device
 // IDs will report themselves as unpaused here.
 //
-// dev: a device opened by SDL_OpenAudioDevice().
+// dev: a device opened by [OpenAudioDevice].
 //
 // Returns true if device is valid and paused, false otherwise.
 //
@@ -1013,8 +988,7 @@ func (dev AudioDeviceID) Paused() bool {
 //
 // devid: the audio device to query.
 //
-// Returns the gain of the device or -1.0f on failure; call SDL_GetError()
-// for more information.
+// Returns the gain of the device or an error.
 //
 // It is safe to call this function from any thread.
 //
@@ -1053,8 +1027,7 @@ func (devid AudioDeviceID) Gain() (float32, error) {
 //
 // gain: the gain. 1.0f is no change, 0.0f is silence.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread, as it holds
 // a stream-specific mutex while running.
@@ -1078,8 +1051,7 @@ func (devid AudioDeviceID) SetGain(gain float32) error {
 // hardware, so that applications don't drop the last buffer of data they
 // supplied if terminating immediately afterwards.
 //
-// devid: an audio device id previously returned by
-// SDL_OpenAudioDevice().
+// devid: an audio device id previously returned by [OpenAudioDevice].
 //
 // It is safe to call this function from any thread.
 //
@@ -1108,7 +1080,7 @@ func (devid AudioDeviceID) Close() {
 // Binding a stream to a device will set its output format for playback
 // devices, and its input format for recording devices, so they match the
 // device's settings. The caller is welcome to change the other end of the
-// stream's format at any time with SDL_SetAudioStreamFormat().
+// stream's format at any time with [AudioStream.SetFormat].
 //
 // devid: an audio device to bind a stream to.
 //
@@ -1116,8 +1088,7 @@ func (devid AudioDeviceID) Close() {
 //
 // num_streams: number streams listed in the `streams` array.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread.
 //
@@ -1134,14 +1105,13 @@ func (devid AudioDeviceID) BindAudioStreams(streams []*AudioStream) error {
 // Bind a single audio stream to an audio device.
 //
 // This is a convenience function, equivalent to calling
-// `SDL_BindAudioStreams(devid, &stream, 1)`.
+// [AudioDeviceID.BindAudioStreams] with a single stream.
 //
 // devid: an audio device to bind a stream to.
 //
 // stream: an audio stream to bind to a device.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread.
 //
@@ -1163,8 +1133,8 @@ func (devid AudioDeviceID) BindAudioStream(stream *AudioStream) error {
 //
 // Unbinding a stream that isn't bound to a device is a legal no-op.
 //
-// streams: an array of audio streams to unbind. Can be NULL or contain
-// NULL.
+// streams: an array of audio streams to unbind. Can be nil or contain
+// nil.
 //
 // num_streams: number streams listed in the `streams` array.
 //
@@ -1180,9 +1150,9 @@ func UnbindAudioStreams(streams []*AudioStream) {
 // Unbind a single audio stream from its audio device.
 //
 // This is a convenience function, equivalent to calling
-// `SDL_UnbindAudioStreams(&stream, 1)`.
+// [UnbindAudioStreams] with a single stream.
 //
-// stream: an audio stream to unbind from a device. Can be NULL.
+// stream: an audio stream to unbind from a device.
 //
 // It is safe to call this function from any thread.
 //
@@ -1213,12 +1183,11 @@ func (stream *AudioStream) Device() AudioDeviceID {
 
 // Create a new audio stream.
 //
-// src_spec: the format details of the input audio.
+// src: the format details of the input audio.
 //
-// dst_spec: the format details of the output audio.
+// dst: the format details of the output audio.
 //
-// Returns a new audio stream on success or NULL on failure; call
-// SDL_GetError() for more information.
+// Returns a new audio stream or an error.
 //
 // It is safe to call this function from any thread.
 //
@@ -1237,10 +1206,9 @@ func CreateAudioStream(src AudioSpec, dst AudioSpec) (*AudioStream, error) {
 
 // Get the properties associated with an audio stream.
 //
-// stream: the SDL_AudioStream to query.
+// stream: the [AudioStream] to query.
 //
-// Returns a valid property ID on success or 0 on failure; call
-// SDL_GetError() for more information.
+// Returns a valid property ID or an error.
 //
 // It is safe to call this function from any thread.
 //
@@ -1257,14 +1225,9 @@ func (stream *AudioStream) Properties() (PropertiesID, error) {
 
 // Query the current format of an audio stream.
 //
-// stream: the SDL_AudioStream to query.
+// stream: the [AudioStream] to query.
 //
-// src_spec: where to store the input audio format; ignored if NULL.
-//
-// dst_spec: where to store the output audio format; ignored if NULL.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns the input and output audio formats or an error on failure.
 //
 // It is safe to call this function from any thread, as it holds
 // a stream-specific mutex while running.
@@ -1283,8 +1246,8 @@ func (stream *AudioStream) Format() (src AudioSpec, dst AudioSpec, err error) {
 
 // Change the input and output formats of an audio stream.
 //
-// Future calls to and SDL_GetAudioStreamAvailable and SDL_GetAudioStreamData
-// will reflect the new format, and future calls to SDL_PutAudioStreamData
+// Future calls to and [AudioStream.Available] and [AudioStream.GetData]
+// will reflect the new format, and future calls to [AudioStream.PutData]
 // must provide data in the new input formats.
 //
 // Data that was previously queued in the stream will still be operated on in
@@ -1301,14 +1264,13 @@ func (stream *AudioStream) Format() (src AudioSpec, dst AudioSpec, err error) {
 //
 // stream: the stream the format is being changed.
 //
-// src_spec: the new format of the audio input; if NULL, it is not
+// src_spec: the new format of the audio input; if nil, it is not
 // changed.
 //
-// dst_spec: the new format of the audio output; if NULL, it is not
+// dst_spec: the new format of the audio output; if nil, it is not
 // changed.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread, as it holds
 // a stream-specific mutex while running.
@@ -1332,10 +1294,9 @@ func (stream *AudioStream) SetFormat(src, dst *AudioSpec) error {
 
 // Get the frequency ratio of an audio stream.
 //
-// stream: the SDL_AudioStream to query.
+// stream: the [AudioStream] to query.
 //
-// Returns the frequency ratio of the stream or 0.0 on failure; call
-// SDL_GetError() for more information.
+// Returns the frequency ratio of the stream or an error.
 //
 // It is safe to call this function from any thread, as it holds
 // a stream-specific mutex while running.
@@ -1359,7 +1320,7 @@ func (stream *AudioStream) FrequencyRatio() (float32, error) {
 // pitch. A value less than 1.0 will play the audio slower, and at a lower
 // pitch.
 //
-// This is applied during SDL_GetAudioStreamData, and can be continuously
+// This is applied during [AudioStream.GetData], and can be continuously
 // changed to create various effects.
 //
 // stream: the stream the frequency ratio is being changed.
@@ -1367,8 +1328,7 @@ func (stream *AudioStream) FrequencyRatio() (float32, error) {
 // ratio: the frequency ratio. 1.0 is normal speed. Must be between 0.01
 // and 100.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread, as it holds
 // a stream-specific mutex while running.
@@ -1390,10 +1350,9 @@ func (stream *AudioStream) SetFrequencyRatio(ratio float32) error {
 //
 // Audio streams default to a gain of 1.0f (no change in output).
 //
-// stream: the SDL_AudioStream to query.
+// stream: the [AudioStream] to query.
 //
-// Returns the gain of the stream or -1.0f on failure; call SDL_GetError()
-// for more information.
+// Returns the gain of the stream or an error.
 //
 // It is safe to call this function from any thread, as it holds
 // a stream-specific mutex while running.
@@ -1416,15 +1375,14 @@ func (stream *AudioStream) Gain() (float32, error) {
 //
 // Audio streams default to a gain of 1.0f (no change in output).
 //
-// This is applied during SDL_GetAudioStreamData, and can be continuously
+// This is applied during [AudioStream.GetData], and can be continuously
 // changed to create various effects.
 //
 // stream: the stream on which the gain is being changed.
 //
 // gain: the gain. 1.0f is no change, 0.0f is silence.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread, as it holds
 // a stream-specific mutex while running.
@@ -1445,15 +1403,12 @@ func (stream *AudioStream) SetGain(gain float32) error {
 // data in the [order that SDL expects](CategoryAudio#channel-layouts).
 //
 // Audio streams default to no remapping applied. This is represented by
-// returning NULL, and does not signify an error.
+// returning nil, and does not signify an error.
 //
-// stream: the SDL_AudioStream to query.
-//
-// count: On output, set to number of channels in the map. Can be NULL.
+// stream: the [AudioStream] to query.
 //
 // Returns an array of the current channel mapping, with as many elements as
-// the current output spec's channels, or NULL if default. This
-// should be freed with SDL_free() when it is no longer needed.
+// the current output spec's channels, or nil if default.
 //
 // It is safe to call this function from any thread, as it holds
 // a stream-specific mutex while running.
@@ -1482,15 +1437,12 @@ func (stream *AudioStream) InputChannelMap() []int {
 // data in the [order that SDL expects](CategoryAudio#channel-layouts).
 //
 // Audio streams default to no remapping applied. This is represented by
-// returning NULL, and does not signify an error.
+// returning nil, and does not signify an error.
 //
-// stream: the SDL_AudioStream to query.
-//
-// count: On output, set to number of channels in the map. Can be NULL.
+// stream: the [AudioStream] to query.
 //
 // Returns an array of the current channel mapping, with as many elements as
-// the current output spec's channels, or NULL if default. This
-// should be freed with SDL_free() when it is no longer needed.
+// the current output spec's channels, or nil if default.
 //
 // It is safe to call this function from any thread, as it holds
 // a stream-specific mutex while running.
@@ -1519,7 +1471,7 @@ func (stream *AudioStream) OutputChannelMap() []int {
 // data in the [order that SDL expects](CategoryAudio#channel-layouts).
 //
 // The input channel map reorders data that is added to a stream via
-// SDL_PutAudioStreamData. Future calls to SDL_PutAudioStreamData must provide
+// [AudioStream.PutData]. Future calls to [AudioStream.PutData] must provide
 // data in the new channel order.
 //
 // Each item in the array represents an input channel, and its value is the
@@ -1539,7 +1491,7 @@ func (stream *AudioStream) OutputChannelMap() []int {
 // next sound file, and start putting that new data while the previous sound
 // file is still queued, and everything will still play back correctly.
 //
-// Audio streams default to no remapping applied. Passing a NULL channel map
+// Audio streams default to no remapping applied. Passing a nil channel map
 // is legal, and turns off remapping.
 //
 // SDL will copy the channel map; the caller does not have to save this array
@@ -1555,14 +1507,11 @@ func (stream *AudioStream) OutputChannelMap() []int {
 // data added to the stream from the device after this call will have the new
 // mapping, but previously-added data will still have the prior mapping.
 //
-// stream: the SDL_AudioStream to change.
+// stream: the [AudioStream] to change.
 //
-// chmap: the new channel map, NULL to reset to default.
+// chmap: the new channel map, nil to reset to default.
 //
-// count: The number of channels in the map.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread, as it holds
 // a stream-specific mutex while running. Don't change the
@@ -1573,9 +1522,12 @@ func (stream *AudioStream) OutputChannelMap() []int {
 //
 // https://wiki.libsdl.org/SDL3/SDL_SetAudioStreamInputChannelMap
 func (stream *AudioStream) SetInputChannelMap(chmap []int) error {
-	cchmap := make([]C.int, len(chmap))
-	for i, c := range chmap {
-		cchmap[i] = C.int(c)
+	var cchmap []C.int
+	if chmap != nil {
+		cchmap = make([]C.int, len(chmap))
+		for i, c := range chmap {
+			cchmap[i] = C.int(c)
+		}
 	}
 	if !C.SDL_SetAudioStreamInputChannelMap((*C.SDL_AudioStream)(stream), unsafe.SliceData(cchmap), C.int(len(chmap))) {
 		return getError()
@@ -1589,7 +1541,7 @@ func (stream *AudioStream) SetInputChannelMap(chmap []int) error {
 // data in the [order that SDL expects](CategoryAudio#channel-layouts).
 //
 // The output channel map reorders data that leaving a stream via
-// SDL_GetAudioStreamData.
+// [AudioStream.GetData].
 //
 // Each item in the array represents an input channel, and its value is the
 // channel that it should be remapped to. To reverse a stereo signal's left
@@ -1603,9 +1555,9 @@ func (stream *AudioStream) SetInputChannelMap(chmap []int) error {
 // reorder/mute them.
 //
 // The output channel map can be changed at any time, as output remapping is
-// applied during SDL_GetAudioStreamData.
+// applied during [AudioStream.GetData].
 //
-// Audio streams default to no remapping applied. Passing a NULL channel map
+// Audio streams default to no remapping applied. Passing a nil channel map
 // is legal, and turns off remapping.
 //
 // SDL will copy the channel map; the caller does not have to save this array
@@ -1623,14 +1575,11 @@ func (stream *AudioStream) SetInputChannelMap(chmap []int) error {
 // map doesn't match the hardware's channel layout, SDL will convert the data
 // before feeding it to the device for playback.
 //
-// stream: the SDL_AudioStream to change.
+// stream: the [AudioStream] to change.
 //
-// chmap: the new channel map, NULL to reset to default.
+// chmap: the new channel map, nil to reset to default.
 //
-// count: The number of channels in the map.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread, as it holds
 // a stream-specific mutex while running. Don't change the
@@ -1641,9 +1590,12 @@ func (stream *AudioStream) SetInputChannelMap(chmap []int) error {
 //
 // https://wiki.libsdl.org/SDL3/SDL_SetAudioStreamOutputChannelMap
 func (stream *AudioStream) SetOutputChannelMap(chmap []int) error {
-	cchmap := make([]C.int, len(chmap))
-	for i, c := range chmap {
-		cchmap[i] = C.int(c)
+	var cchmap []C.int
+	if chmap != nil {
+		cchmap = make([]C.int, len(chmap))
+		for i, c := range chmap {
+			cchmap[i] = C.int(c)
+		}
 	}
 	if !C.SDL_SetAudioStreamOutputChannelMap((*C.SDL_AudioStream)(stream), unsafe.SliceData(cchmap), C.int(len(chmap))) {
 		return getError()
@@ -1654,7 +1606,7 @@ func (stream *AudioStream) SetOutputChannelMap(chmap []int) error {
 // Add data to the stream.
 //
 // This data must match the format/channels/samplerate specified in the latest
-// call to SDL_SetAudioStreamFormat, or the format specified when creating the
+// call to [AudioStream.SetFormat], or the format specified when creating the
 // stream if it hasn't been changed.
 //
 // Note that this call simply copies the unconverted data for later. This is
@@ -1663,12 +1615,9 @@ func (stream *AudioStream) SetOutputChannelMap(chmap []int) error {
 //
 // stream: the stream the audio data is being added to.
 //
-// buf: a pointer to the audio data to add.
+// buf: the audio data to add.
 //
-// len: the number of bytes to write to the stream.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread, but if the
 // stream has a callback set, the caller might need to manage
@@ -1688,10 +1637,10 @@ func (stream *AudioStream) PutData(buf []byte) error {
 //
 // The input/output data format/channels/samplerate is specified when creating
 // the stream, and can be changed after creation by calling
-// SDL_SetAudioStreamFormat.
+// [AudioStream.SetFormat].
 //
 // Note that any conversion and resampling necessary is done during this call,
-// and SDL_PutAudioStreamData simply queues unconverted data for later. This
+// and [AudioStream.PutData] simply queues unconverted data for later. This
 // is different than SDL2, where that work was done while inputting new data
 // to the stream and requesting the output just copied the converted data.
 //
@@ -1699,10 +1648,7 @@ func (stream *AudioStream) PutData(buf []byte) error {
 //
 // buf: a buffer to fill with audio data.
 //
-// len: the maximum number of bytes to fill.
-//
-// Returns the number of bytes read from the stream or -1 on failure; call
-// SDL_GetError() for more information.
+// Returns the number of bytes read from the stream or an error.
 //
 // It is safe to call this function from any thread, but if the
 // stream has a callback set, the caller might need to manage
@@ -1728,13 +1674,12 @@ func (stream *AudioStream) GetData(buf []byte) (int, error) {
 // If the stream has so much data that it would overflow an int, the return
 // value is clamped to a maximum value, but no queued data is lost; if there
 // are gigabytes of data queued, the app might need to read some of it with
-// SDL_GetAudioStreamData before this function's return value is no longer
+// [AudioStream.GetData] before this function's return value is no longer
 // clamped.
 //
 // stream: the audio stream to query.
 //
-// Returns the number of converted/resampled bytes available or -1 on
-// failure; call SDL_GetError() for more information.
+// Returns the number of converted/resampled bytes available or an error.
 //
 // It is safe to call this function from any thread.
 //
@@ -1755,7 +1700,7 @@ func (stream *AudioStream) Available() (int, error) {
 // can be retrieved as output. Because of several details, it's not possible
 // to calculate one number directly from the other. If you need to know how
 // much usable data can be retrieved right now, you should use
-// SDL_GetAudioStreamAvailable() and not this function.
+// [AudioStream.Available] and not this function.
 //
 // Note that audio streams can change their input format at any time, even if
 // there is still data queued in a different format, so the returned byte
@@ -1764,19 +1709,18 @@ func (stream *AudioStream) Available() (int, error) {
 // a stream and plan accordingly.
 //
 // Queued data is not converted until it is consumed by
-// SDL_GetAudioStreamData, so this value should be representative of the exact
+// [AudioStream.GetData], so this value should be representative of the exact
 // data that was put into the stream.
 //
 // If the stream has so much data that it would overflow an int, the return
 // value is clamped to a maximum value, but no queued data is lost; if there
 // are gigabytes of data queued, the app might need to read some of it with
-// SDL_GetAudioStreamData before this function's return value is no longer
+// [AudioStream.GetData] before this function's return value is no longer
 // clamped.
 //
 // stream: the audio stream to query.
 //
-// Returns the number of bytes queued or -1 on failure; call SDL_GetError()
-// for more information.
+// Returns the number of bytes queued or an error.
 //
 // It is safe to call this function from any thread.
 //
@@ -1800,8 +1744,7 @@ func (stream *AudioStream) Queued() (int, error) {
 //
 // stream: the audio stream to flush.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread.
 //
@@ -1822,8 +1765,7 @@ func (stream *AudioStream) Flush() error {
 //
 // stream: the audio stream to clear.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread.
 //
@@ -1850,8 +1792,7 @@ func (stream *AudioStream) Clear() error {
 //
 // stream: the audio stream associated with the audio device to pause.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread.
 //
@@ -1874,8 +1815,7 @@ func (stream *AudioStream) PauseDevice() error {
 //
 // stream: the audio stream associated with the audio device to resume.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread.
 //
@@ -1908,7 +1848,7 @@ func (stream *AudioStream) DevicePaused() bool {
 
 // Lock an audio stream for serialized access.
 //
-// Each SDL_AudioStream has an internal mutex it uses to protect its data
+// Each [AudioStream] has an internal mutex it uses to protect its data
 // structures from threading conflicts. This function allows an app to lock
 // that mutex, which could be useful if registering callbacks on this stream.
 //
@@ -1923,8 +1863,7 @@ func (stream *AudioStream) DevicePaused() bool {
 //
 // stream: the audio stream to lock.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread.
 //
@@ -1940,15 +1879,14 @@ func (stream *AudioStream) Lock() error {
 
 // Unlock an audio stream for serialized access.
 //
-// This unlocks an audio stream after a call to SDL_LockAudioStream.
+// This unlocks an audio stream after a call to [AudioStream.Lock].
 //
 // stream: the audio stream to unlock.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // You should only call this from the same thread that
-// previously called SDL_LockAudioStream.
+// previously called [AudioStream.Lock].
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1960,11 +1898,11 @@ func (stream *AudioStream) Unlock() error {
 	return nil
 }
 
-// A callback that fires when data passes through an SDL_AudioStream.
+// A callback that fires when data passes through an [AudioStream].
 //
 // Apps can (optionally) register a callback with an audio stream that is
-// called when data is added with SDL_PutAudioStreamData, or requested with
-// SDL_GetAudioStreamData.
+// called when data is added with [AudioStream.PutData], or requested with
+// [AudioStream.GetData].
 //
 // Two values are offered here: one is the amount of additional data needed to
 // satisfy the immediate request (which might be zero if the stream already
@@ -1982,17 +1920,14 @@ func (stream *AudioStream) Unlock() error {
 //
 // stream: the SDL audio stream associated with this callback.
 //
-// additional_amount: the amount of data, in bytes, that is needed right
+// additionalAmount: the amount of data, in bytes, that is needed right
 // now.
 //
-// total_amount: the total amount of data requested, in bytes, that is
+// totalAmount: the total amount of data requested, in bytes, that is
 // requested or available.
 //
-// userdata: an opaque pointer provided by the app for their personal
-// use.
-//
 // This callbacks may run from any thread, so if you need to
-// protect shared data, you should use SDL_LockAudioStream to
+// protect shared data, you should use [AudioStream.Lock] to
 // serialize access; this lock will be held before your callback
 // is called, so your callback does not need to manage the lock
 // explicitly.
@@ -2013,7 +1948,7 @@ func cb_AudioStreamCallback(userdata uintptr, stream *C.SDL_AudioStream, additio
 // This callback is called _before_ data is obtained from the stream, giving
 // the callback the chance to add more on-demand.
 //
-// The callback can (optionally) call SDL_PutAudioStreamData() to add more
+// The callback can (optionally) call [AudioStream.PutData] to add more
 // audio to the stream during this call; if needed, the request that triggered
 // this callback will obtain the new data immediately.
 //
@@ -2035,33 +1970,34 @@ func cb_AudioStreamCallback(userdata uintptr, stream *C.SDL_AudioStream, additio
 // (get or put) in progress will finish running before setting the new
 // callback.
 //
-// Setting a NULL function turns off the callback.
+// Setting a nil function turns off the callback.
 //
 // stream: the audio stream to set the new callback on.
 //
 // callback: the new callback function to call when data is requested
 // from the stream.
 //
-// userdata: an opaque pointer provided to the callback for its own
-// personal use.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information. This only fails if `stream` is NULL.
-//
 // It is safe to call this function from any thread.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_SetAudioStreamGetCallback
-func (stream *AudioStream) SetGetCallback(callback AudioStreamCallback) error {
-	h := cgo.NewHandle(callback)
-	if !C.wrap_SDL_SetAudioStreamGetCallback((*C.SDL_AudioStream)(stream), C.uintptr_t(h)) {
-		h.Delete()
-		return getError()
+func (stream *AudioStream) SetGetCallback(callback AudioStreamCallback) {
+	if stream == nil {
+		panic("sdl: stream is nil")
 	}
-	props, _ := stream.Properties()
-	props.SetPointerWithCleanup("go.audiostream.callback.get", uintptr(h), propHandleCleanup)
-	return nil
+	if callback == nil {
+		C.SDL_SetAudioStreamGetCallback((*C.SDL_AudioStream)(stream), nil, nil)
+		if props, err := stream.Properties(); err == nil {
+			props.Clear("go.audiostream.callback.get")
+		}
+		return
+	}
+	h := cgo.NewHandle(callback)
+	C.wrap_SDL_SetAudioStreamGetCallback((*C.SDL_AudioStream)(stream), C.uintptr_t(h))
+	if props, err := stream.Properties(); err == nil {
+		props.SetPointerWithCleanup("go.audiostream.callback.get", uintptr(h), propHandleCleanup)
+	}
 }
 
 // Set a callback that runs when data is added to an audio stream.
@@ -2069,7 +2005,7 @@ func (stream *AudioStream) SetGetCallback(callback AudioStreamCallback) error {
 // This callback is called _after_ the data is added to the stream, giving the
 // callback the chance to obtain it immediately.
 //
-// The callback can (optionally) call SDL_GetAudioStreamData() to obtain audio
+// The callback can (optionally) call [AudioStream.GetData] to obtain audio
 // from the stream during this call.
 //
 // The callback's `approx_request` argument is how many bytes of _converted_
@@ -2080,7 +2016,7 @@ func (stream *AudioStream) SetGetCallback(callback AudioStreamCallback) error {
 // to aid in resampling. Which means the callback may be provided with zero
 // bytes, and a different amount on each call.
 //
-// The callback may call SDL_GetAudioStreamAvailable to see the total amount
+// The callback may call [AudioStream.Available] to see the total amount
 // currently available to read from the stream, instead of the total provided
 // by the current call.
 //
@@ -2094,33 +2030,34 @@ func (stream *AudioStream) SetGetCallback(callback AudioStreamCallback) error {
 // (get or put) in progress will finish running before setting the new
 // callback.
 //
-// Setting a NULL function turns off the callback.
+// Setting a nil function turns off the callback.
 //
 // stream: the audio stream to set the new callback on.
 //
 // callback: the new callback function to call when data is added to the
 // stream.
 //
-// userdata: an opaque pointer provided to the callback for its own
-// personal use.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information. This only fails if `stream` is NULL.
-//
 // It is safe to call this function from any thread.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SetAudioStreamPutCallback
-func (stream *AudioStream) SetPutCallback(callback AudioStreamCallback) error {
-	h := cgo.NewHandle(callback)
-	if !C.wrap_SDL_SetAudioStreamPutCallback((*C.SDL_AudioStream)(stream), C.uintptr_t(h)) {
-		h.Delete()
-		return getError()
+func (stream *AudioStream) SetPutCallback(callback AudioStreamCallback) {
+	if stream == nil {
+		panic("sdl: stream is nil")
 	}
-	props, _ := stream.Properties()
-	props.SetPointerWithCleanup("go.audiostream.callback.put", uintptr(h), propHandleCleanup)
-	return nil
+	if callback == nil {
+		C.SDL_SetAudioStreamPutCallback((*C.SDL_AudioStream)(stream), nil, nil)
+		if props, err := stream.Properties(); err == nil {
+			props.Clear("go.audiostream.callback.put")
+		}
+		return
+	}
+	h := cgo.NewHandle(callback)
+	C.wrap_SDL_SetAudioStreamPutCallback((*C.SDL_AudioStream)(stream), C.uintptr_t(h))
+	if props, err := stream.Properties(); err == nil {
+		props.SetPointerWithCleanup("go.audiostream.callback.put", uintptr(h), propHandleCleanup)
+	}
 }
 
 // Free an audio stream.
@@ -2129,7 +2066,7 @@ func (stream *AudioStream) SetPutCallback(callback AudioStreamCallback) error {
 // queued. You do not need to manually clear the stream first.
 //
 // If this stream was bound to an audio device, it is unbound during this
-// call. If this stream was created with SDL_OpenAudioDeviceStream, the audio
+// call. If this stream was created with [OpenAudioDeviceStream], the audio
 // device that was opened alongside this stream's creation will be closed,
 // too.
 //
@@ -2153,52 +2090,48 @@ func (stream *AudioStream) Destroy() {
 //
 // This function will open an audio device, create a stream and bind it.
 // Unlike other methods of setup, the audio device will be closed when this
-// stream is destroyed, so the app can treat the returned SDL_AudioStream as
+// stream is destroyed, so the app can treat the returned [AudioStream] as
 // the only object needed to manage audio playback.
 //
 // Also unlike other functions, the audio device begins paused. This is to map
 // more closely to SDL2-style behavior, since there is no extra step here to
 // bind a stream to begin audio flowing. The audio device should be resumed
-// with `SDL_ResumeAudioStreamDevice(stream);`
+// with [AudioStream.ResumeDevice]
 //
 // This function works with both playback and recording devices.
 //
 // The `spec` parameter represents the app's side of the audio stream. That
 // is, for recording audio, this will be the output format, and for playing
 // audio, this will be the input format. If spec is NULL, the system will
-// choose the format, and the app can use SDL_GetAudioStreamFormat() to obtain
+// choose the format, and the app can use [AudioStream.Format] to obtain
 // this information later.
 //
 // If you don't care about opening a specific audio device, you can (and
-// probably _should_), use SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK for playback and
-// SDL_AUDIO_DEVICE_DEFAULT_RECORDING for recording.
+// probably _should_), use [AudioDeviceDefaultPlayback] for playback and
+// [AudioDeviceDefaultRecording] for recording.
 //
-// One can optionally provide a callback function; if NULL, the app is
+// One can optionally provide a callback function; if nil, the app is
 // expected to queue audio data for playback (or unqueue audio data if
 // capturing). Otherwise, the callback will begin to fire once the device is
 // unpaused.
 //
-// Destroying the returned stream with SDL_DestroyAudioStream will also close
+// Destroying the returned stream with [AudioStream.Destroy] will also close
 // the audio device associated with this stream.
 //
-// devid: an audio device to open, or SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK
-// or SDL_AUDIO_DEVICE_DEFAULT_RECORDING.
+// devid: an audio device to open, or [AudioDeviceDefaultPlayback]
+// or [AudioDeviceDefaultRecording].
 //
-// spec: the audio stream's data format. Can be NULL.
+// spec: the audio stream's data format. Can be nil.
 //
 // callback: a callback where the app will provide new data for
-// playback, or receive new data for recording. Can be NULL,
+// playback, or receive new data for recording. Can be nil,
 // in which case the app will need to call
-// SDL_PutAudioStreamData or SDL_GetAudioStreamData as
+// [AudioStream.PutData] or [AudioStream.GetData] as
 // necessary.
 //
-// userdata: app-controlled pointer passed to callback. Can be NULL.
-// Ignored if callback is NULL.
-//
-// Returns an audio stream on success, ready to use, or NULL on failure; call
-// SDL_GetError() for more information. When done with this stream,
-// call SDL_DestroyAudioStream to free resources and close the
-// device.
+// Returns an audio stream on success, ready to use, an error.
+// When done with this stream, call [AudioStream.Destroy] to free resources and
+// close the device.
 //
 // It is safe to call this function from any thread.
 //
@@ -2242,24 +2175,20 @@ func OpenAudioDeviceStream(devid AudioDeviceID, spec *AudioSpec, callback AudioS
 // device, which can cause audio playback problems.
 //
 // The postmix callback _must_ be able to handle any audio data format
-// specified in `spec`, which can change between callbacks if the audio device
+// specified in spec, which can change between callbacks if the audio device
 // changed. However, this only covers frequency and channel count; data is
-// always provided here in SDL_AUDIO_F32 format.
+// always provided here in [AudioF32] format.
 //
 // The postmix callback runs _after_ logical device gain and audiostream gain
 // have been applied, which is to say you can make the output data louder at
 // this point than the gain settings would suggest.
 //
-// userdata: a pointer provided by the app through
-// SDL_SetAudioPostmixCallback, for its own use.
-//
 // spec: the current format of audio that is to be submitted to the
 // audio device.
 //
 // buffer: the buffer of audio samples to be submitted. The callback can
-// inspect and/or modify this data.
-//
-// buflen: the size of `buffer` in bytes.
+// inspect and/or modify this data. This slice must not be retained, it may
+// become invalid after the callback returns.
 //
 // This will run from a background thread owned by SDL. The
 // application is responsible for locking resources the callback
@@ -2304,7 +2233,7 @@ func cb_AudioPostmixCallback(userdata C.uintptr_t, spec *C.SDL_AudioSpec, buffer
 //
 // All of this to say: there are specific needs this callback can fulfill, but
 // it is not the simplest interface. Apps should generally provide audio in
-// their preferred format through an SDL_AudioStream and let SDL handle the
+// their preferred format through an [AudioStream] and let SDL handle the
 // difference.
 //
 // This function is extremely time-sensitive; the callback should do the least
@@ -2315,16 +2244,13 @@ func cb_AudioPostmixCallback(userdata C.uintptr_t, spec *C.SDL_AudioSpec, buffer
 // so any existing callback that might be running will finish before this
 // function sets the new callback and returns.
 //
-// Setting a NULL callback function disables any previously-set callback.
+// Setting a nil callback function disables any previously-set callback.
 //
 // devid: the ID of an opened audio device.
 //
-// callback: a callback function to be called. Can be NULL.
+// callback: a callback function to be called. Can be nil.
 //
-// userdata: app-controlled pointer passed to callback. Can be NULL.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread.
 //
@@ -2332,6 +2258,12 @@ func cb_AudioPostmixCallback(userdata C.uintptr_t, spec *C.SDL_AudioSpec, buffer
 //
 // https://wiki.libsdl.org/SDL3/SDL_SetAudioPostmixCallback
 func (devid AudioDeviceID) SetPostmixCallback(callback AudioPostmixCallback) error {
+	if callback == nil {
+		if !C.SDL_SetAudioPostmixCallback((C.SDL_AudioDeviceID)(devid), nil, nil) {
+			return getError()
+		}
+		return nil
+	}
 	if !C.wrap_SDL_SetAudioPostmixCallback((C.SDL_AudioDeviceID)(devid), C.uintptr_t(cgo.NewHandle(callback))) {
 		return getError()
 	}
@@ -2340,78 +2272,41 @@ func (devid AudioDeviceID) SetPostmixCallback(callback AudioPostmixCallback) err
 
 // Load the audio data of a WAVE file into memory.
 //
-// Loading a WAVE file requires `src`, `spec`, `audio_buf` and `audio_len` to
-// be valid pointers. The entire data portion of the file is then loaded into
-// memory and decoded if necessary.
+// The entire data portion of the file is loaded into memory and decoded if
+// necessary.
 //
 // Supported formats are RIFF WAVE files with the formats PCM (8, 16, 24, and
 // 32 bits), IEEE Float (32 bits), Microsoft ADPCM and IMA ADPCM (4 bits), and
 // A-law and mu-law (8 bits). Other formats are currently unsupported and
 // cause an error.
 //
-// If this function succeeds, the return value is zero and the pointer to the
-// audio data allocated by the function is written to `audio_buf` and its
-// length in bytes to `audio_len`. The SDL_AudioSpec members `freq`,
-// `channels`, and `format` are set to the values of the audio data in the
-// buffer.
-//
-// It's necessary to use SDL_free() to free the audio data returned in
-// `audio_buf` when it is no longer used.
+// If this function succeeds, it returns the audio data and an [AudioSpec]
+// describing the format of the data.
 //
 // Because of the underspecification of the .WAV format, there are many
 // problematic files in the wild that cause issues with strict decoders. To
 // provide compatibility with these files, this decoder is lenient in regards
 // to the truncation of the file, the fact chunk, and the size of the RIFF
-// chunk. The hints `SDL_HINT_WAVE_RIFF_CHUNK_SIZE`,
-// `SDL_HINT_WAVE_TRUNCATION`, and `SDL_HINT_WAVE_FACT_CHUNK` can be used to
+// chunk. The hints [HintWaveRiffChunkSize],
+// [HintWaveTruncation], and [HintWaveFactChunk] can be used to
 // tune the behavior of the loading process.
 //
 // Any file that is invalid (due to truncation, corruption, or wrong values in
 // the headers), too big, or unsupported causes an error. Additionally, any
 // critical I/O error from the data source will terminate the loading process
-// with an error. The function returns NULL on error and in all cases (with
-// the exception of `src` being NULL), an appropriate error message will be
-// set.
+// with an error.
 //
 // It is required that the data source supports seeking.
 //
-// Example:
-//
-// ```c
-// SDL_LoadWAV_IO(SDL_IOFromFile("sample.wav", "rb"), true, &spec, &buf, &len);
-// ```
-//
-// Note that the SDL_LoadWAV function does this same thing for you, but in a
-// less messy way:
-//
-// ```c
-// SDL_LoadWAV("sample.wav", &spec, &buf, &len);
-// ```
-//
 // src: the data source for the WAVE data.
 //
-// closeio: if true, calls SDL_CloseIO() on `src` before returning, even
+// closeio: if true, calls [IOStream.Close] on src before returning, even
 // in the case of an error.
 //
-// spec: a pointer to an SDL_AudioSpec that will be set to the WAVE
-// data's format details on successful return.
+// Returns the audio data and format, or an error.
 //
-// audio_buf: a pointer filled with the audio data, allocated by the
-// function.
-//
-// audio_len: a pointer filled with the length of the audio data buffer
-// in bytes.
-//
-// Returns true on success. `audio_buf` will be filled with a pointer to an
-// allocated buffer containing the audio data, and `audio_len` is
-// filled with the length of that audio buffer in bytes.
-//
-// This function returns false if the .WAV file cannot be opened,
-// uses an unknown data format, or is corrupt; call SDL_GetError()
-// for more information.
-//
-// When the application is done with the data returned in
-// `audio_buf`, it should call SDL_free() to dispose of it.
+// This function returns an error if the .WAV file cannot be opened,
+// uses an unknown data format, or is corrupt.
 //
 // It is safe to call this function from any thread.
 //
@@ -2434,31 +2329,14 @@ func LoadWAV_IO(src *IOStream, closeio bool) ([]byte, AudioSpec, error) {
 //
 // This is a convenience function that is effectively the same as:
 //
-// ```c
-// SDL_LoadWAV_IO(SDL_IOFromFile(path, "rb"), true, spec, audio_buf, audio_len);
-// ```
+//	LoadWAV_IO(IOFromFile(path, "rb"), true)
 //
 // path: the file path of the WAV file to open.
 //
-// spec: a pointer to an SDL_AudioSpec that will be set to the WAVE
-// data's format details on successful return.
+// Returns the audio data and format, or an error.
 //
-// audio_buf: a pointer filled with the audio data, allocated by the
-// function.
-//
-// audio_len: a pointer filled with the length of the audio data buffer
-// in bytes.
-//
-// Returns true on success. `audio_buf` will be filled with a pointer to an
-// allocated buffer containing the audio data, and `audio_len` is
-// filled with the length of that audio buffer in bytes.
-//
-// This function returns false if the .WAV file cannot be opened,
-// uses an unknown data format, or is corrupt; call SDL_GetError()
-// for more information.
-//
-// When the application is done with the data returned in
-// `audio_buf`, it should call SDL_free() to dispose of it.
+// This function returns an error if the .WAV file cannot be opened,
+// uses an unknown data format, or is corrupt.
 //
 // It is safe to call this function from any thread.
 //
@@ -2479,10 +2357,10 @@ func LoadWAV(path string) ([]byte, AudioSpec, error) {
 
 // Mix audio data in a specified format.
 //
-// This takes an audio buffer `src` of `len` bytes of `format` data and mixes
+// This takes an audio buffer `src` of `format` data and mixes
 // it into `dst`, performing addition, volume adjustment, and overflow
-// clipping. The buffer pointed to by `dst` must also be `len` bytes of
-// `format` data.
+// clipping. The buffer pointed to by `dst` must be of the same length and
+// format.
 //
 // This is provided for convenience -- you can mix your own audio data.
 //
@@ -2493,23 +2371,20 @@ func LoadWAV(path string) ([]byte, AudioSpec, error) {
 //
 // It is a common misconception that this function is required to write audio
 // data to an output stream in an audio callback. While you can do that,
-// SDL_MixAudio() is really only needed when you're mixing a single audio
+// [MixAudio] is really only needed when you're mixing a single audio
 // stream with a volume adjustment.
 //
 // dst: the destination for the mixed audio.
 //
 // src: the source audio buffer to be mixed.
 //
-// format: the SDL_AudioFormat structure representing the desired audio
+// format: the [AudioFormat] structure representing the desired audio
 // format.
-//
-// len: the length of the audio buffer in bytes.
 //
 // volume: ranges from 0.0 - 1.0, and should be set to 1.0 for full
 // audio volume.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread.
 //
@@ -2529,28 +2404,19 @@ func MixAudio(dst []byte, src []byte, format AudioFormat, volume float32) error 
 // to resample audio in blocks, as it will introduce audio artifacts on the
 // boundaries. You should only use this function if you are converting audio
 // data in its entirety in one call. If you want to convert audio in smaller
-// chunks, use an SDL_AudioStream, which is designed for this situation.
+// chunks, use an [AudioStream], which is designed for this situation.
 //
-// Internally, this function creates and destroys an SDL_AudioStream on each
+// Internally, this function creates and destroys an [AudioStream] on each
 // use, so it's also less efficient than using one directly, if you need to
 // convert multiple times.
 //
-// src_spec: the format details of the input audio.
+// srcSpec: the format details of the input audio.
 //
-// src_data: the audio data to be converted.
+// src: the audio data to be converted.
 //
-// src_len: the len of src_data.
+// dstSpec: the format details of the output audio.
 //
-// dst_spec: the format details of the output audio.
-//
-// dst_data: will be filled with a pointer to converted audio data,
-// which should be freed with SDL_free(). On error, it will be
-// NULL.
-//
-// dst_len: will be filled with the len of dst_data.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns the converted audio data or an error.
 //
 // It is safe to call this function from any thread.
 //
@@ -2590,9 +2456,8 @@ func (format AudioFormat) Name() string {
 
 // Get the appropriate memset value for silencing an audio format.
 //
-// The value returned by this function can be used as the second argument to
-// memset (or SDL_memset) to set an audio buffer in a specific format to
-// silence.
+// A byte slice filled with the value returned by this function represents
+// silence in the specified format.
 //
 // format: the audio data format to query.
 //
@@ -2603,6 +2468,6 @@ func (format AudioFormat) Name() string {
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetSilenceValueForFormat
-func GetSilenceValueForFormat(format AudioFormat) int {
-	return (int)(C.SDL_GetSilenceValueForFormat((C.SDL_AudioFormat)(format)))
+func GetSilenceValueForFormat(format AudioFormat) byte {
+	return (byte)(C.SDL_GetSilenceValueForFormat((C.SDL_AudioFormat)(format)))
 }

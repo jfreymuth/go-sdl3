@@ -51,29 +51,29 @@ import (
 // All SDL programs need to initialize the library before starting to work
 // with it.
 //
-// Almost everything can simply call SDL_Init() near startup, with a handful
+// Almost everything can simply call [Init] near startup, with a handful
 // of flags to specify subsystems to touch. These are here to make sure SDL
 // does not even attempt to touch low-level pieces of the operating system
 // that you don't intend to use. For example, you might be using SDL for video
 // and input but chose an external library for audio, and in this case you
-// would just need to leave off the `SDL_INIT_AUDIO` flag to make sure that
+// would just need to leave off the [InitAudio] flag to make sure that
 // external library has complete control.
 //
-// Most apps, when terminating, should call SDL_Quit(). This will clean up
+// Most apps, when terminating, should call [Quit]. This will clean up
 // (nearly) everything that SDL might have allocated, and crucially, it'll
 // make sure that the display's resolution is back to what the user expects if
 // you had previously changed it for your game.
 //
-// SDL3 apps are strongly encouraged to call SDL_SetAppMetadata() at startup
+// SDL3 apps are strongly encouraged to call [SetAppMetadata] at startup
 // to fill in details about the program. This is completely optional, but it
 // helps in small ways (we can provide an About dialog box for the macOS menu,
 // we can name the app in the system's audio mixer, etc). Those that want to
 // provide a _lot_ of information should look at the more-detailed
-// SDL_SetAppMetadataProperty().
+// [SetAppMetadataProperty].
 
-// Initialization flags for SDL_Init and/or SDL_InitSubSystem
+// Initialization flags for [Init] and/or [InitSubSystem]
 //
-// These are the flags which may be passed to SDL_Init(). You should specify
+// These are the flags which may be passed to [Init]. You should specify
 // the subsystems which you will be using in your application.
 //
 // This datatype is available since SDL 3.2.0.
@@ -82,61 +82,64 @@ import (
 type InitFlags uint32
 
 const (
-	InitAudio    InitFlags = 0x00000010 //`SDL_INIT_AUDIO` implies `SDL_INIT_EVENTS`
-	InitVideo    InitFlags = 0x00000020 //`SDL_INIT_VIDEO` implies `SDL_INIT_EVENTS`, should be initialized on the main thread
-	InitJoystick InitFlags = 0x00000200 //`SDL_INIT_JOYSTICK` implies `SDL_INIT_EVENTS`, should be initialized on the same thread as SDL_INIT_VIDEO on Windows if you don't set SDL_HINT_JOYSTICK_THREAD
+	InitAudio    InitFlags = 0x00000010 // [InitAudio] implies [InitEvents]
+	InitVideo    InitFlags = 0x00000020 // [InitVideo] implies [InitEvents], should be initialized on the main thread
+	InitJoystick InitFlags = 0x00000200 // [InitJoystick] implies [InitEvents], should be initialized on the same thread as [InitVideo] on Windows if you don't set [HintJoystickThread]
 	InitHaptic   InitFlags = 0x00001000
-	InitGamepad  InitFlags = 0x00002000 //`SDL_INIT_GAMEPAD` implies `SDL_INIT_JOYSTICK`
+	InitGamepad  InitFlags = 0x00002000 // [InitGamepad] implies [InitJoystick]
 	InitEvents   InitFlags = 0x00004000
-	InitSensor   InitFlags = 0x00008000 //`SDL_INIT_SENSOR` implies `SDL_INIT_EVENTS`
-	InitCamera   InitFlags = 0x00010000 //`SDL_INIT_CAMERA` implies `SDL_INIT_EVENTS`
+	InitSensor   InitFlags = 0x00008000 // [InitSensor] implies [InitEvents]
+	InitCamera   InitFlags = 0x00010000 // [InitCamera] implies [InitEvents]
 )
 
 // Initialize the SDL library.
 //
-// SDL_Init() simply forwards to calling SDL_InitSubSystem(). Therefore, the
+// [Init] simply forwards to calling [InitSubSystem]. Therefore, the
 // two may be used interchangeably. Though for readability of your code
-// SDL_InitSubSystem() might be preferred.
+// [InitSubSystem] might be preferred.
 //
-// The file I/O (for example: SDL_IOFromFile) and threading (SDL_CreateThread)
+// The file I/O (for example: [IOFromFile]) and threading (SDL_CreateThread)
 // subsystems are initialized by default. Message boxes
-// (SDL_ShowSimpleMessageBox) also attempt to work without initializing the
+// ([ShowSimpleMessageBox]) also attempt to work without initializing the
 // video subsystem, in hopes of being useful in showing an error dialog when
-// SDL_Init fails. You must specifically initialize other subsystems if you
+// [Init] fails. You must specifically initialize other subsystems if you
 // use them in your application.
 //
 // Logging (such as SDL_Log) works without initialization, too.
 //
-// `flags` may be any of the following OR'd together:
+// flags may be any of the following OR'd together:
 //
-// - `SDL_INIT_AUDIO`: audio subsystem; automatically initializes the events
-// subsystem
-// - `SDL_INIT_VIDEO`: video subsystem; automatically initializes the events
-// subsystem, should be initialized on the main thread.
-// - `SDL_INIT_JOYSTICK`: joystick subsystem; automatically initializes the
-// events subsystem
-// - `SDL_INIT_HAPTIC`: haptic (force feedback) subsystem
-// - `SDL_INIT_GAMEPAD`: gamepad subsystem; automatically initializes the
-// joystick subsystem
-// - `SDL_INIT_EVENTS`: events subsystem
-// - `SDL_INIT_SENSOR`: sensor subsystem; automatically initializes the events
-// subsystem
-// - `SDL_INIT_CAMERA`: camera subsystem; automatically initializes the events
-// subsystem
+//   - [InitAudio]: audio subsystem; automatically initializes the events
+//     subsystem
+//   - [InitVideo]: video subsystem; automatically initializes the events
+//     subsystem, should be initialized on the main thread.
+//   - [InitJoystick]: joystick subsystem; automatically initializes the
+//     events subsystem
+//   - [InitHaptic]: haptic (force feedback) subsystem
+//   - [InitGamepad]: gamepad subsystem; automatically initializes the
+//     joystick subsystem
+//   - [InitEvents]: events subsystem
+//   - [InitSensor]: sensor subsystem; automatically initializes the events
+//     subsystem
+//   - [InitCamera]: camera subsystem; automatically initializes the events
+//     subsystem
 //
-// Subsystem initialization is ref-counted, you must call SDL_QuitSubSystem()
-// for each SDL_InitSubSystem() to correctly shutdown a subsystem manually (or
-// call SDL_Quit() to force shutdown). If a subsystem is already loaded then
+// Subsystem initialization is ref-counted, you must call [QuitSubSystem]
+// for each [InitSubSystem] to correctly shutdown a subsystem manually (or
+// call [Quit] to force shutdown). If a subsystem is already loaded then
 // this call will increase the ref-count and return.
 //
 // Consider reporting some basic metadata about your application before
-// calling SDL_Init, using either SDL_SetAppMetadata() or
-// SDL_SetAppMetadataProperty().
+// calling [Init], using either [SetAppMetadata] or
+// [SetAppMetadataProperty].
+//
+// If flags contains [InitVideo], this function should be called on the main
+// thread, which can be ensured by calling [runtime.LockOSThread] at the start
+// of main()
 //
 // flags: subsystem initialization flags.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -150,12 +153,11 @@ func Init(flags InitFlags) error {
 
 // Compatibility function to initialize the SDL library.
 //
-// This function and SDL_Init() are interchangeable.
+// This function and [Init] are interchangeable.
 //
-// flags: any of the flags used by SDL_Init(); see SDL_Init for details.
+// flags: any of the flags used by [Init]; see [Init] for details.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -169,10 +171,10 @@ func InitSubSystem(flags InitFlags) error {
 
 // Shut down specific SDL subsystems.
 //
-// You still need to call SDL_Quit() even if you close all open subsystems
-// with SDL_QuitSubSystem().
+// You still need to call [Quit] even if you close all open subsystems
+// with [QuitSubSystem].
 //
-// flags: any of the flags used by SDL_Init(); see SDL_Init for details.
+// flags: any of the flags used by [Init]; see [Init] for details.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -183,9 +185,9 @@ func QuitSubSystem(flags InitFlags) {
 
 // Get a mask of the specified subsystems which are currently initialized.
 //
-// flags: any of the flags used by SDL_Init(); see SDL_Init for details.
+// flags: any of the flags used by [Init]; see [Init] for details.
 //
-// Returns a mask of all initialized subsystems if `flags` is 0, otherwise it
+// Returns a mask of all initialized subsystems if flags is 0, otherwise it
 // returns the initialization status of the specified subsystems.
 //
 // This function is available since SDL 3.2.0.
@@ -198,7 +200,7 @@ func WasInit(flags InitFlags) InitFlags {
 // Clean up all initialized subsystems.
 //
 // You should call this function even if you have already shutdown each
-// initialized subsystem with SDL_QuitSubSystem(). It is safe to call this
+// initialized subsystem with [QuitSubSystem]. It is safe to call this
 // function even in the case of errors in initialization.
 //
 // You can use this function with atexit() to ensure that it is run when your
@@ -216,10 +218,8 @@ func Quit() {
 //
 // On Apple platforms, the main thread is the thread that runs your program's
 // main() entry point. On other platforms, the main thread is the one that
-// calls SDL_Init(SDL_INIT_VIDEO), which should usually be the one that runs
-// your program's main() entry point. If you are using the main callbacks,
-// SDL_AppInit(), SDL_AppIterate(), and SDL_AppQuit() are all called on the
-// main thread.
+// calls [Init]([InitVideo]), which should usually be the one that runs
+// your program's main() entry point.
 //
 // Returns true if this thread is the main thread, or false otherwise.
 //
@@ -233,8 +233,6 @@ func IsMainThread() bool {
 }
 
 // Callback run on the main thread.
-//
-// userdata: an app-controlled pointer that is passed to the callback.
 //
 // This datatype is available since SDL 3.2.0.
 //
@@ -256,26 +254,23 @@ func cb_MainThreadCallback(userdata uintptr) {
 //
 // Be careful of deadlocks when using this functionality. You should not have
 // the main thread wait for the current thread while this function is being
-// called with `wait_complete` true.
+// called with waitComplete true.
 //
 // callback: the callback to call on the main thread.
 //
-// userdata: a pointer that is passed to `callback`.
-//
-// wait_complete: true to wait for the callback to complete, false to
+// waitComplete: true to wait for the callback to complete, false to
 // return immediately.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_RunOnMainThread
-func RunOnMainThread(callback MainThreadCallback, wait_complete bool) error {
+func RunOnMainThread(callback MainThreadCallback, waitComplete bool) error {
 	h := cgo.NewHandle(callback)
-	ok := C.wrap_SDL_RunOnMainThread(C.uintptr_t(h), (C.bool)(wait_complete))
+	ok := C.wrap_SDL_RunOnMainThread(C.uintptr_t(h), (C.bool)(waitComplete))
 	if !ok {
 		h.Delete()
 		return getError()
@@ -293,15 +288,15 @@ func RunOnMainThread(callback MainThreadCallback, wait_complete bool) error {
 // mixers, etc). Any piece of metadata can be left as NULL, if a specific
 // detail doesn't make sense for the app.
 //
-// This function should be called as early as possible, before SDL_Init.
+// This function should be called as early as possible, before [Init].
 // Multiple calls to this function are allowed, but various state might not
 // change once it has been set up with a previous call to this function.
 //
-// Passing a NULL removes any previous metadata.
+// Passing a nil removes any previous metadata.
 //
 // This is a simplified interface for the most important information. You can
 // supply significantly more detailed metadata with
-// SDL_SetAppMetadataProperty().
+// [SetAppMetadataProperty].
 //
 // appname: The name of the application ("My Game 2: Bad Guy's
 // Revenge!").
@@ -312,8 +307,7 @@ func RunOnMainThread(callback MainThreadCallback, wait_complete bool) error {
 // appidentifier: A unique string in reverse-domain format that
 // identifies this app ("com.example.mygame2").
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread.
 //
@@ -337,50 +331,49 @@ func SetAppMetadata(appname string, appversion string, appidentifier string) err
 // mixers, etc). Any piece of metadata can be left out, if a specific detail
 // doesn't make sense for the app.
 //
-// This function should be called as early as possible, before SDL_Init.
+// This function should be called as early as possible, before [Init].
 // Multiple calls to this function are allowed, but various state might not
 // change once it has been set up with a previous call to this function.
 //
-// Once set, this metadata can be read using SDL_GetAppMetadataProperty().
+// Once set, this metadata can be read using [GetAppMetadataProperty].
 //
 // These are the supported properties:
 //
-// - `SDL_PROP_APP_METADATA_NAME_STRING`: The human-readable name of the
-// application, like "My Game 2: Bad Guy's Revenge!". This will show up
-// anywhere the OS shows the name of the application separately from window
-// titles, such as volume control applets, etc. This defaults to "SDL
-// Application".
-// - `SDL_PROP_APP_METADATA_VERSION_STRING`: The version of the app that is
-// running; there are no rules on format, so "1.0.3beta2" and "April 22nd,
-// 2024" and a git hash are all valid options. This has no default.
-// - `SDL_PROP_APP_METADATA_IDENTIFIER_STRING`: A unique string that
-// identifies this app. This must be in reverse-domain format, like
-// "com.example.mygame2". This string is used by desktop compositors to
-// identify and group windows together, as well as match applications with
-// associated desktop settings and icons. If you plan to package your
-// application in a container such as Flatpak, the app ID should match the
-// name of your Flatpak container as well. This has no default.
-// - `SDL_PROP_APP_METADATA_CREATOR_STRING`: The human-readable name of the
-// creator/developer/maker of this app, like "MojoWorkshop, LLC"
-// - `SDL_PROP_APP_METADATA_COPYRIGHT_STRING`: The human-readable copyright
-// notice, like "Copyright (c) 2024 MojoWorkshop, LLC" or whatnot. Keep this
-// to one line, don't paste a copy of a whole software license in here. This
-// has no default.
-// - `SDL_PROP_APP_METADATA_URL_STRING`: A URL to the app on the web. Maybe a
-// product page, or a storefront, or even a GitHub repository, for user's
-// further information This has no default.
-// - `SDL_PROP_APP_METADATA_TYPE_STRING`: The type of application this is.
-// Currently this string can be "game" for a video game, "mediaplayer" for a
-// media player, or generically "application" if nothing else applies.
-// Future versions of SDL might add new types. This defaults to
-// "application".
+//   - [PropAppMetadataNameString]: The human-readable name of the
+//     application, like "My Game 2: Bad Guy's Revenge!". This will show up
+//     anywhere the OS shows the name of the application separately from window
+//     titles, such as volume control applets, etc. This defaults to "SDL
+//     Application".
+//   - [PropAppMetadataVersionString]: The version of the app that is
+//     running; there are no rules on format, so "1.0.3beta2" and "April 22nd,
+//     2024" and a git hash are all valid options. This has no default.
+//   - [PropAppMetadataIdentifierString]: A unique string that
+//     identifies this app. This must be in reverse-domain format, like
+//     "com.example.mygame2". This string is used by desktop compositors to
+//     identify and group windows together, as well as match applications with
+//     associated desktop settings and icons. If you plan to package your
+//     application in a container such as Flatpak, the app ID should match the
+//     name of your Flatpak container as well. This has no default.
+//   - [PropAppMetadataCreatorString]: The human-readable name of the
+//     creator/developer/maker of this app, like "MojoWorkshop, LLC"
+//   - [PropAppMetadataCopyrightString]: The human-readable copyright
+//     notice, like "Copyright (c) 2024 MojoWorkshop, LLC" or whatnot. Keep this
+//     to one line, don't paste a copy of a whole software license in here. This
+//     has no default.
+//   - [PropAppMetadataUrlString]: A URL to the app on the web. Maybe a
+//     product page, or a storefront, or even a GitHub repository, for user's
+//     further information This has no default.
+//   - [PropAppMetadataTypeString]: The type of application this is.
+//     Currently this string can be "game" for a video game, "mediaplayer" for a
+//     media player, or generically "application" if nothing else applies.
+//     Future versions of SDL might add new types. This defaults to
+//     "application".
 //
 // name: the name of the metadata property to set.
 //
-// value: the value of the property, or NULL to remove that property.
+// value: the value of the property, or an empty string to remove that property.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread.
 //
@@ -404,18 +397,18 @@ const PropAppMetadataTypeString = "SDL.app.metadata.type"
 
 // Get metadata about your app.
 //
-// This returns metadata previously set using SDL_SetAppMetadata() or
-// SDL_SetAppMetadataProperty(). See SDL_SetAppMetadataProperty() for the list
+// This returns metadata previously set using [SetAppMetadata] or
+// [SetAppMetadataProperty]. See [SetAppMetadataProperty] for the list
 // of available properties and their meanings.
 //
 // name: the name of the metadata property to get.
 //
 // Returns the current value of the metadata property, or the default if it
-// is not set, NULL for properties with no default.
+// is not set, an empty string for properties with no default.
 //
 // It is safe to call this function from any thread, although
 // the string returned is not protected and could potentially be
-// freed if you call SDL_SetAppMetadataProperty() to set that
+// freed if you call [SetAppMetadataProperty] to set that
 // property from another thread.
 //
 // This function is available since SDL 3.2.0.

@@ -69,7 +69,7 @@ import "C"
 // access to various SIMD instruction sets, but also has other important info
 // to share, such as system RAM size and number of logical CPU cores.
 //
-// CPU instruction set checks, like SDL_HasSSE() and SDL_HasNEON(), are
+// CPU instruction set checks, like [HasSSE] and [HasNEON], are
 // available on all platforms, even if they don't make sense (an ARM processor
 // will never have SSE and an x86 processor will never have NEON, for example,
 // but these functions still exist and will simply return false in these
@@ -350,7 +350,7 @@ func GetSystemRAM() int {
 // example, if the machine supports SSE only, it will return 16, but if it
 // supports AVX-512F, it'll return 64 (etc). This only reports values for
 // instruction sets SDL knows about, so if your SDL build doesn't have
-// SDL_HasAVX512F(), then it might return 16 for the SSE support it sees and
+// [HasAVX512F], then it might return 16 for the SSE support it sees and
 // not 64 for the AVX-512 instructions that exist but SDL doesn't know about.
 // Plan accordingly.
 //

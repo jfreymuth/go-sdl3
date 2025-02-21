@@ -60,16 +60,16 @@ import "unsafe"
 //
 // This API lets apps read input from video sources, like webcams. Camera
 // devices can be enumerated, queried, and opened. Once opened, it will
-// provide SDL_Surface objects as new frames of video come in. These surfaces
-// can be uploaded to an SDL_Texture or processed as pixels in memory.
+// provide [Surface] objects as new frames of video come in. These surfaces
+// can be uploaded to a [Texture] or processed as pixels in memory.
 //
 // Several platforms will alert the user if an app tries to access a camera,
 // and some will present a UI asking the user if your application should be
 // allowed to obtain images at all, which they can deny. A successfully opened
 // camera will not provide images until permission is granted. Applications,
 // after opening a camera device, can see if they were granted access by
-// either polling with the SDL_GetCameraPermissionState() function, or waiting
-// for an SDL_EVENT_CAMERA_DEVICE_APPROVED or SDL_EVENT_CAMERA_DEVICE_DENIED
+// either polling with the [Camera.PermissionState] function, or waiting
+// for an [EventCameraDeviceApproved] or [EventCameraDeviceDenied]
 // event. Platforms that don't have any user approval process will report
 // approval immediately.
 //
@@ -181,10 +181,10 @@ func GetNumCameraDrivers() int {
 // meant to be proper names.
 //
 // index: the index of the camera driver; the value ranges from 0 to
-// SDL_GetNumCameraDrivers() - 1.
+// [GetNumCameraDrivers] - 1.
 //
-// Returns the name of the camera driver at the requested index, or NULL if
-// an invalid index was specified.
+// Returns the name of the camera driver at the requested index, or an empty
+// string if an invalid index was specified.
 //
 // It is safe to call this function from any thread.
 //
@@ -201,8 +201,8 @@ func GetCameraDriver(index int) string {
 // "coremedia" or "android". These never have Unicode characters, and are not
 // meant to be proper names.
 //
-// Returns the name of the current camera driver or NULL if no driver has
-// been initialized.
+// Returns the name of the current camera driver or an empty string if no driver
+// has been initialized.
 //
 // It is safe to call this function from any thread.
 //
@@ -215,12 +215,7 @@ func GetCurrentCameraDriver() string {
 
 // Get a list of currently connected camera devices.
 //
-// count: a pointer filled in with the number of cameras returned, may
-// be NULL.
-//
-// Returns a 0 terminated array of camera instance IDs or NULL on failure;
-// call SDL_GetError() for more information. This should be freed
-// with SDL_free() when it is no longer needed.
+// Returns a slice of camera instance IDs or an error.
 //
 // It is safe to call this function from any thread.
 //
@@ -248,7 +243,7 @@ func GetCameras() ([]CameraID, error) {
 // and sizes and so want to find the optimal spec that doesn't require
 // conversion.
 //
-// This function isn't strictly required; if you call SDL_OpenCamera with a
+// This function isn't strictly required; if you call [OpenCamera] with a
 // NULL spec, SDL will choose a native format for you, and if you instead
 // specify a desired format, it will transparently convert to the requested
 // format on your behalf.
@@ -264,13 +259,7 @@ func GetCameras() ([]CameraID, error) {
 //
 // devid: the camera device instance ID to query.
 //
-// count: a pointer filled in with the number of elements in the list,
-// may be NULL.
-//
-// Returns a NULL terminated array of pointers to SDL_CameraSpec or NULL on
-// failure; call SDL_GetError() for more information. This is a
-// single allocation that should be freed with SDL_free() when it is
-// no longer needed.
+// Returns a slice of pointers to [CameraSpec] or an error.
 //
 // It is safe to call this function from any thread.
 //
@@ -302,8 +291,7 @@ func (id CameraID) SupportedFormats() ([]*CameraSpec, error) {
 //
 // id: the camera device instance ID.
 //
-// Returns a human-readable device name or NULL on failure; call
-// SDL_GetError() for more information.
+// Returns a human-readable device name or an error.
 //
 // It is safe to call this function from any thread.
 //
@@ -320,10 +308,10 @@ func (id CameraID) Name() (string, error) {
 
 // Get the position of the camera in relation to the system.
 //
-// Most platforms will report UNKNOWN, but mobile devices, like phones, can
-// often make a distinction between cameras on the front of the device (that
-// points towards the user, for taking "selfies") and cameras on the back (for
-// filming in the direction the user is facing).
+// Most platforms will report [CameraPositionUnknown], but mobile devices, like
+// phones, can often make a distinction between cameras on the front of the
+// device (that points towards the user, for taking "selfies") and cameras on
+// the back (for filming in the direction the user is facing).
 //
 // id: the camera device instance ID.
 //
@@ -345,16 +333,16 @@ func (id CameraID) Position() CameraPosition {
 // format. This might incur overhead, including scaling of image data.
 //
 // If you would rather accept whatever format the device offers, you can pass
-// a NULL spec here and it will choose one for you (and you can use
-// SDL_Surface's conversion/scaling functions directly if necessary).
+// a nil spec here and it will choose one for you (and you can use
+// [Surface]'s conversion/scaling functions directly if necessary).
 //
-// You can call SDL_GetCameraFormat() to get the actual data format if passing
-// a NULL spec here. You can see the exact specs a device can support without
-// conversion with SDL_GetCameraSupportedFormats().
+// You can call [Camera.Format] to get the actual data format if passing
+// a nil spec here. You can see the exact specs a device can support without
+// conversion with [CameraID.SupportedFormats].
 //
 // SDL will not attempt to emulate framerate; it will try to set the hardware
 // to the rate closest to the requested speed, but it won't attempt to limit
-// or duplicate frames artificially; call SDL_GetCameraFormat() to see the
+// or duplicate frames artificially; call [Camera.Format] to see the
 // actual framerate of the opened the device, and check your timestamps if
 // this is crucial to your app!
 //
@@ -362,8 +350,8 @@ func (id CameraID) Position() CameraPosition {
 // platforms, the operating system will prompt the user to permit access to
 // the camera, and they can choose Yes or No at that point. Until they do, the
 // camera will not be usable. The app should either wait for an
-// SDL_EVENT_CAMERA_DEVICE_APPROVED (or SDL_EVENT_CAMERA_DEVICE_DENIED) event,
-// or poll SDL_GetCameraPermissionState() occasionally until it returns
+// [EventCameraDeviceApproved] (or [EventCameraDeviceDenied]) event,
+// or poll [Camera.PermissionState] occasionally until it returns
 // non-zero. On platforms that don't require explicit user approval (and
 // perhaps in places where the user previously permitted access), the approval
 // event might come immediately, but it might come seconds, minutes, or hours
@@ -372,10 +360,9 @@ func (id CameraID) Position() CameraPosition {
 // id: the camera device instance ID.
 //
 // spec: the desired format for data the device will provide. Can be
-// NULL.
+// nil.
 //
-// Returns an SDL_Camera object or NULL on failure; call SDL_GetError() for
-// more information.
+// Returns a [Camera] object or an error.
 //
 // It is safe to call this function from any thread.
 //
@@ -383,14 +370,18 @@ func (id CameraID) Position() CameraPosition {
 //
 // https://wiki.libsdl.org/SDL3/SDL_OpenCamera
 func OpenCamera(id CameraID, spec *CameraSpec) (*Camera, error) {
-	c := (*Camera)(C.SDL_OpenCamera((C.SDL_CameraID)(id), &C.SDL_CameraSpec{
-		C.SDL_PixelFormat(spec.Format),
-		C.SDL_Colorspace(spec.Colorspace),
-		C.int(spec.Width),
-		C.int(spec.Height),
-		C.int(spec.FramerateNumerator),
-		C.int(spec.FramerateDenominator),
-	}))
+	var cspec *C.SDL_CameraSpec
+	if spec != nil {
+		cspec = &C.SDL_CameraSpec{
+			C.SDL_PixelFormat(spec.Format),
+			C.SDL_Colorspace(spec.Colorspace),
+			C.int(spec.Width),
+			C.int(spec.Height),
+			C.int(spec.FramerateNumerator),
+			C.int(spec.FramerateDenominator),
+		}
+	}
+	c := (*Camera)(C.SDL_OpenCamera((C.SDL_CameraID)(id), cspec))
 	if c == nil {
 		return nil, getError()
 	}
@@ -409,12 +400,12 @@ func OpenCamera(id CameraID, spec *CameraSpec) (*Camera, error) {
 // for use, and -1 if the user denied access.
 //
 // Instead of polling with this function, you can wait for a
-// SDL_EVENT_CAMERA_DEVICE_APPROVED (or SDL_EVENT_CAMERA_DEVICE_DENIED) event
+// [EventCameraDeviceApproved] (or [EventCameraDeviceDenied]) event
 // in the standard SDL event loop, which is guaranteed to be sent once when
 // permission to use the camera is decided.
 //
 // If a camera is declined, there's nothing to be done but call
-// SDL_CloseCamera() to dispose of it.
+// [Camera.Close] to dispose of it.
 //
 // camera: the opened camera device to query.
 //
@@ -432,10 +423,9 @@ func (camera *Camera) PermissionState() int {
 
 // Get the instance ID of an opened camera.
 //
-// camera: an SDL_Camera to query.
+// camera: a [Camera] to query.
 //
-// Returns the instance ID of the specified camera on success or 0 on
-// failure; call SDL_GetError() for more information.
+// Returns the instance ID of the specified camera on success or an error.
 //
 // It is safe to call this function from any thread.
 //
@@ -452,10 +442,9 @@ func (camera *Camera) ID() (CameraID, error) {
 
 // Get the properties associated with an opened camera.
 //
-// camera: the SDL_Camera obtained from SDL_OpenCamera().
+// camera: the [Camera] obtained from [OpenCamera]().
 //
-// Returns a valid property ID on success or 0 on failure; call
-// SDL_GetError() for more information.
+// Returns a valid property ID or an error.
 //
 // It is safe to call this function from any thread.
 //
@@ -476,18 +465,15 @@ func (camera *Camera) Properties() (PropertiesID, error) {
 // be converting to this format behind the scenes.
 //
 // If the system is waiting for the user to approve access to the camera, as
-// some platforms require, this will return false, but this isn't necessarily
+// some platforms require, this will return an error, but this isn't necessarily
 // a fatal error; you should either wait for an
-// SDL_EVENT_CAMERA_DEVICE_APPROVED (or SDL_EVENT_CAMERA_DEVICE_DENIED) event,
-// or poll SDL_GetCameraPermissionState() occasionally until it returns
+// [EventCameraDeviceApproved] (or [EventCameraDeviceDenied]) event,
+// or poll [Camera.PermissionState] occasionally until it returns
 // non-zero.
 //
 // camera: opened camera device.
 //
-// spec: the SDL_CameraSpec to be initialized by this function.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns the [CameraSpec] or an error.
 //
 // It is safe to call this function from any thread.
 //
@@ -514,35 +500,34 @@ func (camera *Camera) Format() (*CameraSpec, error) {
 // The frame is a memory pointer to the image data, whose size and format are
 // given by the spec requested when opening the device.
 //
-// This is a non blocking API. If there is a frame available, a non-NULL
-// surface is returned, and timestampNS will be filled with a non-zero value.
+// This is a non blocking API. If there is a frame available, a non-nil
+// surface is returned, and a non-zero timestamp.
 //
-// Note that an error case can also return NULL, but a NULL by itself is
+// Note that an error case can also return nil, but a nil by itself is
 // normal and just signifies that a new frame is not yet available. Note that
 // even if a camera device fails outright (a USB camera is unplugged while in
 // use, etc), SDL will send an event separately to notify the app, but
 // continue to provide blank frames at ongoing intervals until
-// SDL_CloseCamera() is called, so real failure here is almost always an out
+// [Camera.Close] is called, so real failure here is almost always an out
 // of memory condition.
 //
-// After use, the frame should be released with SDL_ReleaseCameraFrame(). If
+// After use, the frame should be released with [Camera.ReleaseFrame]. If
 // you don't do this, the system may stop providing more video!
 //
-// Do not call SDL_DestroySurface() on the returned surface! It must be given
-// back to the camera subsystem with SDL_ReleaseCameraFrame!
+// Do not call [Surface.Destroy] on the returned surface! It must be given
+// back to the camera subsystem with [Camera.ReleaseFrame]!
 //
 // If the system is waiting for the user to approve access to the camera, as
-// some platforms require, this will return NULL (no frames available); you
-// should either wait for an SDL_EVENT_CAMERA_DEVICE_APPROVED (or
-// SDL_EVENT_CAMERA_DEVICE_DENIED) event, or poll
-// SDL_GetCameraPermissionState() occasionally until it returns non-zero.
+// some platforms require, this will return nil (no frames available); you
+// should either wait for an [EventCameraDeviceApproved] (or
+// [EventCameraDeviceDenied]) event, or poll
+// [Camera.PermissionState] occasionally until it returns non-zero.
 //
 // camera: opened camera device.
 //
-// timestampNS: a pointer filled in with the frame's timestamp, or 0 on
-// error. Can be NULL.
+// timestampNS: the frame's timestamp, or 0 on error.
 //
-// Returns a new frame of video on success, NULL if none is currently
+// Returns a new frame of video on success, nil if none is currently
 // available.
 //
 // It is safe to call this function from any thread.
@@ -552,6 +537,9 @@ func (camera *Camera) Format() (*CameraSpec, error) {
 // https://wiki.libsdl.org/SDL3/SDL_AcquireCameraFrame
 func (camera *Camera) AcquireFrame() (frame *Surface, timestampNS uint64) {
 	s := C.SDL_AcquireCameraFrame((*C.SDL_Camera)(camera), (*C.Uint64)(&timestampNS))
+	if s == nil {
+		return nil, timestampNS
+	}
 	return &Surface{s, nil}, timestampNS
 }
 
@@ -560,7 +548,7 @@ func (camera *Camera) AcquireFrame() (frame *Surface, timestampNS uint64) {
 // Let the back-end re-use the internal buffer for camera.
 //
 // This function _must_ be called only on surface objects returned by
-// SDL_AcquireCameraFrame(). This function should be called as quickly as
+// [Camera.AcquireFrame]. This function should be called as quickly as
 // possible after acquisition, as SDL keeps a small FIFO queue of surfaces for
 // video frames; if surfaces aren't released in a timely manner, SDL may drop
 // upcoming video frames from the camera.

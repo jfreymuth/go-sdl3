@@ -73,27 +73,21 @@ type DialogFileFilter struct {
 //
 // The specific usage is described in each function.
 //
-// If `filelist` is:
+// The meaning of the arguments depends on which are nil:
 //
-// - NULL, an error occurred. Details can be obtained with SDL_GetError().
-// - A pointer to NULL, the user either didn't choose any file or canceled the
-// dialog.
-// - A pointer to non-`NULL`, the user chose one or more files. The argument
-// is a null-terminated list of pointers to C strings, each containing a
-// path.
-//
-// The filelist argument should not be freed; it will automatically be freed
-// when the callback returns.
+//   - err != nil: an error occurred.
+//   - err == nil && filelist == nil: the user either didn't choose any file or
+//     canceled the dialog.
+//   - err == nil && filelist != nil: the user chose one or more files. filelist
+//     contains the selected paths.
 //
 // The filter argument is the index of the filter that was selected, or -1 if
 // no filter was selected or if the platform or method doesn't support
 // fetching the selected filter.
 //
 // In Android, the `filelist` are `content://` URIs. They should be opened
-// using SDL_IOFromFile() with appropriate modes. This applies both to open
+// using [IOFromFile] with appropriate modes. This applies both to open
 // and save file dialog.
-//
-// userdata: an app-provided pointer, for the callback's use.
 //
 // filelist: the file(s) chosen by the user.
 //
@@ -127,8 +121,7 @@ func cb_DialogFileCallback(userdata uintptr, filelist **C.char, filter C.int) {
 // result will be passed to the callback.
 //
 // The callback will be invoked with a null-terminated list of files the user
-// chose. The list will be empty if the user canceled the dialog, and it will
-// be NULL if an error occurred.
+// chose. The list will be empty if the user canceled the dialog.
 //
 // Note that the callback may be called from a different thread than the one
 // the function was invoked on.
@@ -138,29 +131,23 @@ func cb_DialogFileCallback(userdata uintptr, filelist **C.char, filter C.int) {
 //
 // On Linux, dialogs may require XDG Portals, which requires DBus, which
 // requires an event-handling loop. Apps that do not use SDL to handle events
-// should add a call to SDL_PumpEvents in their main loop.
+// should add a call to [PumpEvents] in their main loop.
 //
 // callback: a function pointer to be invoked when the user selects a
 // file and accepts, or cancels the dialog, or an error
 // occurs.
 //
-// userdata: an optional pointer to pass extra data to the callback when
-// it will be invoked.
-//
-// window: the window that the dialog should be modal for, may be NULL.
+// window: the window that the dialog should be modal for, may be nil.
 // Not all platforms support this option.
 //
-// filters: a list of filters, may be NULL. Not all platforms support
+// filters: a list of filters, may be nil. Not all platforms support
 // this option, and platforms that do support it may allow the
-// user to ignore the filters. If non-NULL, it must remain
-// valid at least until the callback is invoked.
+// user to ignore the filters.
 //
-// nfilters: the number of filters. Ignored if filters is NULL.
+// defaultLocation: the default folder or file to start the dialog at,
+// may be empty. Not all platforms support this option.
 //
-// default_location: the default folder or file to start the dialog at,
-// may be NULL. Not all platforms support this option.
-//
-// allow_many: if non-zero, the user will be allowed to select multiple
+// allowMany: if true, the user will be allowed to select multiple
 // entries. Not all platforms support this option.
 //
 // This function should be called only from the main thread. The
@@ -190,8 +177,7 @@ func ShowOpenFileDialog(callback DialogFileCallback, window *Window, filters []D
 // result will be passed to the callback.
 //
 // The callback will be invoked with a null-terminated list of files the user
-// chose. The list will be empty if the user canceled the dialog, and it will
-// be NULL if an error occurred.
+// chose. The list will be empty if the user canceled the dialog.
 //
 // Note that the callback may be called from a different thread than the one
 // the function was invoked on.
@@ -200,27 +186,21 @@ func ShowOpenFileDialog(callback DialogFileCallback, window *Window, filters []D
 //
 // On Linux, dialogs may require XDG Portals, which requires DBus, which
 // requires an event-handling loop. Apps that do not use SDL to handle events
-// should add a call to SDL_PumpEvents in their main loop.
+// should add a call to [PumpEvents] in their main loop.
 //
 // callback: a function pointer to be invoked when the user selects a
 // file and accepts, or cancels the dialog, or an error
 // occurs.
 //
-// userdata: an optional pointer to pass extra data to the callback when
-// it will be invoked.
-//
-// window: the window that the dialog should be modal for, may be NULL.
+// window: the window that the dialog should be modal for, may be nil.
 // Not all platforms support this option.
 //
-// filters: a list of filters, may be NULL. Not all platforms support
+// filters: a list of filters, may be nil. Not all platforms support
 // this option, and platforms that do support it may allow the
-// user to ignore the filters. If non-NULL, it must remain
-// valid at least until the callback is invoked.
+// user to ignore the filters.
 //
-// nfilters: the number of filters. Ignored if filters is NULL.
-//
-// default_location: the default folder or file to start the dialog at,
-// may be NULL. Not all platforms support this option.
+// defaultLocation: the default folder or file to start the dialog at,
+// may be empty. Not all platforms support this option.
 //
 // This function should be called only from the main thread. The
 // callback may be invoked from the same thread or from a
@@ -248,8 +228,7 @@ func ShowSaveFileDialog(callback DialogFileCallback, window *Window, filters []D
 // result will be passed to the callback.
 //
 // The callback will be invoked with a null-terminated list of files the user
-// chose. The list will be empty if the user canceled the dialog, and it will
-// be NULL if an error occurred.
+// chose. The list will be empty if the user canceled the dialog.
 //
 // Note that the callback may be called from a different thread than the one
 // the function was invoked on.
@@ -259,22 +238,19 @@ func ShowSaveFileDialog(callback DialogFileCallback, window *Window, filters []D
 //
 // On Linux, dialogs may require XDG Portals, which requires DBus, which
 // requires an event-handling loop. Apps that do not use SDL to handle events
-// should add a call to SDL_PumpEvents in their main loop.
+// should add a call to [PumpEvents] in their main loop.
 //
 // callback: a function pointer to be invoked when the user selects a
 // file and accepts, or cancels the dialog, or an error
 // occurs.
 //
-// userdata: an optional pointer to pass extra data to the callback when
-// it will be invoked.
-//
-// window: the window that the dialog should be modal for, may be NULL.
+// window: the window that the dialog should be modal for, may be nil.
 // Not all platforms support this option.
 //
-// default_location: the default folder or file to start the dialog at,
-// may be NULL. Not all platforms support this option.
+// defaultLocation: the default folder or file to start the dialog at,
+// may be empty. Not all platforms support this option.
 //
-// allow_many: if non-zero, the user will be allowed to select multiple
+// allow_many: if true, the user will be allowed to select multiple
 // entries. Not all platforms support this option.
 //
 // This function should be called only from the main thread. The
@@ -290,7 +266,7 @@ func ShowOpenFolderDialog(callback DialogFileCallback, window *Window, defaultLo
 
 // Various types of file dialogs.
 //
-// This is used by SDL_ShowFileDialogWithProperties() to decide what kind of
+// This is used by [ShowFileDialogWithProperties] to decide what kind of
 // dialog to present to the user.
 //
 // This enum is available since SDL 3.2.0.
@@ -308,24 +284,24 @@ const (
 //
 // These are the supported properties:
 //
-// - `SDL_PROP_FILE_DIALOG_FILTERS_POINTER`: a pointer to a list of
-// SDL_DialogFileFilter structs, which will be used as filters for
-// file-based selections. Ignored if the dialog is an "Open Folder" dialog.
-// If non-NULL, the array of filters must remain valid at least until the
-// callback is invoked.
-// - `SDL_PROP_FILE_DIALOG_NFILTERS_NUMBER`: the number of filters in the
-// array of filters, if it exists.
-// - `SDL_PROP_FILE_DIALOG_WINDOW_POINTER`: the window that the dialog should
-// be modal for.
-// - `SDL_PROP_FILE_DIALOG_LOCATION_STRING`: the default folder or file to
-// start the dialog at.
-// - `SDL_PROP_FILE_DIALOG_MANY_BOOLEAN`: true to allow the user to select
-// more than one entry.
-// - `SDL_PROP_FILE_DIALOG_TITLE_STRING`: the title for the dialog.
-// - `SDL_PROP_FILE_DIALOG_ACCEPT_STRING`: the label that the accept button
-// should have.
-// - `SDL_PROP_FILE_DIALOG_CANCEL_STRING`: the label that the cancel button
-// should have.
+//   - [PropFileDialogFiltersPointer]: a pointer to a list of
+//     [DialogFileFilter] structs, which will be used as filters for
+//     file-based selections. Ignored if the dialog is an "Open Folder" dialog.
+//     If non-NULL, the array of filters must remain valid at least until the
+//     callback is invoked.
+//   - [PropFileDialogNfiltersNumber]: the number of filters in the
+//     array of filters, if it exists.
+//   - [PropFileDialogWindowPointer]: the window that the dialog should
+//     be modal for.
+//   - [PropFileDialogLocationString]: the default folder or file to
+//     start the dialog at.
+//   - [PropFileDialogManyBoolean]: true to allow the user to select
+//     more than one entry.
+//   - [PropFileDialogTitleString]: the title for the dialog.
+//   - [PropFileDialogAcceptString]: the label that the accept button
+//     should have.
+//   - [PropFileDialogCancelString]: the label that the cancel button
+//     should have.
 //
 // Note that each platform may or may not support any of the properties.
 //
@@ -334,9 +310,6 @@ const (
 // callback: a function pointer to be invoked when the user selects a
 // file and accepts, or cancels the dialog, or an error
 // occurs.
-//
-// userdata: an optional pointer to pass extra data to the callback when
-// it will be invoked.
 //
 // props: the properties to use.
 //

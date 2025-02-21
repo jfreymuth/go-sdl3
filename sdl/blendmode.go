@@ -37,7 +37,7 @@ import "C"
 //
 // These predefined blend modes are supported everywhere.
 //
-// Additional values may be obtained from SDL_ComposeCustomBlendMode.
+// Additional values may be obtained from [ComposeCustomBlendMode].
 //
 // This datatype is available since SDL 3.2.0.
 //
@@ -98,8 +98,8 @@ const (
 
 // Compose a custom blend mode for renderers.
 //
-// The functions SDL_SetRenderDrawBlendMode and SDL_SetTextureBlendMode accept
-// the SDL_BlendMode returned by this function if the renderer supports it.
+// The functions [Renderer.SetDrawBlendMode] and [Texture.SetBlendMode] accept
+// the [BlendMode] returned by this function if the renderer supports it.
 //
 // A blend mode controls how the pixels from a drawing operation (source) get
 // combined with the pixels from the render target (destination). First, the
@@ -122,59 +122,59 @@ const (
 // - `max(src, dst)`
 //
 // The red, green, and blue components are always multiplied with the first,
-// second, and third components of the SDL_BlendFactor, respectively. The
+// second, and third components of the [BlendFactor], respectively. The
 // fourth component is not used.
 //
 // The alpha component is always multiplied with the fourth component of the
-// SDL_BlendFactor. The other components are not used in the alpha
+// [BlendFactor]. The other components are not used in the alpha
 // calculation.
 //
 // Support for these blend modes varies for each renderer. To check if a
-// specific SDL_BlendMode is supported, create a renderer and pass it to
-// either SDL_SetRenderDrawBlendMode or SDL_SetTextureBlendMode. They will
+// specific [BlendMode] is supported, create a renderer and pass it to
+// either [Renderer.SetDrawBlendMode] or [Texture.SetBlendMode]. They will
 // return with an error if the blend mode is not supported.
 //
 // This list describes the support of custom blend modes for each renderer.
-// All renderers support the four blend modes listed in the SDL_BlendMode
+// All renderers support the four blend modes listed in the [BlendMode]
 // enumeration.
 //
 // - **direct3d**: Supports all operations with all factors. However, some
-// factors produce unexpected results with `SDL_BLENDOPERATION_MINIMUM` and
-// `SDL_BLENDOPERATION_MAXIMUM`.
+// factors produce unexpected results with [BlendoperationMinimum] and
+// [BlendoperationMaximum].
 // - **direct3d11**: Same as Direct3D 9.
-// - **opengl**: Supports the `SDL_BLENDOPERATION_ADD` operation with all
+// - **opengl**: Supports the [BlendmodeAdd] operation with all
 // factors. OpenGL versions 1.1, 1.2, and 1.3 do not work correctly here.
-// - **opengles2**: Supports the `SDL_BLENDOPERATION_ADD`,
-// `SDL_BLENDOPERATION_SUBTRACT`, `SDL_BLENDOPERATION_REV_SUBTRACT`
+// - **opengles2**: Supports the [BlendmodeAdd],
+// [BlendoperationSubtract], [BlendoperationRevSubtract]
 // operations with all factors.
 // - **psp**: No custom blend mode support.
 // - **software**: No custom blend mode support.
 //
 // Some renderers do not provide an alpha component for the default render
-// target. The `SDL_BLENDFACTOR_DST_ALPHA` and
-// `SDL_BLENDFACTOR_ONE_MINUS_DST_ALPHA` factors do not have an effect in this
+// target. The [BlendfactorDstAlpha] and
+// [BlendfactorOneMinusDstAlpha] factors do not have an effect in this
 // case.
 //
-// srcColorFactor: the SDL_BlendFactor applied to the red, green, and
+// srcColorFactor: the [BlendFactor] applied to the red, green, and
 // blue components of the source pixels.
 //
-// dstColorFactor: the SDL_BlendFactor applied to the red, green, and
+// dstColorFactor: the [BlendFactor] applied to the red, green, and
 // blue components of the destination pixels.
 //
-// colorOperation: the SDL_BlendOperation used to combine the red,
+// colorOperation: the [BlendOperation] used to combine the red,
 // green, and blue components of the source and
 // destination pixels.
 //
-// srcAlphaFactor: the SDL_BlendFactor applied to the alpha component of
+// srcAlphaFactor: the [BlendFactor] applied to the alpha component of
 // the source pixels.
 //
-// dstAlphaFactor: the SDL_BlendFactor applied to the alpha component of
+// dstAlphaFactor: the [BlendFactor] applied to the alpha component of
 // the destination pixels.
 //
-// alphaOperation: the SDL_BlendOperation used to combine the alpha
+// alphaOperation: the [BlendOperation] used to combine the alpha
 // component of the source and destination pixels.
 //
-// Returns an SDL_BlendMode that represents the chosen factors and
+// Returns an [BlendMode] that represents the chosen factors and
 // operations.
 //
 // It is safe to call this function from any thread.

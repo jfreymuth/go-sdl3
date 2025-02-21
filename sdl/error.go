@@ -29,6 +29,9 @@ package sdl
 // #cgo noescape SDL_ClearError
 // #cgo nocallback SDL_ClearError
 // #include <SDL3/SDL.h>
+// void wrap_SDL_SetError(_GoString_ msg) {
+//     SDL_SetError("%.*s", _GoStringLen(msg), _GoStringPtr(msg));
+// }
 import "C"
 
 // # CategoryError
@@ -37,23 +40,21 @@ import "C"
 //
 // Most apps will interface with these APIs in exactly one function: when
 // almost any SDL function call reports failure, you can get a human-readable
-// string of the problem from SDL_GetError().
+// string of the problem from [GetError].
 //
 // These strings are maintained per-thread, and apps are welcome to set their
 // own errors, which is popular when building libraries on top of SDL for
-// other apps to consume. These strings are set by calling SDL_SetError().
+// other apps to consume. These strings are set by calling [SetError].
 //
 // A common usage pattern is to have a function that returns true for success
 // and false for failure, and do this when something fails:
 //
-// ```c
-// if (something_went_wrong) {
-// return SDL_SetError("The thing broke in this specific way: %d", errcode);
-// }
-// ```
+//   if (something_went_wrong) {
+//   return SDL_SetError("The thing broke in this specific way: %d", errcode);
+//   }
 //
 // It's also common to just return `false` in this case if the failing thing
-// is known to call SDL_SetError(), so errors simply propagate through.
+// is known to call [SetError], so errors simply propagate through.
 
 // Set an error indicating that memory allocation failed.
 //
@@ -73,13 +74,17 @@ func OutOfMemory() bool {
 // Retrieve a message about the last error that occurred on the current
 // thread.
 //
-// It is possible for multiple errors to occur before calling SDL_GetError().
+// Functions in this package that return an error will call [GetError] on
+// failure, and also call [ClearError], meaning this function will usually only
+// return an error if SDL sets the error string after a successful operation.
+//
+// It is possible for multiple errors to occur before calling [GetError].
 // Only the last error is returned.
 //
 // The message is only applicable when an SDL function has signaled an error.
 // You must check the return values of SDL function calls to determine when to
-// appropriately call SDL_GetError(). You should *not* use the results of
-// SDL_GetError() to decide if an error has occurred! Sometimes SDL will set
+// appropriately call [GetError]. You should *not* use the results of
+// [GetError] to decide if an error has occurred! Sometimes SDL will set
 // an error string even when reporting success.
 //
 // SDL will *not* clear the error string for successful API calls. You *must*
@@ -95,7 +100,7 @@ func OutOfMemory() bool {
 //
 // Returns a message with information about the specific error that occurred,
 // or an empty string if there hasn't been an error message set since
-// the last call to SDL_ClearError().
+// the last call to [ClearError].
 //
 // It is safe to call this function from any thread.
 //
@@ -141,4 +146,27 @@ func (err sdlError) Error() string {
 // https://wiki.libsdl.org/SDL3/SDL_ClearError
 func ClearError() bool {
 	return (bool)(C.SDL_ClearError())
+}
+
+// Set the SDL error message for the current thread.
+//
+// Calling this function will replace any previous error message that was set.
+//
+// This function always returns false, since SDL frequently uses false to
+// signify a failing result, leading to this idiom:
+//
+//	if (error_code) {
+//	    return SDL_SetError("This operation has failed: %d", error_code);
+//	}
+//
+// message: the error message
+//
+// Returns false.
+//
+// It is safe to call this function from any thread.
+//
+// This function is available since SDL 3.2.0.
+func SetError(message string) bool {
+	C.wrap_SDL_SetError(message)
+	return false
 }

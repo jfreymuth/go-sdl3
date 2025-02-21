@@ -104,8 +104,7 @@ import (
 //
 // text: the text to store in the clipboard.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -124,9 +123,7 @@ func SetClipboardText(text string) error {
 // This functions returns an empty string if there was not enough memory left
 // for a copy of the clipboard's content.
 //
-// Returns the clipboard text on success or an empty string on failure; call
-// SDL_GetError() for more information. This should be freed with
-// SDL_free() when it is no longer needed.
+// Returns the clipboard text or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -135,11 +132,11 @@ func SetClipboardText(text string) error {
 // https://wiki.libsdl.org/SDL3/SDL_GetClipboardText
 func GetClipboardText() (string, error) {
 	ctext := C.SDL_GetClipboardText()
-	text := C.GoString(ctext)
-	C.SDL_free(unsafe.Pointer(ctext))
-	if text == "" {
+	if ctext == nil {
 		return "", getError()
 	}
+	text := C.GoString(ctext)
+	C.SDL_free(unsafe.Pointer(ctext))
 	return text, nil
 }
 
@@ -160,8 +157,7 @@ func HasClipboardText() bool {
 //
 // text: the text to store in the primary selection.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -180,9 +176,7 @@ func SetPrimarySelectionText(text string) error {
 // This functions returns an empty string if there was not enough memory left
 // for a copy of the primary selection's content.
 //
-// Returns the primary selection text on success or an empty string on
-// failure; call SDL_GetError() for more information. This should be
-// freed with SDL_free() when it is no longer needed.
+// Returns the primary selection text or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -191,11 +185,11 @@ func SetPrimarySelectionText(text string) error {
 // https://wiki.libsdl.org/SDL3/SDL_GetPrimarySelectionText
 func GetPrimarySelectionText() (string, error) {
 	ctext := C.SDL_GetPrimarySelectionText()
-	text := C.GoString(ctext)
-	C.SDL_free(unsafe.Pointer(ctext))
-	if text == "" {
+	if ctext == nil {
 		return "", getError()
 	}
+	text := C.GoString(ctext)
+	C.SDL_free(unsafe.Pointer(ctext))
 	return text, nil
 }
 
@@ -216,22 +210,15 @@ func HasPrimarySelectionText() bool {
 // Callback function that will be called when data for the specified mime-type
 // is requested by the OS.
 //
-// The callback function is called with NULL as the mime_type when the
-// clipboard is cleared or new data is set. The clipboard is automatically
-// cleared in SDL_Quit().
+// The callback function is called with an empty string as the mime_type when
+// the clipboard is cleared or new data is set. The clipboard is automatically
+// cleared in [Quit].
 //
 // userdata: a pointer to provided user data.
 //
-// mime_type: the requested mime-type.
+// mimeType: the requested mime-type.
 //
-// size: a pointer filled in with the length of the returned data.
-//
-// Returns a pointer to the data for the provided mime-type. Returning NULL
-// or setting length to 0 will cause no data to be sent to the
-// "receiver". It is up to the receiver to handle this. Essentially
-// returning no data is more or less undefined behavior and may cause
-// breakage in receiving applications. The returned data will not be
-// freed so it needs to be retained and dealt with internally.
+// Returns the data for the provided mime-type.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -264,24 +251,12 @@ func cb_ClipboardCleanupCallback(userdata uintptr) {
 // data the callback function will be called, allowing it to generate and
 // respond with the data for the requested mime-type.
 //
-// The size of text data does not include any terminator, and the text does
-// not need to be null terminated (e.g. you can directly copy a portion of a
-// document).
-//
 // callback: a function pointer to the function that provides the
 // clipboard data.
 //
-// cleanup: a function pointer to the function that cleans up the
-// clipboard data.
+// mimeTypes: a list of mime-types that are being offered.
 //
-// userdata: an opaque pointer that will be forwarded to the callbacks.
-//
-// mime_types: a list of mime-types that are being offered.
-//
-// num_mime_types: the number of mime-types in the mime_types list.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -307,8 +282,7 @@ func SetClipboardData(callback ClipboardDataCallback, mimeTypes []string) error 
 
 // Clear the clipboard data.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -324,16 +298,9 @@ func ClearClipboardData() error {
 
 // Get the data from clipboard for a given mime type.
 //
-// The size of text data does not include the terminator, but the text is
-// guaranteed to be null terminated.
+// mimeType: the mime type to read from the clipboard.
 //
-// mime_type: the mime type to read from the clipboard.
-//
-// size: a pointer filled in with the length of the returned data.
-//
-// Returns the retrieved data buffer or NULL on failure; call SDL_GetError()
-// for more information. This should be freed with SDL_free() when it
-// is no longer needed.
+// Returns the retrieved data or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -353,7 +320,7 @@ func GetClipboardData(mimeType string) (string, error) {
 
 // Query whether there is data in the clipboard for the provided mime type.
 //
-// mime_type: the mime type to check for data for.
+// mimeType: the mime type to check for data for.
 //
 // Returns true if there exists data in clipboard for the provided mime type,
 // false if it does not.
@@ -369,12 +336,7 @@ func HasClipboardData(mimeType string) bool {
 
 // Retrieve the list of mime types available in the clipboard.
 //
-// num_mime_types: a pointer filled with the number of mime types, may
-// be NULL.
-//
-// Returns a null terminated array of strings with mime types, or NULL on
-// failure; call SDL_GetError() for more information. This should be
-// freed with SDL_free() when it is no longer needed.
+// Returns a slice of strings with mime types, or an error.
 //
 // This function should only be called on the main thread.
 //
