@@ -271,7 +271,7 @@ const (
 // This enum is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GamepadButton
-type GamepadButton uint32
+type GamepadButton byte
 
 const (
 	GamepadButtonSouth GamepadButton = iota // Bottom face button (e.g. Xbox A button)
@@ -342,7 +342,7 @@ const (
 // This enum is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GamepadAxis
-type GamepadAxis uint32
+type GamepadAxis byte
 
 const (
 	GamepadAxisLeftX GamepadAxis = iota

@@ -782,7 +782,7 @@ func (joystick *Joystick) SetVirtualButton(button int, down bool) error {
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_SetJoystickVirtualHat
-func (joystick *Joystick) SetVirtualHat(hat int, value byte) error {
+func (joystick *Joystick) SetVirtualHat(hat int, value JoystickHatState) error {
 	if !C.SDL_SetJoystickVirtualHat((*C.SDL_Joystick)(joystick), (C.int)(hat), (C.Uint8)(value)) {
 		return getError()
 	}
@@ -1348,20 +1348,22 @@ func (joystick *Joystick) Ball(ball int) (dx, dy int, err error) {
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetJoystickHat
-func (joystick *Joystick) Hat(hat int) byte {
-	return (byte)(C.SDL_GetJoystickHat((*C.SDL_Joystick)(joystick), (C.int)(hat)))
+func (joystick *Joystick) Hat(hat int) JoystickHatState {
+	return (JoystickHatState)(C.SDL_GetJoystickHat((*C.SDL_Joystick)(joystick), (C.int)(hat)))
 }
 
+type JoystickHatState byte
+
 const (
-	HatCentered  = 0x00
-	HatUp        = 0x01
-	HatRight     = 0x02
-	HatDown      = 0x04
-	HatLeft      = 0x08
-	HatRightUp   = HatRight | HatUp
-	HatRightDown = HatRight | HatDown
-	HatLeftUp    = HatLeft | HatUp
-	HatLeftDown  = HatLeft | HatDown
+	HatCentered  JoystickHatState = 0x00
+	HatUp        JoystickHatState = 0x01
+	HatRight     JoystickHatState = 0x02
+	HatDown      JoystickHatState = 0x04
+	HatLeft      JoystickHatState = 0x08
+	HatRightUp   JoystickHatState = HatRight | HatUp
+	HatRightDown JoystickHatState = HatRight | HatDown
+	HatLeftUp    JoystickHatState = HatLeft | HatUp
+	HatLeftDown  JoystickHatState = HatLeft | HatDown
 )
 
 // Get the current state of a button on a joystick.
