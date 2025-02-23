@@ -115,12 +115,7 @@ func HasKeyboard() bool {
 // power buttons, etc. You should wait for input from a device before you
 // consider it actively in use.
 //
-// count: a pointer filled in with the number of keyboards returned, may
-// be NULL.
-//
-// Returns a 0 terminated array of keyboards instance IDs or NULL on failure;
-// call SDL_GetError() for more information. This should be freed
-// with SDL_free() when it is no longer needed.
+// Returns a slice of keyboards instance IDs or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -147,8 +142,7 @@ func GetKeyboards() ([]KeyboardID, error) {
 //
 // id: the keyboard instance ID.
 //
-// Returns the name of the selected keyboard or NULL on failure; call
-// SDL_GetError() for more information.
+// Returns the name of the selected keyboard or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -184,21 +178,19 @@ func GetKeyboardFocus() *Window {
 //
 // A array element with a value of true means that the key is pressed and a
 // value of false means that it is not. Indexes into this array are obtained
-// by using SDL_Scancode values.
+// by using [Scancode] values.
 //
-// Use SDL_PumpEvents() to update the state array.
+// Use [PumpEvents] to update the state array.
 //
 // This function gives you the current state after all events have been
 // processed, so if a key or button has been pressed and released before you
 // process events, then the pressed state will never show up in the
-// SDL_GetKeyboardState() calls.
+// [GetKeyboardState] calls.
 //
 // Note: This function doesn't take into account whether shift has been
 // pressed or not.
 //
-// numkeys: if non-NULL, receives the length of the returned array.
-//
-// Returns a pointer to an array of key states.
+// Returns an array of key states.
 //
 // It is safe to call this function from any thread.
 //
@@ -227,7 +219,7 @@ func ResetKeyboard() {
 // Get the current key modifier state for the keyboard.
 //
 // Returns an OR'd combination of the modifier keys for the keyboard. See
-// SDL_Keymod for details.
+// [Keymod] for details.
 //
 // It is safe to call this function from any thread.
 //
@@ -240,15 +232,15 @@ func GetModState() Keymod {
 
 // Set the current key modifier state for the keyboard.
 //
-// The inverse of SDL_GetModState(), SDL_SetModState() allows you to impose
+// The inverse of [GetModState], [SetModState] allows you to impose
 // modifier key states on your application. Simply pass your desired modifier
-// states into `modstate`. This value may be a bitwise, OR'd combination of
-// SDL_Keymod values.
+// states into modstate. This value may be a bitwise, OR'd combination of
+// [Keymod] values.
 //
 // This does not change the keyboard state, only the key modifier flags that
 // SDL reports.
 //
-// modstate: the desired SDL_Keymod for the keyboard.
+// modstate: the desired [Keymod] for the keyboard.
 //
 // It is safe to call this function from any thread.
 //
@@ -263,18 +255,18 @@ func SetModState(modstate Keymod) {
 // current keyboard layout.
 //
 // If you want to get the keycode as it would be delivered in key events,
-// including options specified in SDL_HINT_KEYCODE_OPTIONS, then you should
-// pass `key_event` as true. Otherwise this function simply translates the
+// including options specified in [HintKeycodeOptions], then you should
+// pass keyEvent as true. Otherwise this function simply translates the
 // scancode based on the given modifier state.
 //
-// scancode: the desired SDL_Scancode to query.
+// scancode: the desired [Scancode] to query.
 //
 // modstate: the modifier state to use when translating the scancode to
 // a keycode.
 //
-// key_event: true if the keycode will be used in key events.
+// keyEvent: true if the keycode will be used in key events.
 //
-// Returns the SDL_Keycode that corresponds to the given SDL_Scancode.
+// Returns the [Keycode] that corresponds to the given [Scancode].
 //
 // This function is not thread safe.
 //
@@ -291,12 +283,10 @@ func GetKeyFromScancode(scancode Scancode, modstate Keymod, keyEvent bool) Keyco
 // Note that there may be multiple scancode+modifier states that can generate
 // this keycode, this will just return the first one found.
 //
-// key: the desired SDL_Keycode to query.
+// key: the desired [Keycode] to query.
 //
-// modstate: a pointer to the modifier state that would be used when the
-// scancode generates this key, may be NULL.
-//
-// Returns the SDL_Scancode that corresponds to the given SDL_Keycode.
+// Returns the [Scancode] and modifier state that corresponds to the given
+// [Keycode].
 //
 // This function is not thread safe.
 //
@@ -310,14 +300,13 @@ func GetScancodeFromKey(key Keycode) (Scancode, Keymod) {
 
 // Set a human-readable name for a scancode.
 //
-// scancode: the desired SDL_Scancode.
+// scancode: the desired [Scancode].
 //
 // name: the name to use for the scancode, encoded as UTF-8. The string
 // is not copied, so the pointer given to this function must stay
 // valid while SDL is being used.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is not thread safe.
 //
@@ -334,15 +323,15 @@ func SetScancodeName(scancode Scancode, name string) error {
 // Get a human-readable name for a scancode.
 //
 // **Warning**: The returned name is by design not stable across platforms,
-// e.g. the name for `SDL_SCANCODE_LGUI` is "Left GUI" under Linux but "Left
+// e.g. the name for [ScancodeLeftGui] is "Left GUI" under Linux but "Left
 // Windows" under Microsoft Windows, and some scancodes like
-// `SDL_SCANCODE_NONUSBACKSLASH` don't have any name at all. There are even
-// scancodes that share names, e.g. `SDL_SCANCODE_RETURN` and
-// `SDL_SCANCODE_RETURN2` (both called "Return"). This function is therefore
+// [ScancodeNonUSBackslash] don't have any name at all. There are even
+// scancodes that share names, e.g. [ScancodeReturn] and
+// [ScancodeReturn2] (both called "Return"). This function is therefore
 // unsuitable for creating a stable cross-platform two-way mapping between
 // strings and scancodes.
 //
-// scancode: the desired SDL_Scancode to query.
+// scancode: the desired [Scancode] to query.
 //
 // Returns a pointer to the name for the scancode. If the scancode doesn't
 // have a name this function returns an empty string ("").
@@ -360,8 +349,8 @@ func GetScancodeName(scancode Scancode) string {
 //
 // name: the human-readable scancode name.
 //
-// Returns the SDL_Scancode, or `SDL_SCANCODE_UNKNOWN` if the name wasn't
-// recognized; call SDL_GetError() for more information.
+// Returns the [Scancode], or an error if the name wasn't
+// recognized.
 //
 // This function is not thread safe.
 //
@@ -382,7 +371,7 @@ func GetScancodeFromName(name string) (Scancode, error) {
 //
 // Letters will be presented in their uppercase form, if applicable.
 //
-// key: the desired SDL_Keycode to query.
+// key: the desired [Keycode] to query.
 //
 // Returns a UTF-8 encoded string of the key name.
 //
@@ -399,8 +388,7 @@ func GetKeyName(key Keycode) string {
 //
 // name: the human-readable key name.
 //
-// Returns key code, or `SDLK_UNKNOWN` if the name wasn't recognized; call
-// SDL_GetError() for more information.
+// Returns key code, or an error if the name wasn't recognized.
 //
 // This function is not thread safe.
 //
@@ -417,9 +405,9 @@ func GetKeyFromName(name string) (Keycode, error) {
 
 // Start accepting Unicode text input events in a window.
 //
-// This function will enable text input (SDL_EVENT_TEXT_INPUT and
-// SDL_EVENT_TEXT_EDITING events) in the specified window. Please use this
-// function paired with SDL_StopTextInput().
+// This function will enable text input ([EventTextInput] and
+// [EventTextEditing] events) in the specified window. Please use this
+// function paired with [Window.StopTextInput].
 //
 // Text input events are not received by default.
 //
@@ -429,8 +417,7 @@ func GetKeyFromName(name string) (Keycode, error) {
 //
 // window: the window to enable text input.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -446,7 +433,7 @@ func (window *Window) StartTextInput() error {
 
 // Text input type.
 //
-// These are the valid values for SDL_PROP_TEXTINPUT_TYPE_NUMBER. Not every
+// These are the valid values for [PropTextinputTypeNumber]. Not every
 // value is valid on every platform, but where a value isn't supported, a
 // reasonable fallback will be used.
 //
@@ -469,7 +456,7 @@ const (
 
 // Auto capitalization type.
 //
-// These are the valid values for SDL_PROP_TEXTINPUT_CAPITALIZATION_NUMBER.
+// These are the valid values for [PropTextinputCapitalizationNumber].
 // Not every value is valid on every platform, but where a value isn't
 // supported, a reasonable fallback will be used.
 //
@@ -488,9 +475,9 @@ const (
 // Start accepting Unicode text input events in a window, with properties
 // describing the input.
 //
-// This function will enable text input (SDL_EVENT_TEXT_INPUT and
-// SDL_EVENT_TEXT_EDITING events) in the specified window. Please use this
-// function paired with SDL_StopTextInput().
+// This function will enable text input ([EventTextInput] and
+// [EventTextEditing] events) in the specified window. Please use this
+// function paired with [Window.StopTextInput].
 //
 // Text input events are not received by default.
 //
@@ -500,32 +487,31 @@ const (
 //
 // These are the supported properties:
 //
-// - `SDL_PROP_TEXTINPUT_TYPE_NUMBER` - an SDL_TextInputType value that
-// describes text being input, defaults to SDL_TEXTINPUT_TYPE_TEXT.
-// - `SDL_PROP_TEXTINPUT_CAPITALIZATION_NUMBER` - an SDL_Capitalization value
-// that describes how text should be capitalized, defaults to
-// SDL_CAPITALIZE_SENTENCES for normal text entry, SDL_CAPITALIZE_WORDS for
-// SDL_TEXTINPUT_TYPE_TEXT_NAME, and SDL_CAPITALIZE_NONE for e-mail
-// addresses, usernames, and passwords.
-// - `SDL_PROP_TEXTINPUT_AUTOCORRECT_BOOLEAN` - true to enable auto completion
-// and auto correction, defaults to true.
-// - `SDL_PROP_TEXTINPUT_MULTILINE_BOOLEAN` - true if multiple lines of text
-// are allowed. This defaults to true if SDL_HINT_RETURN_KEY_HIDES_IME is
-// "0" or is not set, and defaults to false if SDL_HINT_RETURN_KEY_HIDES_IME
-// is "1".
+//   - [PropTextinputTypeNumber] - a [TextInputType] value that
+//     describes text being input, defaults to [TextinputTypeText].
+//   - [PropTextinputCapitalizationNumber] - a [Capitalization] value
+//     that describes how text should be capitalized, defaults to
+//     [CapitalizeSentences] for normal text entry, [CapitalizeWords] for
+//     [TextinputTypeTextName], and [CapitalizeNone] for e-mail
+//     addresses, usernames, and passwords.
+//   - [PropTextinputAutocorrectBoolean] - true to enable auto completion
+//     and auto correction, defaults to true.
+//   - [PropTextinputMultilineBoolean] - true if multiple lines of text
+//     are allowed. This defaults to true if [HintReturnKeyHidesIME] is
+//     "0" or is not set, and defaults to false if [HintReturnKeyHidesIME]
+//     is "1".
 //
 // On Android you can directly specify the input type:
 //
-// - `SDL_PROP_TEXTINPUT_ANDROID_INPUTTYPE_NUMBER` - the text input type to
-// use, overriding other properties. This is documented at
-// https://developer.android.com/reference/android/text/InputType
+//   - [PropTextinputAndroidInputtypeNumber] - the text input type to
+//     use, overriding other properties. This is documented at
+//     https://developer.android.com/reference/android/text/InputType
 //
 // window: the window to enable text input.
 //
 // props: the properties to use.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -562,13 +548,12 @@ func (window *Window) TextInputActive() bool {
 
 // Stop receiving any text input events in a window.
 //
-// If SDL_StartTextInput() showed the screen keyboard, this function will hide
+// If [Window.StartTextInput] showed the screen keyboard, this function will hide
 // it.
 //
 // window: the window to disable text input.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -586,8 +571,7 @@ func (window *Window) StopTextInput() error {
 //
 // window: the window to affect.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -608,14 +592,13 @@ func (window *Window) ClearComposition() error {
 //
 // window: the window for which to set the text input area.
 //
-// rect: the SDL_Rect representing the text input area, in window
-// coordinates, or NULL to clear it.
+// rect: the [Rect] representing the text input area, in window
+// coordinates, or nil to clear it.
 //
 // cursor: the offset of the current cursor location relative to
-// `rect->x`, in window coordinates.
+// rect.X, in window coordinates.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -635,18 +618,15 @@ func (window *Window) SetTextInputArea(rect *Rect, cursor int) error {
 
 // Get the area used to type Unicode text input.
 //
-// This returns the values previously set by SDL_SetTextInputArea().
+// This returns the values previously set by [Window.SetTextInputArea].
 //
 // window: the window for which to query the text input area.
 //
-// rect: a pointer to an SDL_Rect filled in with the text input area,
-// may be NULL.
+// rect: the text input area.
 //
-// cursor: a pointer to the offset of the current cursor location
-// relative to `rect->x`, may be NULL.
+// cursor: the offset of the current cursor location relative to rect.X.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //

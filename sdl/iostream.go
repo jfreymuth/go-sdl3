@@ -84,10 +84,10 @@ import (
 // offers implementations for files, memory, etc, and the app can provide
 // their own implementations, too.
 //
-// SDL_IOStream is not related to the standard C++ iostream class, other than
+// [IOStream] is not related to the standard C++ iostream class, other than
 // both are abstract interfaces to read/write data.
 
-// SDL_IOStream status, set by a read or write operation.
+// [IOStream] status, set by a read or write operation.
 //
 // This enum is available since SDL 3.2.0.
 //
@@ -103,61 +103,41 @@ const (
 	IOStatusWriteonly                 // Tried to read a write-only buffer
 )
 
-// Possible `whence` values for SDL_IOStream seeking.
-//
-// These map to the same "whence" concept that `fseek` or `lseek` use in the
-// standard C runtime.
-//
-// This enum is available since SDL 3.2.0.
-//
-// https://wiki.libsdl.org/SDL3/SDL_IOWhence
-type IOWhence uint32
-
-const (
-	IoSeekSet IOWhence = iota // Seek from the beginning of data
-	IoSeekCur                 // Seek relative to current read point
-	IoSeekEnd                 // Seek relative to the end of data
-)
-
 // https://wiki.libsdl.org/SDL3/SDL_IOStreamInterface
 type IOStreamInterface interface {
 
-	// Return the number of bytes in this SDL_IOStream
+	// Return the number of bytes in this [IOStream]
 	//
 	// Returns the total size of the data stream, or -1 on error.
 	Size() int64
 
-	// Seek to `offset` relative to `whence`, one of stdio's whence values:
-	// SDL_IO_SEEK_SET, SDL_IO_SEEK_CUR, SDL_IO_SEEK_END
+	// Seek to offset relative to whence, one of stdio's whence values:
+	// [io.SeekStart], [io.SeekCurrent], [io.SeekEnd]
 	//
 	// Returns the final offset in the data stream, or -1 on error.
-	Seek(offset int64, whence IOWhence) int64
+	Seek(offset int64, whence int) int64
 
-	// Read up to `size` bytes from the data stream to the area pointed
-	// at by `ptr`.
+	// Read up to len(p) bytes from the data stream to the area pointed
+	// at by p.
 	//
-	// On an incomplete read, you should set `*status` to a value from the
-	// SDL_IOStatus enum. You do not have to explicitly set this on
-	// a complete, successful read.
+	// On an incomplete read, you should return a status other than
+	// [IOStatusReady].
 	//
 	// Returns the number of bytes read
 	Read(p []byte) (int, IOStatus)
 
-	// Write exactly `size` bytes from the area pointed at by `ptr`
+	// Write exactly len(p) bytes from the area pointed at by p
 	// to data stream.
 	//
-	// On an incomplete write, you should set `*status` to a value from the
-	// SDL_IOStatus enum. You do not have to explicitly set this on
-	// a complete, successful write.
+	// On an incomplete write, you should return a status other than
+	// [IOStatusReady].
 	//
 	// Retruns the number of bytes written
 	Write(p []byte) (int, IOStatus)
 
 	// If the stream is buffering, make sure the data is written out.
 	//
-	// On failure, you should set `*status` to a value from the
-	// SDL_IOStatus enum. You do not have to explicitly set this on
-	// a successful flush.
+	// On failure, you should return a status other than [IOStatusReady].
 	//
 	// Returns true if successful or false on write error when flushing data.
 	Flush() (IOStatus, bool)
@@ -167,7 +147,7 @@ type IOStreamInterface interface {
 	// This does not guarantee file writes will sync to physical media; they
 	// can be in the system's file cache, waiting to go to disk.
 	//
-	// The SDL_IOStream is still destroyed even if this fails, so clean up anything
+	// The [IOStream] is still destroyed even if this fails, so clean up anything
 	// even if flushing buffers, etc, returns an error.
 	//
 	// Returns true if successful or false on write error when flushing data.
@@ -183,7 +163,7 @@ func cb_IOStreamSize(userdata uintptr) C.Sint64 {
 //export cb_IOStreamSeek
 func cb_IOStreamSeek(userdata uintptr, offset C.Sint64, whence C.SDL_IOWhence) C.Sint64 {
 	h := cgo.Handle(userdata)
-	return C.Sint64(h.Value().(IOStreamInterface).Seek(int64(offset), IOWhence(whence)))
+	return C.Sint64(h.Value().(IOStreamInterface).Seek(int64(offset), int(whence)))
 }
 
 //export cb_IOStreamRead
@@ -221,8 +201,8 @@ func cb_IOStreamClose(userdata uintptr) C.bool {
 // The read/write operation structure.
 //
 // This operates as an opaque handle. There are several APIs to create various
-// types of I/O streams, or an app can supply an SDL_IOStreamInterface to
-// SDL_OpenIO() to provide their own stream implementation behind this
+// types of I/O streams, or an app can supply an [IOStreamInterface] to
+// [OpenIO] to provide their own stream implementation behind this
 // struct's abstract interface.
 //
 // This struct is available since SDL 3.2.0.
@@ -232,36 +212,36 @@ type IOStream C.struct_SDL_IOStream
 
 // \name IOFrom functions
 //
-// Functions to create SDL_IOStream structures from various data streams.
+// Functions to create [IOStream] structures from various data streams.
 
-// Use this function to create a new SDL_IOStream structure for reading from
+// Use this function to create a new [IOStream] structure for reading from
 // and/or writing to a named file.
 //
-// The `mode` string is treated roughly the same as in a call to the C
+// The mode string is treated roughly the same as in a call to the C
 // library's fopen(), even if SDL doesn't happen to use fopen() behind the
 // scenes.
 //
-// Available `mode` strings:
+// Available mode strings:
 //
-// - "r": Open a file for reading. The file must exist.
-// - "w": Create an empty file for writing. If a file with the same name
-// already exists its content is erased and the file is treated as a new
-// empty file.
-// - "a": Append to a file. Writing operations append data at the end of the
-// file. The file is created if it does not exist.
-// - "r+": Open a file for update both reading and writing. The file must
-// exist.
-// - "w+": Create an empty file for both reading and writing. If a file with
-// the same name already exists its content is erased and the file is
-// treated as a new empty file.
-// - "a+": Open a file for reading and appending. All writing operations are
-// performed at the end of the file, protecting the previous content to be
-// overwritten. You can reposition (fseek, rewind) the internal pointer to
-// anywhere in the file for reading, but writing operations will move it
-// back to the end of file. The file is created if it does not exist.
+//   - "r": Open a file for reading. The file must exist.
+//   - "w": Create an empty file for writing. If a file with the same name
+//     already exists its content is erased and the file is treated as a new
+//     empty file.
+//   - "a": Append to a file. Writing operations append data at the end of the
+//     file. The file is created if it does not exist.
+//   - "r+": Open a file for update both reading and writing. The file must
+//     exist.
+//   - "w+": Create an empty file for both reading and writing. If a file with
+//     the same name already exists its content is erased and the file is
+//     treated as a new empty file.
+//   - "a+": Open a file for reading and appending. All writing operations are
+//     performed at the end of the file, protecting the previous content to be
+//     overwritten. You can reposition (fseek, rewind) the internal pointer to
+//     anywhere in the file for reading, but writing operations will move it
+//     back to the end of file. The file is created if it does not exist.
 //
 // **NOTE**: In order to open a file as a binary file, a "b" character has to
-// be included in the `mode` string. This additional "b" character can either
+// be included in the mode string. This additional "b" character can either
 // be appended at the end of the string (thus making the following compound
 // modes: "rb", "wb", "ab", "r+b", "w+b", "a+b") or be inserted between the
 // letter and the "+" sign for the mixed modes ("rb+", "wb+", "ab+").
@@ -272,39 +252,38 @@ type IOStream C.struct_SDL_IOStream
 // This function supports Unicode filenames, but they must be encoded in UTF-8
 // format, regardless of the underlying operating system.
 //
-// In Android, SDL_IOFromFile() can be used to open content:// URIs. As a
-// fallback, SDL_IOFromFile() will transparently open a matching filename in
+// In Android, [IOFromFile] can be used to open content:// URIs. As a
+// fallback, [IOFromFile] will transparently open a matching filename in
 // the app's `assets`.
 //
-// Closing the SDL_IOStream will close SDL's internal file handle.
+// Closing the [IOStream] will close SDL's internal file handle.
 //
 // The following properties may be set at creation time by SDL:
 //
-// - `SDL_PROP_IOSTREAM_WINDOWS_HANDLE_POINTER`: a pointer, that can be cast
-// to a win32 `HANDLE`, that this SDL_IOStream is using to access the
-// filesystem. If the program isn't running on Windows, or SDL used some
-// other method to access the filesystem, this property will not be set.
-// - `SDL_PROP_IOSTREAM_STDIO_FILE_POINTER`: a pointer, that can be cast to a
-// stdio `FILE *`, that this SDL_IOStream is using to access the filesystem.
-// If SDL used some other method to access the filesystem, this property
-// will not be set. PLEASE NOTE that if SDL is using a different C runtime
-// than your app, trying to use this pointer will almost certainly result in
-// a crash! This is mostly a problem on Windows; make sure you build SDL and
-// your app with the same compiler and settings to avoid it.
-// - `SDL_PROP_IOSTREAM_FILE_DESCRIPTOR_NUMBER`: a file descriptor that this
-// SDL_IOStream is using to access the filesystem.
-// - `SDL_PROP_IOSTREAM_ANDROID_AASSET_POINTER`: a pointer, that can be cast
-// to an Android NDK `AAsset *`, that this SDL_IOStream is using to access
-// the filesystem. If SDL used some other method to access the filesystem,
-// this property will not be set.
+//   - [PropIOStreamWindowsHandlePointer]: a pointer, that can be cast
+//     to a win32 `HANDLE`, that this [IOStream] is using to access the
+//     filesystem. If the program isn't running on Windows, or SDL used some
+//     other method to access the filesystem, this property will not be set.
+//   - [PropIOStreamStdioFilePointer]: a pointer, that can be cast to a
+//     stdio `FILE *`, that this [IOStream] is using to access the filesystem.
+//     If SDL used some other method to access the filesystem, this property
+//     will not be set. PLEASE NOTE that if SDL is using a different C runtime
+//     than your app, trying to use this pointer will almost certainly result in
+//     a crash! This is mostly a problem on Windows; make sure you build SDL and
+//     your app with the same compiler and settings to avoid it.
+//   - [PropIOStreamFileDescriptorNumber]: a file descriptor that this
+//     [IOStream] is using to access the filesystem.
+//   - [PropIOStreamAndroidAAssetPointer]: a pointer, that can be cast
+//     to an Android NDK `AAsset *`, that this [IOStream] is using to access
+//     the filesystem. If SDL used some other method to access the filesystem,
+//     this property will not be set.
 //
 // file: a UTF-8 string representing the filename to open.
 //
 // mode: an ASCII string representing the mode to be used for opening
 // the file.
 //
-// Returns a pointer to the SDL_IOStream structure that is created or NULL on
-// failure; call SDL_GetError() for more information.
+// Returns a pointer to the [IOStream] structure that is created or an error.
 //
 // This function is not thread safe.
 //
@@ -319,38 +298,33 @@ func IOFromFile(file string, mode string) (*IOStream, error) {
 	return stream, nil
 }
 
-const PropIostreamWindowsHandlePointer = "SDL.iostream.windows.handle"
-const PropIostreamStdioFilePointer = "SDL.iostream.stdio.file"
-const PropIostreamFileDescriptorNumber = "SDL.iostream.file_descriptor"
-const PropIostreamAndroidAassetPointer = "SDL.iostream.android.aasset"
+const PropIOStreamWindowsHandlePointer = "SDL.iostream.windows.handle"
+const PropIOStreamStdioFilePointer = "SDL.iostream.stdio.file"
+const PropIOStreamFileDescriptorNumber = "SDL.iostream.file_descriptor"
+const PropIOStreamAndroidAAssetPointer = "SDL.iostream.android.aasset"
 
 // Use this function to prepare a read-write memory buffer for use with
-// SDL_IOStream.
+// [IOStream].
 //
-// This function sets up an SDL_IOStream struct based on a memory area of a
+// This function sets up an [IOStream] struct based on a memory area of a
 // certain size, for both read and write access.
 //
-// This memory buffer is not copied by the SDL_IOStream; the pointer you
+// This memory buffer is not copied by the [IOStream]; the pointer you
 // provide must remain valid until you close the stream. Closing the stream
 // will not free the original buffer.
 //
-// If you need to make sure the SDL_IOStream never writes to the memory
-// buffer, you should use SDL_IOFromConstMem() with a read-only buffer of
+// If you need to make sure the [IOStream] never writes to the memory
+// buffer, you should use [IOFromConstMem] with a read-only buffer of
 // memory instead.
 //
 // The following properties will be set at creation time by SDL:
 //
-// - `SDL_PROP_IOSTREAM_MEMORY_POINTER`: this will be the `mem` parameter that
-// was passed to this function.
-// - `SDL_PROP_IOSTREAM_MEMORY_SIZE_NUMBER`: this will be the `size` parameter
-// that was passed to this function.
+//   - [PropIOStreamMemoryPointer]: this will be a pointer to the start of mem.
+//   - [PropIOStreamMemorySizeNumber]: this will be len(mem).
 //
-// mem: a pointer to a buffer to feed an SDL_IOStream stream.
+// mem: a buffer to feed an [IOStream] stream.
 //
-// size: the buffer size, in bytes.
-//
-// Returns a pointer to a new SDL_IOStream structure or NULL on failure; call
-// SDL_GetError() for more information.
+// Returns a pointer to a new [IOStream] structure or an error.
 //
 // It is safe to call this function from any thread.
 //
@@ -365,38 +339,33 @@ func IOFromMem(mem []byte) (*IOStream, error) {
 	return stream, nil
 }
 
-const PropIostreamMemoryPointer = "SDL.iostream.memory.base"
-const PropIostreamMemorySizeNumber = "SDL.iostream.memory.size"
+const PropIOStreamMemoryPointer = "SDL.iostream.memory.base"
+const PropIOStreamMemorySizeNumber = "SDL.iostream.memory.size"
 
 // Use this function to prepare a read-only memory buffer for use with
-// SDL_IOStream.
+// [IOStream].
 //
-// This function sets up an SDL_IOStream struct based on a memory area of a
+// This function sets up an [IOStream] struct based on a memory area of a
 // certain size. It assumes the memory area is not writable.
 //
-// Attempting to write to this SDL_IOStream stream will report an error
+// Attempting to write to this [IOStream] stream will report an error
 // without writing to the memory buffer.
 //
-// This memory buffer is not copied by the SDL_IOStream; the pointer you
+// This memory buffer is not copied by the [IOStream]; the pointer you
 // provide must remain valid until you close the stream. Closing the stream
 // will not free the original buffer.
 //
-// If you need to write to a memory buffer, you should use SDL_IOFromMem()
+// If you need to write to a memory buffer, you should use [IOFromMem]
 // with a writable buffer of memory instead.
 //
 // The following properties will be set at creation time by SDL:
 //
-// - `SDL_PROP_IOSTREAM_MEMORY_POINTER`: this will be the `mem` parameter that
-// was passed to this function.
-// - `SDL_PROP_IOSTREAM_MEMORY_SIZE_NUMBER`: this will be the `size` parameter
-// that was passed to this function.
+//   - [PropIOStreamMemoryPointer]: this will be a pointer to the start of mem.
+//   - [PropIOStreamMemorySizeNumber]: this will be len(mem).
 //
-// mem: a pointer to a read-only buffer to feed an SDL_IOStream stream.
+// mem: a read-only buffer to feed an [IOStream] stream.
 //
-// size: the buffer size, in bytes.
-//
-// Returns a pointer to a new SDL_IOStream structure or NULL on failure; call
-// SDL_GetError() for more information.
+// Returns a pointer to a new [IOStream] structure or an error.
 //
 // It is safe to call this function from any thread.
 //
@@ -411,22 +380,21 @@ func IOFromConstMem(mem []byte) (*IOStream, error) {
 	return stream, nil
 }
 
-// Use this function to create an SDL_IOStream that is backed by dynamically
+// Use this function to create an [IOStream] that is backed by dynamically
 // allocated memory.
 //
 // This supports the following properties to provide access to the memory and
 // control over allocations:
 //
-// - `SDL_PROP_IOSTREAM_DYNAMIC_MEMORY_POINTER`: a pointer to the internal
-// memory of the stream. This can be set to NULL to transfer ownership of
-// the memory to the application, which should free the memory with
-// SDL_free(). If this is done, the next operation on the stream must be
-// SDL_CloseIO().
-// - `SDL_PROP_IOSTREAM_DYNAMIC_CHUNKSIZE_NUMBER`: memory will be allocated in
-// multiples of this size, defaulting to 1024.
+//   - [PropIOStreamDynamicMemoryPointer]: a pointer to the internal
+//     memory of the stream. This can be set to NULL to transfer ownership of
+//     the memory to the application, which should free the memory with
+//     SDL_free(). If this is done, the next operation on the stream must be
+//     [IOStream.Close].
+//   - [PropIOStreamDynamicChunksizeNumber]: memory will be allocated in
+//     multiples of this size, defaulting to 1024.
 //
-// Returns a pointer to a new SDL_IOStream structure or NULL on failure; call
-// SDL_GetError() for more information.
+// Returns a pointer to a new [IOStream] structure or an error.
 //
 // It is safe to call this function from any thread.
 //
@@ -441,26 +409,19 @@ func IOFromDynamicMem() (*IOStream, error) {
 	return stream, nil
 }
 
-const PropIostreamDynamicMemoryPointer = "SDL.iostream.dynamic.memory"
-const PropIostreamDynamicChunksizeNumber = "SDL.iostream.dynamic.chunksize"
+const PropIOStreamDynamicMemoryPointer = "SDL.iostream.dynamic.memory"
+const PropIOStreamDynamicChunksizeNumber = "SDL.iostream.dynamic.chunksize"
 
-// Create a custom SDL_IOStream.
+// Create a custom [IOStream].
 //
 // Applications do not need to use this function unless they are providing
-// their own SDL_IOStream implementation. If you just need an SDL_IOStream to
+// their own [IOStream] implementation. If you just need an [IOStream] to
 // read/write a common data source, you should use the built-in
-// implementations in SDL, like SDL_IOFromFile() or SDL_IOFromMem(), etc.
+// implementations in SDL, like [IOFromFile] or [IOFromMem], etc.
 //
-// This function makes a copy of `iface` and the caller does not need to keep
-// it around after this call.
+// iface: the interface that implements this [IOStream].
 //
-// iface: the interface that implements this SDL_IOStream, initialized
-// using SDL_INIT_INTERFACE().
-//
-// userdata: the pointer that will be passed to the interface functions.
-//
-// Returns a pointer to the allocated memory on success or NULL on failure;
-// call SDL_GetError() for more information.
+// Returns a pointer to the allocated memory on success or an error.
 //
 // It is safe to call this function from any thread.
 //
@@ -477,15 +438,15 @@ func OpenIO(iface IOStreamInterface) (*IOStream, error) {
 	return stream, nil
 }
 
-// Close and free an allocated SDL_IOStream structure.
+// Close and free an allocated [IOStream] structure.
 //
-// SDL_CloseIO() closes and cleans up the SDL_IOStream stream. It releases any
-// resources used by the stream and frees the SDL_IOStream itself. This
-// returns true on success, or false if the stream failed to flush to its
+// CloseIO closes and cleans up the [IOStream] stream. It releases any
+// resources used by the stream and frees the [IOStream] itself. This
+// returns nil on success, or an error if the stream failed to flush to its
 // output (e.g. to disk).
 //
 // Note that if this fails to flush the stream for any reason, this function
-// reports an error, but the SDL_IOStream is still invalid once this function
+// reports an error, but the [IOStream] is still invalid once this function
 // returns.
 //
 // This call flushes any buffered writes to the operating system, but there
@@ -493,13 +454,12 @@ func OpenIO(iface IOStreamInterface) (*IOStream, error) {
 // be in the OS's file cache, waiting to go to disk later. If it's absolutely
 // crucial that writes go to disk immediately, so they are definitely stored
 // even if the power fails before the file cache would have caught up, one
-// should call SDL_FlushIO() before closing. Note that flushing takes time and
+// should call [IOStream.Flush] before closing. Note that flushing takes time and
 // makes the system and your app operate less efficiently, so do so sparingly.
 //
-// context: SDL_IOStream structure to close.
+// stream: [IOStream] structure to close.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is not thread safe.
 //
@@ -513,12 +473,11 @@ func (stream *IOStream) Close() error {
 	return nil
 }
 
-// Get the properties associated with an SDL_IOStream.
+// Get the properties associated with an [IOStream].
 //
-// context: a pointer to an SDL_IOStream structure.
+// stream: a pointer to an [IOStream] structure.
 //
-// Returns a valid property ID on success or 0 on failure; call
-// SDL_GetError() for more information.
+// Returns a valid property ID or an error.
 //
 // This function is not thread safe.
 //
@@ -533,19 +492,19 @@ func (stream *IOStream) Properties() (PropertiesID, error) {
 	return props, nil
 }
 
-// Query the stream status of an SDL_IOStream.
+// Query the stream status of an [IOStream].
 //
 // This information can be useful to decide if a short read or write was due
 // to an error, an EOF, or a non-blocking operation that isn't yet ready to
 // complete.
 //
-// An SDL_IOStream's status is only expected to change after a SDL_ReadIO or
-// SDL_WriteIO call; don't expect it to change if you just call this query
+// An [IOStream]'s status is only expected to change after a [IOStream.Read] or
+// [IOStream.Write] call; don't expect it to change if you just call this query
 // function in a tight loop.
 //
-// context: the SDL_IOStream to query.
+// stream: the [IOStream] to query.
 //
-// Returns an SDL_IOStatus enum with the current state.
+// Returns an [IOStatus] enum with the current state.
 //
 // This function is not thread safe.
 //
@@ -556,62 +515,66 @@ func (stream *IOStream) Status() IOStatus {
 	return (IOStatus)(C.SDL_GetIOStatus((*C.SDL_IOStream)(stream)))
 }
 
-// Use this function to get the size of the data stream in an SDL_IOStream.
+// Use this function to get the size of the data stream in an [IOStream].
 //
-// context: the SDL_IOStream to get the size of the data stream from.
+// stream: the [IOStream] to get the size of the data stream from.
 //
-// Returns the size of the data stream in the SDL_IOStream on success or a
-// negative error code on failure; call SDL_GetError() for more
-// information.
+// Returns the size of the data stream in the [IOStream] or an error.
 //
 // This function is not thread safe.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetIOSize
-func (stream *IOStream) Size() int64 {
-	return (int64)(C.SDL_GetIOSize((*C.SDL_IOStream)(stream)))
+func (stream *IOStream) Size() (int64, error) {
+	size := (int64)(C.SDL_GetIOSize((*C.SDL_IOStream)(stream)))
+	if size < 0 {
+		return 0, getError()
+	}
+	return size, nil
 }
 
-// Seek within an SDL_IOStream data stream.
+// Seek within an [IOStream] data stream.
 //
-// This function seeks to byte `offset`, relative to `whence`.
+// This function seeks to byte offset, relative to whence.
 //
 // `whence` may be any of the following values:
 //
-// - `SDL_IO_SEEK_SET`: seek from the beginning of data
-// - `SDL_IO_SEEK_CUR`: seek relative to current read point
-// - `SDL_IO_SEEK_END`: seek relative to the end of data
+//   - [io.SeekStart]: seek from the beginning of data
+//   - [io.SeekCurrent]: seek relative to current read point
+//   - [io.SeekEnd]: seek relative to the end of data
 //
 // If this stream can not seek, it will return -1.
 //
-// context: a pointer to an SDL_IOStream structure.
+// stream: a pointer to an [IOStream] structure.
 //
-// offset: an offset in bytes, relative to `whence` location; can be
+// offset: an offset in bytes, relative to whence location; can be
 // negative.
 //
-// whence: any of `SDL_IO_SEEK_SET`, `SDL_IO_SEEK_CUR`,
-// `SDL_IO_SEEK_END`.
+// whence: any of [io.SeekStart], [io.SeekCurrent], [io.SeekEnd].
 //
-// Returns the final offset in the data stream after the seek or -1 on
-// failure; call SDL_GetError() for more information.
+// Returns the final offset in the data stream after the seek or an error.
 //
 // This function is not thread safe.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_SeekIO
-func (stream *IOStream) Seek(offset int64, whence IOWhence) int64 {
-	return (int64)(C.SDL_SeekIO((*C.SDL_IOStream)(stream), (C.Sint64)(offset), (C.SDL_IOWhence)(whence)))
+func (stream *IOStream) Seek(offset int64, whence int) (int64, error) {
+	offset = (int64)(C.SDL_SeekIO((*C.SDL_IOStream)(stream), (C.Sint64)(offset), (C.SDL_IOWhence)(whence)))
+	if offset < 0 {
+		return 0, getError()
+	}
+	return offset, nil
 }
 
-// Determine the current read/write offset in an SDL_IOStream data stream.
+// Determine the current read/write offset in an [IOStream] data stream.
 //
-// SDL_TellIO is actually a wrapper function that calls the SDL_IOStream's
-// `seek` method, with an offset of 0 bytes from `SDL_IO_SEEK_CUR`, to
+// Tell is actually a wrapper function that calls the [IOStream]'s
+// Seek method, with an offset of 0 bytes from [io.SeekCurrent], to
 // simplify application development.
 //
-// context: an SDL_IOStream data stream object from which to get the
+// stream: an [IOStream] data stream object from which to get the
 // current offset.
 //
 // Returns the current offset in the stream, or -1 if the information can not
@@ -628,29 +591,26 @@ func (stream *IOStream) Tell() int64 {
 
 // Read from a data source.
 //
-// This function reads up `size` bytes from the data source to the area
-// pointed at by `ptr`. This function may read less bytes than requested.
+// This function reads up len(ptr) bytes from the data source to the area
+// pointed at by ptr. This function may read less bytes than requested.
 //
 // This function will return zero when the data stream is completely read, and
-// SDL_GetIOStatus() will return SDL_IO_STATUS_EOF. If zero is returned and
-// the stream is not at EOF, SDL_GetIOStatus() will return a different error
-// value and SDL_GetError() will offer a human-readable message.
+// [IOStream.Status] will return [IOStatusEOF]. If zero is returned and
+// the stream is not at EOF, [IOStream.Status] will return a different error
+// value. In both cases, this method will return a non-nil error
 //
-// context: a pointer to an SDL_IOStream structure.
+// stream: a pointer to an [IOStream] structure.
 //
 // ptr: a pointer to a buffer to read data into.
 //
-// size: the number of bytes to read from the data source.
-//
-// Returns the number of bytes read, or 0 on end of file or other failure;
-// call SDL_GetError() for more information.
+// Returns the number of bytes read or an error.
 //
 // This function is not thread safe.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_ReadIO
-func (stream *IOStream) ReadIO(ptr []byte) (int, error) {
+func (stream *IOStream) Read(ptr []byte) (int, error) {
 	n := (int)(C.SDL_ReadIO((*C.SDL_IOStream)(stream), unsafe.Pointer(unsafe.SliceData(ptr)), (C.size_t)(len(ptr))))
 	if n == 0 {
 		return 0, getError()
@@ -658,34 +618,32 @@ func (stream *IOStream) ReadIO(ptr []byte) (int, error) {
 	return n, nil
 }
 
-// Write to an SDL_IOStream data stream.
+// Write to an [IOStream] data stream.
 //
-// This function writes exactly `size` bytes from the area pointed at by `ptr`
-// to the stream. If this fails for any reason, it'll return less than `size`
-// to demonstrate how far the write progressed. On success, it returns `size`.
+// This function writes exactly len(ptr) bytes from the area pointed at by ptr
+// to the stream. If this fails for any reason, it'll return less than len(ptr)
+// to demonstrate how far the write progressed. On success, it returns len(ptr).
 //
 // On error, this function still attempts to write as much as possible, so it
 // might return a positive value less than the requested write size.
 //
-// The caller can use SDL_GetIOStatus() to determine if the problem is
+// The caller can use [IOStream.Status] to determine if the problem is
 // recoverable, such as a non-blocking write that can simply be retried later,
 // or a fatal error.
 //
-// context: a pointer to an SDL_IOStream structure.
+// stream: a pointer to an [IOStream] structure.
 //
 // ptr: a pointer to a buffer containing data to write.
 //
-// size: the number of bytes to write.
-//
-// Returns the number of bytes written, which will be less than `size` on
-// failure; call SDL_GetError() for more information.
+// Returns the number of bytes written, which will be less than len(p) on
+// failure, in which case a non-nil error is returned.
 //
 // This function is not thread safe.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_WriteIO
-func (stream *IOStream) WriteIO(ptr []byte) (int, error) {
+func (stream *IOStream) Write(ptr []byte) (int, error) {
 	n := (int)(C.SDL_WriteIO((*C.SDL_IOStream)(stream), unsafe.Pointer(unsafe.SliceData(ptr)), (C.size_t)(len(ptr))))
 	if n == 0 {
 		return 0, getError()
@@ -699,10 +657,9 @@ func (stream *IOStream) WriteIO(ptr []byte) (int, error) {
 // Normally this isn't necessary but if the stream is a pipe or socket it
 // guarantees that any pending data is sent.
 //
-// context: SDL_IOStream structure to flush.
+// stream: [IOStream] structure to flush.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is not thread safe.
 //
@@ -718,22 +675,12 @@ func (stream *IOStream) Flush() error {
 
 // Load all the data from an SDL data stream.
 //
-// The data is allocated with a zero byte at the end (null terminated) for
-// convenience. This extra byte is not included in the value reported via
-// `datasize`.
+// stream: the [IOStream] to read all available data from.
 //
-// The data should be freed with SDL_free().
-//
-// src: the SDL_IOStream to read all available data from.
-//
-// datasize: a pointer filled in with the number of bytes read, may be
-// NULL.
-//
-// closeio: if true, calls SDL_CloseIO() on `src` before returning, even
+// closeio: if true, calls [IOStream.Close] on the stream before returning, even
 // in the case of an error.
 //
-// Returns the data or NULL on failure; call SDL_GetError() for more
-// information.
+// Returns the data or an error.
 //
 // This function is not thread safe.
 //
@@ -753,18 +700,14 @@ func (stream *IOStream) ReadAll(closeio bool) ([]byte, error) {
 
 // Save all the data into an SDL data stream.
 //
-// src: the SDL_IOStream to write all data to.
+// stream: the [IOStream] to write all data to.
 //
-// data: the data to be written. If datasize is 0, may be NULL or a
-// invalid pointer.
+// data: the data to be written.
 //
-// datasize: the number of bytes to be written.
-//
-// closeio: if true, calls SDL_CloseIO() on `src` before returning, even
+// closeio: if true, calls [IOStream.Close] on the stream before returning, even
 // in the case of an error.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is not thread safe.
 //
@@ -782,19 +725,16 @@ func (stream *IOStream) WriteAll(data []byte, closeio bool) error {
 //
 // Read an item of the specified endianness and return in native format.
 
-// Use this function to read a byte from an SDL_IOStream.
+// Use this function to read a byte from an [IOStream].
 //
-// This function will return false when the data stream is completely read,
-// and SDL_GetIOStatus() will return SDL_IO_STATUS_EOF. If false is returned
-// and the stream is not at EOF, SDL_GetIOStatus() will return a different
-// error value and SDL_GetError() will offer a human-readable message.
+// This function will return zero when the data stream is completely read, and
+// [IOStream.Status] will return [IOStatusEOF]. If zero is returned and
+// the stream is not at EOF, [IOStream.Status] will return a different error
+// value. In both cases, this method will return a non-nil error
 //
-// src: the SDL_IOStream to read from.
+// stream: the [IOStream] to read from.
 //
-// value: a pointer filled in with the data read.
-//
-// Returns true on success or false on failure or EOF; call SDL_GetError()
-// for more information.
+// Returns the data read or an error.
 //
 // This function is not thread safe.
 //
@@ -809,19 +749,18 @@ func (stream *IOStream) ReadU8() (byte, error) {
 	return byte(value), nil
 }
 
-// Use this function to read a signed byte from an SDL_IOStream.
+// Use this function to read a signed byte from an [IOStream].
 //
-// This function will return false when the data stream is completely read,
-// and SDL_GetIOStatus() will return SDL_IO_STATUS_EOF. If false is returned
-// and the stream is not at EOF, SDL_GetIOStatus() will return a different
-// error value and SDL_GetError() will offer a human-readable message.
+// This function will return zero when the data stream is completely read, and
+// [IOStream.Status] will return [IOStatusEOF]. If zero is returned and
+// the stream is not at EOF, [IOStream.Status] will return a different error
+// value. In both cases, this method will return a non-nil error
 //
-// src: the SDL_IOStream to read from.
+// stream: the [IOStream] to read from.
 //
 // value: a pointer filled in with the data read.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns the data read or an error.
 //
 // This function is not thread safe.
 //
@@ -837,22 +776,21 @@ func (stream *IOStream) ReadS8() (int8, error) {
 }
 
 // Use this function to read 16 bits of little-endian data from an
-// SDL_IOStream and return in native format.
+// [IOStream] and return in native format.
 //
 // SDL byteswaps the data only if necessary, so the data returned will be in
 // the native byte order.
 //
-// This function will return false when the data stream is completely read,
-// and SDL_GetIOStatus() will return SDL_IO_STATUS_EOF. If false is returned
-// and the stream is not at EOF, SDL_GetIOStatus() will return a different
-// error value and SDL_GetError() will offer a human-readable message.
+// This function will return zero when the data stream is completely read, and
+// [IOStream.Status] will return [IOStatusEOF]. If zero is returned and
+// the stream is not at EOF, [IOStream.Status] will return a different error
+// value. In both cases, this method will return a non-nil error
 //
-// src: the stream from which to read data.
+// stream: the stream from which to read data.
 //
 // value: a pointer filled in with the data read.
 //
-// Returns true on successful write or false on failure; call SDL_GetError()
-// for more information.
+// Returns the data read or an error.
 //
 // This function is not thread safe.
 //
@@ -868,22 +806,19 @@ func (stream *IOStream) ReadU16LE() (uint16, error) {
 }
 
 // Use this function to read 16 bits of little-endian data from an
-// SDL_IOStream and return in native format.
+// [IOStream] and return in native format.
 //
 // SDL byteswaps the data only if necessary, so the data returned will be in
 // the native byte order.
 //
-// This function will return false when the data stream is completely read,
-// and SDL_GetIOStatus() will return SDL_IO_STATUS_EOF. If false is returned
-// and the stream is not at EOF, SDL_GetIOStatus() will return a different
-// error value and SDL_GetError() will offer a human-readable message.
+// This function will return zero when the data stream is completely read, and
+// [IOStream.Status] will return [IOStatusEOF]. If zero is returned and
+// the stream is not at EOF, [IOStream.Status] will return a different error
+// value. In both cases, this method will return a non-nil error
 //
-// src: the stream from which to read data.
+// stream: the stream from which to read data.
 //
-// value: a pointer filled in with the data read.
-//
-// Returns true on successful write or false on failure; call SDL_GetError()
-// for more information.
+// Returns the data read or an error.
 //
 // This function is not thread safe.
 //
@@ -898,23 +833,20 @@ func (stream *IOStream) ReadS16LE() (int16, error) {
 	return int16(value), nil
 }
 
-// Use this function to read 16 bits of big-endian data from an SDL_IOStream
+// Use this function to read 16 bits of big-endian data from an [IOStream]
 // and return in native format.
 //
 // SDL byteswaps the data only if necessary, so the data returned will be in
 // the native byte order.
 //
-// This function will return false when the data stream is completely read,
-// and SDL_GetIOStatus() will return SDL_IO_STATUS_EOF. If false is returned
-// and the stream is not at EOF, SDL_GetIOStatus() will return a different
-// error value and SDL_GetError() will offer a human-readable message.
+// This function will return zero when the data stream is completely read, and
+// [IOStream.Status] will return [IOStatusEOF]. If zero is returned and
+// the stream is not at EOF, [IOStream.Status] will return a different error
+// value. In both cases, this method will return a non-nil error
 //
-// src: the stream from which to read data.
+// stream: the stream from which to read data.
 //
-// value: a pointer filled in with the data read.
-//
-// Returns true on successful write or false on failure; call SDL_GetError()
-// for more information.
+// Returns the data read or an error.
 //
 // This function is not thread safe.
 //
@@ -929,23 +861,20 @@ func (stream *IOStream) ReadU16BE() (uint16, error) {
 	return uint16(value), nil
 }
 
-// Use this function to read 16 bits of big-endian data from an SDL_IOStream
+// Use this function to read 16 bits of big-endian data from an [IOStream]
 // and return in native format.
 //
 // SDL byteswaps the data only if necessary, so the data returned will be in
 // the native byte order.
 //
-// This function will return false when the data stream is completely read,
-// and SDL_GetIOStatus() will return SDL_IO_STATUS_EOF. If false is returned
-// and the stream is not at EOF, SDL_GetIOStatus() will return a different
-// error value and SDL_GetError() will offer a human-readable message.
+// This function will return zero when the data stream is completely read, and
+// [IOStream.Status] will return [IOStatusEOF]. If zero is returned and
+// the stream is not at EOF, [IOStream.Status] will return a different error
+// value. In both cases, this method will return a non-nil error
 //
-// src: the stream from which to read data.
+// stream: the stream from which to read data.
 //
-// value: a pointer filled in with the data read.
-//
-// Returns true on successful write or false on failure; call SDL_GetError()
-// for more information.
+// Returns the data read or an error.
 //
 // This function is not thread safe.
 //
@@ -961,22 +890,19 @@ func (stream *IOStream) ReadS16BE() (int16, error) {
 }
 
 // Use this function to read 32 bits of little-endian data from an
-// SDL_IOStream and return in native format.
+// [IOStream] and return in native format.
 //
 // SDL byteswaps the data only if necessary, so the data returned will be in
 // the native byte order.
 //
-// This function will return false when the data stream is completely read,
-// and SDL_GetIOStatus() will return SDL_IO_STATUS_EOF. If false is returned
-// and the stream is not at EOF, SDL_GetIOStatus() will return a different
-// error value and SDL_GetError() will offer a human-readable message.
+// This function will return zero when the data stream is completely read, and
+// [IOStream.Status] will return [IOStatusEOF]. If zero is returned and
+// the stream is not at EOF, [IOStream.Status] will return a different error
+// value. In both cases, this method will return a non-nil error
 //
-// src: the stream from which to read data.
+// stream: the stream from which to read data.
 //
-// value: a pointer filled in with the data read.
-//
-// Returns true on successful write or false on failure; call SDL_GetError()
-// for more information.
+// Returns the data read or an error.
 //
 // This function is not thread safe.
 //
@@ -992,22 +918,19 @@ func (stream *IOStream) ReadU32LE() (uint32, error) {
 }
 
 // Use this function to read 32 bits of little-endian data from an
-// SDL_IOStream and return in native format.
+// [IOStream] and return in native format.
 //
 // SDL byteswaps the data only if necessary, so the data returned will be in
 // the native byte order.
 //
-// This function will return false when the data stream is completely read,
-// and SDL_GetIOStatus() will return SDL_IO_STATUS_EOF. If false is returned
-// and the stream is not at EOF, SDL_GetIOStatus() will return a different
-// error value and SDL_GetError() will offer a human-readable message.
+// This function will return zero when the data stream is completely read, and
+// [IOStream.Status] will return [IOStatusEOF]. If zero is returned and
+// the stream is not at EOF, [IOStream.Status] will return a different error
+// value. In both cases, this method will return a non-nil error
 //
-// src: the stream from which to read data.
+// stream: the stream from which to read data.
 //
-// value: a pointer filled in with the data read.
-//
-// Returns true on successful write or false on failure; call SDL_GetError()
-// for more information.
+// Returns the data read or an error.
 //
 // This function is not thread safe.
 //
@@ -1022,23 +945,20 @@ func (stream *IOStream) ReadS32LE() (int32, error) {
 	return int32(value), nil
 }
 
-// Use this function to read 32 bits of big-endian data from an SDL_IOStream
+// Use this function to read 32 bits of big-endian data from an [IOStream]
 // and return in native format.
 //
 // SDL byteswaps the data only if necessary, so the data returned will be in
 // the native byte order.
 //
-// This function will return false when the data stream is completely read,
-// and SDL_GetIOStatus() will return SDL_IO_STATUS_EOF. If false is returned
-// and the stream is not at EOF, SDL_GetIOStatus() will return a different
-// error value and SDL_GetError() will offer a human-readable message.
+// This function will return zero when the data stream is completely read, and
+// [IOStream.Status] will return [IOStatusEOF]. If zero is returned and
+// the stream is not at EOF, [IOStream.Status] will return a different error
+// value. In both cases, this method will return a non-nil error
 //
-// src: the stream from which to read data.
+// stream: the stream from which to read data.
 //
-// value: a pointer filled in with the data read.
-//
-// Returns true on successful write or false on failure; call SDL_GetError()
-// for more information.
+// Returns the data read or an error.
 //
 // This function is not thread safe.
 //
@@ -1053,23 +973,20 @@ func (stream *IOStream) ReadU32BE() (uint32, error) {
 	return uint32(value), nil
 }
 
-// Use this function to read 32 bits of big-endian data from an SDL_IOStream
+// Use this function to read 32 bits of big-endian data from an [IOStream]
 // and return in native format.
 //
 // SDL byteswaps the data only if necessary, so the data returned will be in
 // the native byte order.
 //
-// This function will return false when the data stream is completely read,
-// and SDL_GetIOStatus() will return SDL_IO_STATUS_EOF. If false is returned
-// and the stream is not at EOF, SDL_GetIOStatus() will return a different
-// error value and SDL_GetError() will offer a human-readable message.
+// This function will return zero when the data stream is completely read, and
+// [IOStream.Status] will return [IOStatusEOF]. If zero is returned and
+// the stream is not at EOF, [IOStream.Status] will return a different error
+// value. In both cases, this method will return a non-nil error
 //
-// src: the stream from which to read data.
+// stream: the stream from which to read data.
 //
-// value: a pointer filled in with the data read.
-//
-// Returns true on successful write or false on failure; call SDL_GetError()
-// for more information.
+// Returns the data read or an error.
 //
 // This function is not thread safe.
 //
@@ -1085,22 +1002,19 @@ func (stream *IOStream) ReadS32BE() (int32, error) {
 }
 
 // Use this function to read 64 bits of little-endian data from an
-// SDL_IOStream and return in native format.
+// [IOStream] and return in native format.
 //
 // SDL byteswaps the data only if necessary, so the data returned will be in
 // the native byte order.
 //
-// This function will return false when the data stream is completely read,
-// and SDL_GetIOStatus() will return SDL_IO_STATUS_EOF. If false is returned
-// and the stream is not at EOF, SDL_GetIOStatus() will return a different
-// error value and SDL_GetError() will offer a human-readable message.
+// This function will return zero when the data stream is completely read, and
+// [IOStream.Status] will return [IOStatusEOF]. If zero is returned and
+// the stream is not at EOF, [IOStream.Status] will return a different error
+// value. In both cases, this method will return a non-nil error
 //
-// src: the stream from which to read data.
+// stream: the stream from which to read data.
 //
-// value: a pointer filled in with the data read.
-//
-// Returns true on successful write or false on failure; call SDL_GetError()
-// for more information.
+// Returns the data read or an error.
 //
 // This function is not thread safe.
 //
@@ -1116,22 +1030,19 @@ func (stream *IOStream) ReadU64LE() (uint64, error) {
 }
 
 // Use this function to read 64 bits of little-endian data from an
-// SDL_IOStream and return in native format.
+// [IOStream] and return in native format.
 //
 // SDL byteswaps the data only if necessary, so the data returned will be in
 // the native byte order.
 //
-// This function will return false when the data stream is completely read,
-// and SDL_GetIOStatus() will return SDL_IO_STATUS_EOF. If false is returned
-// and the stream is not at EOF, SDL_GetIOStatus() will return a different
-// error value and SDL_GetError() will offer a human-readable message.
+// This function will return zero when the data stream is completely read, and
+// [IOStream.Status] will return [IOStatusEOF]. If zero is returned and
+// the stream is not at EOF, [IOStream.Status] will return a different error
+// value. In both cases, this method will return a non-nil error
 //
-// src: the stream from which to read data.
+// stream: the stream from which to read data.
 //
-// value: a pointer filled in with the data read.
-//
-// Returns true on successful write or false on failure; call SDL_GetError()
-// for more information.
+// Returns the data read or an error.
 //
 // This function is not thread safe.
 //
@@ -1146,23 +1057,20 @@ func (stream *IOStream) ReadS64LE() (int64, error) {
 	return int64(value), nil
 }
 
-// Use this function to read 64 bits of big-endian data from an SDL_IOStream
+// Use this function to read 64 bits of big-endian data from an [IOStream]
 // and return in native format.
 //
 // SDL byteswaps the data only if necessary, so the data returned will be in
 // the native byte order.
 //
-// This function will return false when the data stream is completely read,
-// and SDL_GetIOStatus() will return SDL_IO_STATUS_EOF. If false is returned
-// and the stream is not at EOF, SDL_GetIOStatus() will return a different
-// error value and SDL_GetError() will offer a human-readable message.
+// This function will return zero when the data stream is completely read, and
+// [IOStream.Status] will return [IOStatusEOF]. If zero is returned and
+// the stream is not at EOF, [IOStream.Status] will return a different error
+// value. In both cases, this method will return a non-nil error
 //
-// src: the stream from which to read data.
+// stream: the stream from which to read data.
 //
-// value: a pointer filled in with the data read.
-//
-// Returns true on successful write or false on failure; call SDL_GetError()
-// for more information.
+// Returns the data read or an error.
 //
 // This function is not thread safe.
 //
@@ -1177,23 +1085,20 @@ func (stream *IOStream) ReadU64BE() (uint64, error) {
 	return uint64(value), nil
 }
 
-// Use this function to read 64 bits of big-endian data from an SDL_IOStream
+// Use this function to read 64 bits of big-endian data from an [IOStream]
 // and return in native format.
 //
 // SDL byteswaps the data only if necessary, so the data returned will be in
 // the native byte order.
 //
-// This function will return false when the data stream is completely read,
-// and SDL_GetIOStatus() will return SDL_IO_STATUS_EOF. If false is returned
-// and the stream is not at EOF, SDL_GetIOStatus() will return a different
-// error value and SDL_GetError() will offer a human-readable message.
+// This function will return zero when the data stream is completely read, and
+// [IOStream.Status] will return [IOStatusEOF]. If zero is returned and
+// the stream is not at EOF, [IOStream.Status] will return a different error
+// value. In both cases, this method will return a non-nil error
 //
-// src: the stream from which to read data.
+// stream: the stream from which to read data.
 //
-// value: a pointer filled in with the data read.
-//
-// Returns true on successful write or false on failure; call SDL_GetError()
-// for more information.
+// Returns the data read or an error.
 //
 // This function is not thread safe.
 //
@@ -1212,14 +1117,11 @@ func (stream *IOStream) ReadS64BE() (int64, error) {
 //
 // Write an item of native format to the specified endianness.
 
-// Use this function to write a byte to an SDL_IOStream.
+// Use this function to write a byte to an [IOStream].
 //
-// dst: the SDL_IOStream to write to.
+// stream: the [IOStream] to write to.
 //
-// value: the byte value to write.
-//
-// Returns true on successful write or false on failure; call SDL_GetError()
-// for more information.
+// Returns nil on successful write or an error on failure.
 //
 // This function is not thread safe.
 //
@@ -1233,14 +1135,11 @@ func (stream *IOStream) WriteU8(value byte) error {
 	return nil
 }
 
-// Use this function to write a signed byte to an SDL_IOStream.
+// Use this function to write a signed byte to an [IOStream].
 //
-// dst: the SDL_IOStream to write to.
+// stream: the [IOStream] to write to.
 //
-// value: the byte value to write.
-//
-// Returns true on successful write or false on failure; call SDL_GetError()
-// for more information.
+// Returns nil on successful write or an error on failure.
 //
 // This function is not thread safe.
 //
@@ -1254,19 +1153,16 @@ func (stream *IOStream) WriteS8(value int8) error {
 	return nil
 }
 
-// Use this function to write 16 bits in native format to an SDL_IOStream as
+// Use this function to write 16 bits in native format to an [IOStream] as
 // little-endian data.
 //
 // SDL byteswaps the data only if necessary, so the application always
 // specifies native format, and the data written will be in little-endian
 // format.
 //
-// dst: the stream to which data will be written.
+// stream: the stream to which data will be written.
 //
-// value: the data to be written, in native format.
-//
-// Returns true on successful write or false on failure; call SDL_GetError()
-// for more information.
+// Returns nil on successful write or an error on failure.
 //
 // This function is not thread safe.
 //
@@ -1280,19 +1176,16 @@ func (stream *IOStream) WriteU16LE(value uint16) error {
 	return nil
 }
 
-// Use this function to write 16 bits in native format to an SDL_IOStream as
+// Use this function to write 16 bits in native format to an [IOStream] as
 // little-endian data.
 //
 // SDL byteswaps the data only if necessary, so the application always
 // specifies native format, and the data written will be in little-endian
 // format.
 //
-// dst: the stream to which data will be written.
+// stream: the stream to which data will be written.
 //
-// value: the data to be written, in native format.
-//
-// Returns true on successful write or false on failure; call SDL_GetError()
-// for more information.
+// Returns nil on successful write or an error on failure.
 //
 // This function is not thread safe.
 //
@@ -1306,18 +1199,15 @@ func (stream *IOStream) WriteS16LE(value int16) error {
 	return nil
 }
 
-// Use this function to write 16 bits in native format to an SDL_IOStream as
+// Use this function to write 16 bits in native format to an [IOStream] as
 // big-endian data.
 //
 // SDL byteswaps the data only if necessary, so the application always
 // specifies native format, and the data written will be in big-endian format.
 //
-// dst: the stream to which data will be written.
+// stream: the stream to which data will be written.
 //
-// value: the data to be written, in native format.
-//
-// Returns true on successful write or false on failure; call SDL_GetError()
-// for more information.
+// Returns nil on successful write or an error on failure.
 //
 // This function is not thread safe.
 //
@@ -1331,18 +1221,15 @@ func (stream *IOStream) WriteU16BE(value uint16) error {
 	return nil
 }
 
-// Use this function to write 16 bits in native format to an SDL_IOStream as
+// Use this function to write 16 bits in native format to an [IOStream] as
 // big-endian data.
 //
 // SDL byteswaps the data only if necessary, so the application always
 // specifies native format, and the data written will be in big-endian format.
 //
-// dst: the stream to which data will be written.
+// stream: the stream to which data will be written.
 //
-// value: the data to be written, in native format.
-//
-// Returns true on successful write or false on failure; call SDL_GetError()
-// for more information.
+// Returns nil on successful write or an error on failure.
 //
 // This function is not thread safe.
 //
@@ -1356,19 +1243,16 @@ func (stream *IOStream) WriteS16BE(value int16) error {
 	return nil
 }
 
-// Use this function to write 32 bits in native format to an SDL_IOStream as
+// Use this function to write 32 bits in native format to an [IOStream] as
 // little-endian data.
 //
 // SDL byteswaps the data only if necessary, so the application always
 // specifies native format, and the data written will be in little-endian
 // format.
 //
-// dst: the stream to which data will be written.
+// stream: the stream to which data will be written.
 //
-// value: the data to be written, in native format.
-//
-// Returns true on successful write or false on failure; call SDL_GetError()
-// for more information.
+// Returns nil on successful write or an error on failure.
 //
 // This function is not thread safe.
 //
@@ -1382,19 +1266,16 @@ func (stream *IOStream) WriteU32LE(value uint32) error {
 	return nil
 }
 
-// Use this function to write 32 bits in native format to an SDL_IOStream as
+// Use this function to write 32 bits in native format to an [IOStream] as
 // little-endian data.
 //
 // SDL byteswaps the data only if necessary, so the application always
 // specifies native format, and the data written will be in little-endian
 // format.
 //
-// dst: the stream to which data will be written.
+// stream: the stream to which data will be written.
 //
-// value: the data to be written, in native format.
-//
-// Returns true on successful write or false on failure; call SDL_GetError()
-// for more information.
+// Returns nil on successful write or an error on failure.
 //
 // This function is not thread safe.
 //
@@ -1408,18 +1289,15 @@ func (stream *IOStream) WriteS32LE(value int32) error {
 	return nil
 }
 
-// Use this function to write 32 bits in native format to an SDL_IOStream as
+// Use this function to write 32 bits in native format to an [IOStream] as
 // big-endian data.
 //
 // SDL byteswaps the data only if necessary, so the application always
 // specifies native format, and the data written will be in big-endian format.
 //
-// dst: the stream to which data will be written.
+// stream: the stream to which data will be written.
 //
-// value: the data to be written, in native format.
-//
-// Returns true on successful write or false on failure; call SDL_GetError()
-// for more information.
+// Returns nil on successful write or an error on failure.
 //
 // This function is not thread safe.
 //
@@ -1433,18 +1311,15 @@ func (stream *IOStream) WriteU32BE(value uint32) error {
 	return nil
 }
 
-// Use this function to write 32 bits in native format to an SDL_IOStream as
+// Use this function to write 32 bits in native format to an [IOStream] as
 // big-endian data.
 //
 // SDL byteswaps the data only if necessary, so the application always
 // specifies native format, and the data written will be in big-endian format.
 //
-// dst: the stream to which data will be written.
+// stream: the stream to which data will be written.
 //
-// value: the data to be written, in native format.
-//
-// Returns true on successful write or false on failure; call SDL_GetError()
-// for more information.
+// Returns nil on successful write or an error on failure.
 //
 // This function is not thread safe.
 //
@@ -1458,19 +1333,16 @@ func (stream *IOStream) WriteS32BE(value int32) error {
 	return nil
 }
 
-// Use this function to write 64 bits in native format to an SDL_IOStream as
+// Use this function to write 64 bits in native format to an [IOStream] as
 // little-endian data.
 //
 // SDL byteswaps the data only if necessary, so the application always
 // specifies native format, and the data written will be in little-endian
 // format.
 //
-// dst: the stream to which data will be written.
+// stream: the stream to which data will be written.
 //
-// value: the data to be written, in native format.
-//
-// Returns true on successful write or false on failure; call SDL_GetError()
-// for more information.
+// Returns nil on successful write or an error on failure.
 //
 // This function is not thread safe.
 //
@@ -1484,19 +1356,16 @@ func (stream *IOStream) WriteU64LE(value uint64) error {
 	return nil
 }
 
-// Use this function to write 64 bits in native format to an SDL_IOStream as
+// Use this function to write 64 bits in native format to an [IOStream] as
 // little-endian data.
 //
 // SDL byteswaps the data only if necessary, so the application always
 // specifies native format, and the data written will be in little-endian
 // format.
 //
-// dst: the stream to which data will be written.
+// stream: the stream to which data will be written.
 //
-// value: the data to be written, in native format.
-//
-// Returns true on successful write or false on failure; call SDL_GetError()
-// for more information.
+// Returns nil on successful write or an error on failure.
 //
 // This function is not thread safe.
 //
@@ -1510,18 +1379,15 @@ func (stream *IOStream) WriteS64LE(value int64) error {
 	return nil
 }
 
-// Use this function to write 64 bits in native format to an SDL_IOStream as
+// Use this function to write 64 bits in native format to an [IOStream] as
 // big-endian data.
 //
 // SDL byteswaps the data only if necessary, so the application always
 // specifies native format, and the data written will be in big-endian format.
 //
-// dst: the stream to which data will be written.
+// stream: the stream to which data will be written.
 //
-// value: the data to be written, in native format.
-//
-// Returns true on successful write or false on failure; call SDL_GetError()
-// for more information.
+// Returns nil on successful write or an error on failure.
 //
 // This function is not thread safe.
 //
@@ -1535,18 +1401,15 @@ func (stream *IOStream) WriteU64BE(value uint64) error {
 	return nil
 }
 
-// Use this function to write 64 bits in native format to an SDL_IOStream as
+// Use this function to write 64 bits in native format to an [IOStream] as
 // big-endian data.
 //
 // SDL byteswaps the data only if necessary, so the application always
 // specifies native format, and the data written will be in big-endian format.
 //
-// dst: the stream to which data will be written.
+// stream: the stream to which data will be written.
 //
-// value: the data to be written, in native format.
-//
-// Returns true on successful write or false on failure; call SDL_GetError()
-// for more information.
+// Returns nil on successful write or an error on failure.
 //
 // This function is not thread safe.
 //

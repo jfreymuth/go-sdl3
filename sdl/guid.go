@@ -36,7 +36,7 @@ import "C"
 //
 // SDL provides functions to convert a GUID to/from a string.
 
-// An SDL_GUID is a 128-bit identifier for an input device that identifies
+// A GUID is a 128-bit identifier for an input device that identifies
 // that device across runs of SDL programs on the same platform.
 //
 // If the device is detached and then re-attached to a different port, or if
@@ -55,13 +55,9 @@ import "C"
 // https://wiki.libsdl.org/SDL3/SDL_GUID
 type GUID [16]C.Uint8
 
-// Get an ASCII string representation for a given SDL_GUID.
+// Get an ASCII string representation for a given GUID.
 //
-// guid: the SDL_GUID you wish to convert to string.
-//
-// pszGUID: buffer in which to write the ASCII string.
-//
-// cbGUID: the size of pszGUID, should be at least 33 bytes.
+// guid: the GUID you wish to convert to string.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -72,15 +68,15 @@ func (g GUID) String() string {
 	return C.GoString(&buf[0])
 }
 
-// Convert a GUID string into a SDL_GUID structure.
+// Convert a GUID string into a [GUID] structure.
 //
 // Performs no error checking. If this function is given a string containing
 // an invalid GUID, the function will silently succeed, but the GUID generated
 // will not be useful.
 //
-// pchGUID: string containing an ASCII representation of a GUID.
+// s: string containing an ASCII representation of a GUID.
 //
-// Returns a SDL_GUID structure.
+// Returns a GUID structure.
 //
 // This function is available since SDL 3.2.0.
 //

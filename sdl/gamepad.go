@@ -881,11 +881,11 @@ func GetGamepadFromPlayerIndex(playerIndex int32) (*Gamepad, error) {
 //
 // The following read-only properties are provided by SDL:
 //
-//   - [PropGamepadCapMonoLedBoolean]: true if this gamepad has an LED
+//   - [PropGamepadCapMonoLEDBoolean]: true if this gamepad has an LED
 //     that has adjustable brightness
-//   - [PropGamepadCapRgbLedBoolean]: true if this gamepad has an LED
+//   - [PropGamepadCapRGBLEDBoolean]: true if this gamepad has an LED
 //     that has adjustable color
-//   - [PropGamepadCapPlayerLedBoolean]: true if this gamepad has a
+//   - [PropGamepadCapPlayerLEDBoolean]: true if this gamepad has a
 //     player LED
 //   - [PropGamepadCapRumbleBoolean]: true if this gamepad has
 //     left/right rumble
@@ -907,9 +907,9 @@ func (gamepad *Gamepad) Properties() (PropertiesID, error) {
 	return props, nil
 }
 
-const PropGamepadCapMonoLedBoolean = PropJoystickCapMonoLedBoolean
-const PropGamepadCapRgbLedBoolean = PropJoystickCapRgbLedBoolean
-const PropGamepadCapPlayerLedBoolean = PropJoystickCapPlayerLedBoolean
+const PropGamepadCapMonoLEDBoolean = PropJoystickCapMonoLEDBoolean
+const PropGamepadCapRGBLEDBoolean = PropJoystickCapRGBLEDBoolean
+const PropGamepadCapPlayerLEDBoolean = PropJoystickCapPlayerLEDBoolean
 const PropGamepadCapRumbleBoolean = PropJoystickCapRumbleBoolean
 const PropGamepadCapTriggerRumbleBoolean = PropJoystickCapTriggerRumbleBoolean
 

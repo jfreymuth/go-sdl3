@@ -64,9 +64,9 @@ import (
 //
 // The variable can be set to the following values:
 //
-// - "0": SDL will not handle Alt+Tab. Your application is responsible for
-// handling Alt+Tab while the keyboard is grabbed.
-// - "1": SDL will minimize your window when Alt+Tab is pressed (default)
+//   - "0": SDL will not handle Alt+Tab. Your application is responsible for
+//     handling Alt+Tab while the keyboard is grabbed.
+//   - "1": SDL will minimize your window when Alt+Tab is pressed (default)
 //
 // This hint can be set anytime.
 //
@@ -83,8 +83,8 @@ const HintAllowAltTabWhileGrabbed = "SDL_ALLOW_ALT_TAB_WHILE_GRABBED"
 //
 // The variable can be set to the following values:
 //
-// - "0": The application starts fresh at each launch. (default)
-// - "1": The application activity can be recreated by the OS.
+//   - "0": The application starts fresh at each launch. (default)
+//   - "1": The application activity can be recreated by the OS.
 //
 // This hint can be set anytime.
 //
@@ -96,8 +96,8 @@ const HintAndroidAllowRecreateActivity = "SDL_ANDROID_ALLOW_RECREATE_ACTIVITY"
 //
 // The variable can be set to the following values:
 //
-// - "0": Non blocking.
-// - "1": Blocking. (default)
+//   - "0": Non blocking.
+//   - "1": Blocking. (default)
 //
 // This hint should be set before SDL is initialized.
 //
@@ -111,8 +111,8 @@ const HintAndroidBlockOnPause = "SDL_ANDROID_BLOCK_ON_PAUSE"
 //
 // The variable can be set to the following values:
 //
-// - "0": Low latency audio is not enabled.
-// - "1": Low latency audio is enabled. (default)
+//   - "0": Low latency audio is not enabled.
+//   - "1": Low latency audio is enabled. (default)
 //
 // This hint should be set before SDL audio is initialized.
 //
@@ -130,10 +130,10 @@ const HintAndroidLowLatencyAudio = "SDL_ANDROID_LOW_LATENCY_AUDIO"
 //
 // The variable can be set to the following values:
 //
-// - "0": Back button will be handled as usual for system. (default)
-// - "1": Back button will be trapped, allowing you to handle the key press
-// manually. (This will also let right mouse click work on systems where the
-// right mouse button functions as back.)
+//   - "0": Back button will be handled as usual for system. (default)
+//   - "1": Back button will be trapped, allowing you to handle the key press
+//     manually. (This will also let right mouse click work on systems where the
+//     right mouse button functions as back.)
 //
 // This hint can be set anytime.
 //
@@ -183,8 +183,8 @@ const HintAppName = "SDL_APP_NAME"
 //
 // The variable can be set to the following values:
 //
-// - "0": Controller input does not generate UI events. (default)
-// - "1": Controller input generates UI events.
+//   - "0": Controller input does not generate UI events. (default)
+//   - "1": Controller input generates UI events.
 //
 // This hint can be set anytime.
 //
@@ -196,8 +196,8 @@ const HintAppleTvControllerUiEvents = "SDL_APPLE_TV_CONTROLLER_UI_EVENTS"
 //
 // The variable can be set to the following values:
 //
-// - "0": Remote orientation does not affect joystick axes. (default)
-// - "1": Joystick axes are based on the orientation of the remote.
+//   - "0": Remote orientation does not affect joystick axes. (default)
+//   - "1": Joystick axes are based on the orientation of the remote.
 //
 // This hint can be set anytime.
 //
@@ -249,9 +249,9 @@ const HintAudioAlsaDefaultRecordingDevice = "SDL_AUDIO_ALSA_DEFAULT_RECORDING_DE
 //
 // The variable can be set to the following values:
 //
-// - "ambient": Use the AVAudioSessionCategoryAmbient audio category, will be
-// muted by the phone mute switch (default)
-// - "playback": Use the AVAudioSessionCategoryPlayback category.
+//   - "ambient": Use the AVAudioSessionCategoryAmbient audio category, will be
+//     muted by the phone mute switch (default)
+//   - "playback": Use the AVAudioSessionCategoryPlayback category.
 //
 // For more information, see Apple's documentation:
 // https://developer.apple.com/library/content/documentation/Audio/Conceptual/AudioSessionProgrammingGuide/AudioSessionCategoriesandModes/AudioSessionCategoriesandModes.html
@@ -422,17 +422,17 @@ const HintAudioDummyTimescale = "SDL_AUDIO_DUMMY_TIMESCALE"
 //
 // The variable can be set to the following values:
 //
-// - "U8": Unsigned 8-bit audio
-// - "S8": Signed 8-bit audio
-// - "S16LE": Signed 16-bit little-endian audio
-// - "S16BE": Signed 16-bit big-endian audio
-// - "S16": Signed 16-bit native-endian audio (default)
-// - "S32LE": Signed 32-bit little-endian audio
-// - "S32BE": Signed 32-bit big-endian audio
-// - "S32": Signed 32-bit native-endian audio
-// - "F32LE": Floating point little-endian audio
-// - "F32BE": Floating point big-endian audio
-// - "F32": Floating point native-endian audio
+//   - "U8": Unsigned 8-bit audio
+//   - "S8": Signed 8-bit audio
+//   - "S16LE": Signed 16-bit little-endian audio
+//   - "S16BE": Signed 16-bit big-endian audio
+//   - "S16": Signed 16-bit native-endian audio (default)
+//   - "S32LE": Signed 32-bit little-endian audio
+//   - "S32BE": Signed 32-bit big-endian audio
+//   - "S32": Signed 32-bit native-endian audio
+//   - "F32LE": Floating point little-endian audio
+//   - "F32BE": Floating point big-endian audio
+//   - "F32": Floating point native-endian audio
 //
 // This hint should be set before an audio device is opened.
 //
@@ -463,8 +463,8 @@ const HintAudioFrequency = "SDL_AUDIO_FREQUENCY"
 //
 // The variable can be set to the following values:
 //
-// - "0": Audio monitor devices will be ignored. (default)
-// - "1": Audio monitor devices will show up in the device list.
+//   - "0": Audio monitor devices will be ignored. (default)
+//   - "1": Audio monitor devices will show up in the device list.
 //
 // This hint should be set before SDL is initialized.
 //
@@ -476,8 +476,8 @@ const HintAudioIncludeMonitors = "SDL_AUDIO_INCLUDE_MONITORS"
 //
 // The variable can be set to the following values:
 //
-// - "0": You'll call SDL_UpdateJoysticks() manually.
-// - "1": SDL will automatically call SDL_UpdateJoysticks(). (default)
+//   - "0": You'll call SDL_UpdateJoysticks() manually.
+//   - "1": SDL will automatically call SDL_UpdateJoysticks(). (default)
 //
 // This hint can be set anytime.
 //
@@ -489,8 +489,8 @@ const HintAutoUpdateJoysticks = "SDL_AUTO_UPDATE_JOYSTICKS"
 //
 // The variable can be set to the following values:
 //
-// - "0": You'll call SDL_UpdateSensors() manually.
-// - "1": SDL will automatically call SDL_UpdateSensors(). (default)
+//   - "0": You'll call SDL_UpdateSensors() manually.
+//   - "1": SDL will automatically call SDL_UpdateSensors(). (default)
 //
 // This hint can be set anytime.
 //
@@ -506,12 +506,12 @@ const HintAutoUpdateSensors = "SDL_AUTO_UPDATE_SENSORS"
 //
 // The variable can be set to the following values:
 //
-// - "0": Surfaces with a colorkey or an alpha channel are saved to a 32-bit
-// BMP file with an alpha mask. SDL will use the bitmap header version 4 and
-// set the alpha mask accordingly. (default)
-// - "1": Surfaces with a colorkey or an alpha channel are saved to a 32-bit
-// BMP file without an alpha mask. The alpha channel data will be in the
-// file, but applications are going to ignore it.
+//   - "0": Surfaces with a colorkey or an alpha channel are saved to a 32-bit
+//     BMP file with an alpha mask. SDL will use the bitmap header version 4 and
+//     set the alpha mask accordingly. (default)
+//   - "1": Surfaces with a colorkey or an alpha channel are saved to a 32-bit
+//     BMP file without an alpha mask. The alpha channel data will be in the
+//     file, but applications are going to ignore it.
 //
 // This hint can be set anytime.
 //
@@ -543,20 +543,20 @@ const HintCameraDriver = "SDL_CAMERA_DRIVER"
 // The variable can be set to a comma separated list containing the following
 // items:
 //
-// - "all"
-// - "altivec"
-// - "sse"
-// - "sse2"
-// - "sse3"
-// - "sse41"
-// - "sse42"
-// - "avx"
-// - "avx2"
-// - "avx512f"
-// - "arm-simd"
-// - "neon"
-// - "lsx"
-// - "lasx"
+//   - "all"
+//   - "altivec"
+//   - "sse"
+//   - "sse2"
+//   - "sse3"
+//   - "sse41"
+//   - "sse42"
+//   - "avx"
+//   - "avx2"
+//   - "avx512f"
+//   - "arm-simd"
+//   - "neon"
+//   - "lsx"
+//   - "lasx"
 //
 // The items can be prefixed by '+'/'-' to add/remove features.
 //
@@ -567,8 +567,8 @@ const HintCpuFeatureMask = "SDL_CPU_FEATURE_MASK"
 //
 // The variable can be set to the following values:
 //
-// - "0": Disable DirectInput detection.
-// - "1": Enable DirectInput detection. (default)
+//   - "0": Disable DirectInput detection.
+//   - "1": Enable DirectInput detection. (default)
 //
 // This hint should be set before SDL is initialized.
 //
@@ -591,9 +591,9 @@ const HintJoystickDirectinput = "SDL_JOYSTICK_DIRECTINPUT"
 //
 // The variable can be set to the following values:
 //
-// - NULL: Select automatically (default, all platforms)
-// - "portal": Use XDG Portals through DBus (Unix only)
-// - "zenity": Use the Zenity program (Unix only)
+//   - NULL: Select automatically (default, all platforms)
+//   - "portal": Use XDG Portals through DBus (Unix only)
+//   - "zenity": Use the Zenity program (Unix only)
 //
 // More options may be added in the future.
 //
@@ -628,9 +628,9 @@ const HintDisplayUsableBounds = "SDL_DISPLAY_USABLE_BOUNDS"
 //
 // The variable can be set to the following values:
 //
-// - "0": Disable emscripten_sleep calls (if you give back browser control
-// manually or use asyncify for other purposes).
-// - "1": Enable emscripten_sleep calls. (default)
+//   - "0": Disable emscripten_sleep calls (if you give back browser control
+//     manually or use asyncify for other purposes).
+//   - "1": Enable emscripten_sleep calls. (default)
 //
 // This hint can be set anytime.
 //
@@ -654,13 +654,13 @@ const HintEmscriptenCanvasSelector = "SDL_EMSCRIPTEN_CANVAS_SELECTOR"
 //
 // The variable can be one of:
 //
-// - "#window": the javascript window object (default)
-// - "#document": the javascript document object
-// - "#screen": the javascript window.screen object
-// - "#canvas": the WebGL canvas element
-// - "#none": Don't bind anything at all
-// - any other string without a leading # sign applies to the element on the
-// page with that ID.
+//   - "#window": the javascript window object (default)
+//   - "#document": the javascript document object
+//   - "#screen": the javascript window.screen object
+//   - "#canvas": the WebGL canvas element
+//   - "#none": Don't bind anything at all
+//   - any other string without a leading # sign applies to the element on the
+//     page with that ID.
 //
 // This hint should be set before creating a window.
 //
@@ -672,10 +672,10 @@ const HintEmscriptenKeyboardElement = "SDL_EMSCRIPTEN_KEYBOARD_ELEMENT"
 //
 // The variable can be set to the following values:
 //
-// - "auto": The on-screen keyboard will be shown if there is no physical
-// keyboard attached. (default)
-// - "0": Do not show the on-screen keyboard.
-// - "1": Show the on-screen keyboard, if available.
+//   - "auto": The on-screen keyboard will be shown if there is no physical
+//     keyboard attached. (default)
+//   - "0": Do not show the on-screen keyboard.
+//   - "1": Show the on-screen keyboard, if available.
 //
 // This hint must be set before SDL_StartTextInput() is called
 //
@@ -703,9 +703,9 @@ const HintEvdevDevices = "SDL_EVDEV_DEVICES"
 // The variable can be set to the following values, from least to most
 // verbose:
 //
-// - "0": Don't log any events. (default)
-// - "1": Log most events (other than the really spammy ones).
-// - "2": Include mouse and finger motion events.
+//   - "0": Don't log any events. (default)
+//   - "1": Log most events (other than the really spammy ones).
+//   - "2": Include mouse and finger motion events.
 //
 // This is generally meant to be used to debug SDL itself, but can be useful
 // for application developers that need better visibility into what is going
@@ -724,8 +724,8 @@ const HintEventLogging = "SDL_EVENT_LOGGING"
 //
 // The variable can be set to the following values:
 //
-// - "0": Honor the OS policy for raising windows. (default)
-// - "1": Force the window to be raised, overriding any OS policy.
+//   - "0": Honor the OS policy for raising windows. (default)
+//   - "1": Force the window to be raised, overriding any OS policy.
 //
 // At present, this is only an issue under MS Windows, which makes it nearly
 // impossible to programmatically move a window to the foreground, for
@@ -746,10 +746,10 @@ const HintForceRaisewindow = "SDL_FORCE_RAISEWINDOW"
 //
 // The variable can be set to the following values:
 //
-// - "0": Disable 3D acceleration
-// - "1": Enable 3D acceleration, using the default renderer. (default)
-// - "X": Enable 3D acceleration, using X where X is one of the valid
-// rendering drivers. (e.g. "direct3d", "opengl", etc.)
+//   - "0": Disable 3D acceleration
+//   - "1": Enable 3D acceleration, using the default renderer. (default)
+//   - "X": Enable 3D acceleration, using X where X is one of the valid
+//     rendering drivers. (e.g. "direct3d", "opengl", etc.)
 //
 // This hint should be set before calling SDL_GetWindowSurface()
 //
@@ -793,12 +793,12 @@ const HintGamecontrollerconfigFile = "SDL_GAMECONTROLLERCONFIG_FILE"
 //
 // The variable can be set to the following values:
 //
-// - "Xbox360"
-// - "XboxOne"
-// - "PS3"
-// - "PS4"
-// - "PS5"
-// - "SwitchPro"
+//   - "Xbox360"
+//   - "XboxOne"
+//   - "PS3"
+//   - "PS4"
+//   - "PS5"
+//   - "SwitchPro"
 //
 // This hint should be set before SDL is initialized.
 //
@@ -842,8 +842,8 @@ const HintGamecontrollerIgnoreDevicesExcept = "SDL_GAMECONTROLLER_IGNORE_DEVICES
 //
 // The variable can be set to the following values:
 //
-// - "0": Sensor fusion is disabled
-// - "1": Sensor fusion is enabled for all controllers that lack sensors
+//   - "0": Sensor fusion is disabled
+//   - "1": Sensor fusion is enabled for all controllers that lack sensors
 //
 // Or the variable can be a comma separated list of USB VID/PID pairs in
 // hexadecimal form, e.g.
@@ -922,8 +922,8 @@ const HintGdkTextinputTitle = "SDL_GDK_TEXTINPUT_TITLE"
 //
 // The variable can be set to the following values:
 //
-// - "0": HIDAPI will not use libusb for device access.
-// - "1": HIDAPI will use libusb for device access if available. (default)
+//   - "0": HIDAPI will not use libusb for device access.
+//   - "1": HIDAPI will use libusb for device access if available. (default)
 //
 // This hint should be set before SDL is initialized.
 //
@@ -938,8 +938,8 @@ const HintHidapiLibusb = "SDL_HIDAPI_LIBUSB"
 //
 // The variable can be set to the following values:
 //
-// - "0": HIDAPI will use libusb for all device access.
-// - "1": HIDAPI will use libusb only for whitelisted devices. (default)
+//   - "0": HIDAPI will use libusb for all device access.
+//   - "1": HIDAPI will use libusb only for whitelisted devices. (default)
 //
 // This hint should be set before SDL is initialized.
 //
@@ -950,8 +950,8 @@ const HintHidapiLibusbWhitelist = "SDL_HIDAPI_LIBUSB_WHITELIST"
 //
 // The variable can be set to the following values:
 //
-// - "0": HIDAPI will poll for device changes.
-// - "1": HIDAPI will use udev for device detection. (default)
+//   - "0": HIDAPI will poll for device changes.
+//   - "1": HIDAPI will use udev for device detection. (default)
 //
 // This hint should be set before SDL is initialized.
 //
@@ -975,8 +975,8 @@ const HintGPUDriver = "SDL_GPU_DRIVER"
 //
 // The variable can be set to the following values:
 //
-// - "0": SDL_hid_enumerate() will enumerate all HID devices.
-// - "1": SDL_hid_enumerate() will only enumerate controllers. (default)
+//   - "0": SDL_hid_enumerate() will enumerate all HID devices.
+//   - "1": SDL_hid_enumerate() will only enumerate controllers. (default)
 //
 // By default SDL will only enumerate controllers, to reduce risk of hanging
 // or crashing on devices with bad drivers and avoiding macOS keyboard capture
@@ -1011,12 +1011,12 @@ const HintHidapiIgnoreDevices = "SDL_HIDAPI_IGNORE_DEVICES"
 // The variable can be set to a comma separated list containing the following
 // items:
 //
-// - "none" or "0": The application can't render any IME elements, and native
-// UI should be used. (default)
-// - "composition": The application handles SDL_EVENT_TEXT_EDITING events and
-// can render the composition text.
-// - "candidates": The application handles SDL_EVENT_TEXT_EDITING_CANDIDATES
-// and can render the candidate list.
+//   - "none" or "0": The application can't render any IME elements, and native
+//     UI should be used. (default)
+//   - "composition": The application handles SDL_EVENT_TEXT_EDITING events and
+//     can render the composition text.
+//   - "candidates": The application handles SDL_EVENT_TEXT_EDITING_CANDIDATES
+//     and can render the candidate list.
 //
 // This hint should be set before SDL is initialized.
 //
@@ -1028,12 +1028,12 @@ const HintImeImplementedUi = "SDL_IME_IMPLEMENTED_UI"
 //
 // The variable can be set to the following values:
 //
-// - "0": The indicator bar is not hidden. (default for windowed applications)
-// - "1": The indicator bar is hidden and is shown when the screen is touched
-// (useful for movie playback applications).
-// - "2": The indicator bar is dim and the first swipe makes it visible and
-// the second swipe performs the "home" action. (default for fullscreen
-// applications)
+//   - "0": The indicator bar is not hidden. (default for windowed applications)
+//   - "1": The indicator bar is hidden and is shown when the screen is touched
+//     (useful for movie playback applications).
+//   - "2": The indicator bar is dim and the first swipe makes it visible and
+//     the second swipe performs the "home" action. (default for fullscreen
+//     applications)
 //
 // This hint can be set anytime.
 //
@@ -1045,10 +1045,10 @@ const HintIosHideHomeIndicator = "SDL_IOS_HIDE_HOME_INDICATOR"
 //
 // The variable can be set to the following values:
 //
-// - "0": Disable joystick & gamecontroller input events when the application
-// is in the background. (default)
-// - "1": Enable joystick & gamecontroller input events when the application
-// is in the background.
+//   - "0": Disable joystick & gamecontroller input events when the application
+//     is in the background. (default)
+//   - "1": Enable joystick & gamecontroller input events when the application
+//     is in the background.
 //
 // This hint can be set anytime.
 //
@@ -1144,11 +1144,11 @@ const HintJoystickDevice = "SDL_JOYSTICK_DEVICE"
 //
 // The variable can be set to the following values:
 //
-// - "0": enhanced reports are not enabled.
-// - "1": enhanced reports are enabled. (default)
-// - "auto": enhanced features are advertised to the application, but SDL
-// doesn't change the controller report mode unless the application uses
-// them.
+//   - "0": enhanced reports are not enabled.
+//   - "1": enhanced reports are enabled. (default)
+//   - "auto": enhanced features are advertised to the application, but SDL
+//     doesn't change the controller report mode unless the application uses
+//     them.
 //
 // This hint can be enabled anytime.
 //
@@ -1194,8 +1194,8 @@ const HintJoystickFlightstickDevicesExcluded = "SDL_JOYSTICK_FLIGHTSTICK_DEVICES
 //
 // The variable can be set to the following values:
 //
-// - "0": GameInput is not used.
-// - "1": GameInput is used.
+//   - "0": GameInput is not used.
+//   - "1": GameInput is used.
 //
 // The default is "1" on GDK platforms, and "0" otherwise.
 //
@@ -1243,8 +1243,8 @@ const HintJoystickGamecubeDevicesExcluded = "SDL_JOYSTICK_GAMECUBE_DEVICES_EXCLU
 //
 // The variable can be set to the following values:
 //
-// - "0": HIDAPI drivers are not used.
-// - "1": HIDAPI drivers are used. (default)
+//   - "0": HIDAPI drivers are not used.
+//   - "1": HIDAPI drivers are used. (default)
 //
 // This variable is the default for all drivers, but can be overridden by the
 // hints for specific drivers below.
@@ -1259,10 +1259,10 @@ const HintJoystickHidapi = "SDL_JOYSTICK_HIDAPI"
 //
 // The variable can be set to the following values:
 //
-// - "0": Left and right Joy-Con controllers will not be combined and each
-// will be a mini-gamepad.
-// - "1": Left and right Joy-Con controllers will be combined into a single
-// controller. (default)
+//   - "0": Left and right Joy-Con controllers will not be combined and each
+//     will be a mini-gamepad.
+//   - "1": Left and right Joy-Con controllers will be combined into a single
+//     controller. (default)
 //
 // This hint should be set before initializing joysticks and gamepads.
 //
@@ -1274,8 +1274,8 @@ const HintJoystickHidapiCombineJoyCons = "SDL_JOYSTICK_HIDAPI_COMBINE_JOY_CONS"
 //
 // The variable can be set to the following values:
 //
-// - "0": HIDAPI driver is not used.
-// - "1": HIDAPI driver is used.
+//   - "0": HIDAPI driver is not used.
+//   - "1": HIDAPI driver is used.
 //
 // The default is the value of SDL_HINT_JOYSTICK_HIDAPI
 //
@@ -1295,8 +1295,8 @@ const HintJoystickHidapiGamecube = "SDL_JOYSTICK_HIDAPI_GAMECUBE"
 //
 // The variable can be set to the following values:
 //
-// - "0": Normal rumble behavior is behavior is used. (default)
-// - "1": Proper GameCube controller rumble behavior is used.
+//   - "0": Normal rumble behavior is behavior is used. (default)
+//   - "1": Proper GameCube controller rumble behavior is used.
 //
 // This hint can be set anytime.
 //
@@ -1308,8 +1308,8 @@ const HintJoystickHidapiGamecubeRumbleBrake = "SDL_JOYSTICK_HIDAPI_GAMECUBE_RUMB
 //
 // The variable can be set to the following values:
 //
-// - "0": HIDAPI driver is not used.
-// - "1": HIDAPI driver is used.
+//   - "0": HIDAPI driver is not used.
+//   - "1": HIDAPI driver is used.
 //
 // The default is the value of SDL_HINT_JOYSTICK_HIDAPI.
 //
@@ -1323,8 +1323,8 @@ const HintJoystickHidapiJoyCons = "SDL_JOYSTICK_HIDAPI_JOY_CONS"
 //
 // The variable can be set to the following values:
 //
-// - "0": home button LED is turned off
-// - "1": home button LED is turned on
+//   - "0": home button LED is turned off
+//   - "1": home button LED is turned on
 //
 // By default the Home button LED state is not changed. This hint can also be
 // set to a floating point value between 0.0 and 1.0 which controls the
@@ -1340,8 +1340,8 @@ const HintJoystickHidapiJoyconHomeLed = "SDL_JOYSTICK_HIDAPI_JOYCON_HOME_LED"
 //
 // The variable can be set to the following values:
 //
-// - "0": HIDAPI driver is not used.
-// - "1": HIDAPI driver is used.
+//   - "0": HIDAPI driver is not used.
+//   - "1": HIDAPI driver is used.
 //
 // The default is the value of SDL_HINT_JOYSTICK_HIDAPI.
 //
@@ -1355,8 +1355,8 @@ const HintJoystickHidapiLuna = "SDL_JOYSTICK_HIDAPI_LUNA"
 //
 // The variable can be set to the following values:
 //
-// - "0": HIDAPI driver is not used.
-// - "1": HIDAPI driver is used.
+//   - "0": HIDAPI driver is not used.
+//   - "1": HIDAPI driver is used.
 //
 // The default is the value of SDL_HINT_JOYSTICK_HIDAPI.
 //
@@ -1370,8 +1370,8 @@ const HintJoystickHidapiNintendoClassic = "SDL_JOYSTICK_HIDAPI_NINTENDO_CLASSIC"
 //
 // The variable can be set to the following values:
 //
-// - "0": HIDAPI driver is not used.
-// - "1": HIDAPI driver is used.
+//   - "0": HIDAPI driver is not used.
+//   - "1": HIDAPI driver is used.
 //
 // The default is the value of SDL_HINT_JOYSTICK_HIDAPI on macOS, and "0" on
 // other platforms.
@@ -1390,8 +1390,8 @@ const HintJoystickHidapiPS3 = "SDL_JOYSTICK_HIDAPI_PS3"
 //
 // The variable can be set to the following values:
 //
-// - "0": Sony driver (sixaxis.sys) is not used.
-// - "1": Sony driver (sixaxis.sys) is used.
+//   - "0": Sony driver (sixaxis.sys) is not used.
+//   - "1": Sony driver (sixaxis.sys) is used.
 //
 // The default value is 0.
 //
@@ -1405,8 +1405,8 @@ const HintJoystickHidapiPS3SixaxisDriver = "SDL_JOYSTICK_HIDAPI_PS3_SIXAXIS_DRIV
 //
 // The variable can be set to the following values:
 //
-// - "0": HIDAPI driver is not used.
-// - "1": HIDAPI driver is used.
+//   - "0": HIDAPI driver is not used.
+//   - "1": HIDAPI driver is used.
 //
 // The default is the value of SDL_HINT_JOYSTICK_HIDAPI.
 //
@@ -1433,8 +1433,8 @@ const HintJoystickHidapiPS4ReportInterval = "SDL_JOYSTICK_HIDAPI_PS4_REPORT_INTE
 //
 // The variable can be set to the following values:
 //
-// - "0": HIDAPI driver is not used.
-// - "1": HIDAPI driver is used.
+//   - "0": HIDAPI driver is not used.
+//   - "1": HIDAPI driver is used.
 //
 // The default is the value of SDL_HINT_JOYSTICK_HIDAPI.
 //
@@ -1448,8 +1448,8 @@ const HintJoystickHidapiPS5 = "SDL_JOYSTICK_HIDAPI_PS5"
 //
 // The variable can be set to the following values:
 //
-// - "0": player LEDs are not enabled.
-// - "1": player LEDs are enabled. (default)
+//   - "0": player LEDs are not enabled.
+//   - "1": player LEDs are enabled. (default)
 //
 // This hint is available since SDL 3.2.0.
 const HintJoystickHidapiPS5PlayerLed = "SDL_JOYSTICK_HIDAPI_PS5_PLAYER_LED"
@@ -1459,8 +1459,8 @@ const HintJoystickHidapiPS5PlayerLed = "SDL_JOYSTICK_HIDAPI_PS5_PLAYER_LED"
 //
 // The variable can be set to the following values:
 //
-// - "0": HIDAPI driver is not used.
-// - "1": HIDAPI driver is used.
+//   - "0": HIDAPI driver is not used.
+//   - "1": HIDAPI driver is used.
 //
 // The default is the value of SDL_HINT_JOYSTICK_HIDAPI.
 //
@@ -1474,8 +1474,8 @@ const HintJoystickHidapiShield = "SDL_JOYSTICK_HIDAPI_SHIELD"
 //
 // The variable can be set to the following values:
 //
-// - "0": HIDAPI driver is not used.
-// - "1": HIDAPI driver is used.
+//   - "0": HIDAPI driver is not used.
+//   - "1": HIDAPI driver is used.
 //
 // The default is the value of SDL_HINT_JOYSTICK_HIDAPI.
 //
@@ -1487,10 +1487,10 @@ const HintJoystickHidapiStadia = "SDL_JOYSTICK_HIDAPI_STADIA"
 //
 // The variable can be set to the following values:
 //
-// - "0": HIDAPI driver is not used. (default)
-// - "1": HIDAPI driver is used for Steam Controllers, which requires
-// Bluetooth access and may prompt the user for permission on iOS and
-// Android.
+//   - "0": HIDAPI driver is not used. (default)
+//   - "1": HIDAPI driver is used for Steam Controllers, which requires
+//     Bluetooth access and may prompt the user for permission on iOS and
+//     Android.
 //
 // This hint should be set before initializing joysticks and gamepads.
 //
@@ -1502,8 +1502,8 @@ const HintJoystickHidapiSteam = "SDL_JOYSTICK_HIDAPI_STEAM"
 //
 // The variable can be set to the following values:
 //
-// - "0": Steam button LED is turned off.
-// - "1": Steam button LED is turned on.
+//   - "0": Steam button LED is turned off.
+//   - "1": Steam button LED is turned on.
 //
 // By default the Steam button LED state is not changed. This hint can also be
 // set to a floating point value between 0.0 and 1.0 which controls the
@@ -1519,8 +1519,8 @@ const HintJoystickHidapiSteamHomeLed = "SDL_JOYSTICK_HIDAPI_STEAM_HOME_LED"
 //
 // The variable can be set to the following values:
 //
-// - "0": HIDAPI driver is not used.
-// - "1": HIDAPI driver is used.
+//   - "0": HIDAPI driver is not used.
+//   - "1": HIDAPI driver is used.
 //
 // The default is the value of SDL_HINT_JOYSTICK_HIDAPI.
 //
@@ -1543,8 +1543,8 @@ const HintJoystickHidapiSteamHori = "SDL_JOYSTICK_HIDAPI_STEAM_HORI"
 //
 // The variable can be set to the following values:
 //
-// - "0": HIDAPI driver is not used.
-// - "1": HIDAPI driver is used.
+//   - "0": HIDAPI driver is not used.
+//   - "1": HIDAPI driver is used.
 //
 // The default is the value of SDL_HINT_JOYSTICK_HIDAPI.
 //
@@ -1558,8 +1558,8 @@ const HintJoystickHidapiSwitch = "SDL_JOYSTICK_HIDAPI_SWITCH"
 //
 // The variable can be set to the following values:
 //
-// - "0": Home button LED is turned off.
-// - "1": Home button LED is turned on.
+//   - "0": Home button LED is turned off.
+//   - "1": Home button LED is turned on.
 //
 // By default the Home button LED state is not changed. This hint can also be
 // set to a floating point value between 0.0 and 1.0 which controls the
@@ -1575,8 +1575,8 @@ const HintJoystickHidapiSwitchHomeLed = "SDL_JOYSTICK_HIDAPI_SWITCH_HOME_LED"
 //
 // The variable can be set to the following values:
 //
-// - "0": Player LEDs are not enabled.
-// - "1": Player LEDs are enabled. (default)
+//   - "0": Player LEDs are not enabled.
+//   - "1": Player LEDs are enabled. (default)
 //
 // This hint can be set anytime.
 //
@@ -1588,9 +1588,9 @@ const HintJoystickHidapiSwitchPlayerLed = "SDL_JOYSTICK_HIDAPI_SWITCH_PLAYER_LED
 //
 // The variable can be set to the following values:
 //
-// - "0": Left and right Joy-Con controllers will not be in vertical mode.
-// (default)
-// - "1": Left and right Joy-Con controllers will be in vertical mode.
+//   - "0": Left and right Joy-Con controllers will not be in vertical mode.
+//     (default)
+//   - "1": Left and right Joy-Con controllers will be in vertical mode.
 //
 // This hint should be set before opening a Joy-Con controller.
 //
@@ -1602,8 +1602,8 @@ const HintJoystickHidapiVerticalJoyCons = "SDL_JOYSTICK_HIDAPI_VERTICAL_JOY_CONS
 //
 // The variable can be set to the following values:
 //
-// - "0": HIDAPI driver is not used.
-// - "1": HIDAPI driver is used.
+//   - "0": HIDAPI driver is not used.
+//   - "1": HIDAPI driver is used.
 //
 // This driver doesn't work with the dolphinbar, so the default is false for
 // now.
@@ -1618,8 +1618,8 @@ const HintJoystickHidapiWii = "SDL_JOYSTICK_HIDAPI_WII"
 //
 // The variable can be set to the following values:
 //
-// - "0": Player LEDs are not enabled.
-// - "1": Player LEDs are enabled. (default)
+//   - "0": Player LEDs are not enabled.
+//   - "1": Player LEDs are enabled. (default)
 //
 // This hint can be set anytime.
 //
@@ -1631,8 +1631,8 @@ const HintJoystickHidapiWiiPlayerLed = "SDL_JOYSTICK_HIDAPI_WII_PLAYER_LED"
 //
 // The variable can be set to the following values:
 //
-// - "0": HIDAPI driver is not used.
-// - "1": HIDAPI driver is used.
+//   - "0": HIDAPI driver is not used.
+//   - "1": HIDAPI driver is used.
 //
 // The default is "0" on Windows, otherwise the value of
 // SDL_HINT_JOYSTICK_HIDAPI
@@ -1647,8 +1647,8 @@ const HintJoystickHidapiXbox = "SDL_JOYSTICK_HIDAPI_XBOX"
 //
 // The variable can be set to the following values:
 //
-// - "0": HIDAPI driver is not used.
-// - "1": HIDAPI driver is used.
+//   - "0": HIDAPI driver is not used.
+//   - "1": HIDAPI driver is used.
 //
 // The default is the value of SDL_HINT_JOYSTICK_HIDAPI_XBOX
 //
@@ -1662,8 +1662,8 @@ const HintJoystickHidapiXbox360 = "SDL_JOYSTICK_HIDAPI_XBOX_360"
 //
 // The variable can be set to the following values:
 //
-// - "0": Player LEDs are not enabled.
-// - "1": Player LEDs are enabled. (default)
+//   - "0": Player LEDs are not enabled.
+//   - "1": Player LEDs are enabled. (default)
 //
 // This hint can be set anytime.
 //
@@ -1675,8 +1675,8 @@ const HintJoystickHidapiXbox360PlayerLed = "SDL_JOYSTICK_HIDAPI_XBOX_360_PLAYER_
 //
 // The variable can be set to the following values:
 //
-// - "0": HIDAPI driver is not used.
-// - "1": HIDAPI driver is used.
+//   - "0": HIDAPI driver is not used.
+//   - "1": HIDAPI driver is used.
 //
 // The default is the value of SDL_HINT_JOYSTICK_HIDAPI_XBOX_360
 //
@@ -1690,8 +1690,8 @@ const HintJoystickHidapiXbox360Wireless = "SDL_JOYSTICK_HIDAPI_XBOX_360_WIRELESS
 //
 // The variable can be set to the following values:
 //
-// - "0": HIDAPI driver is not used.
-// - "1": HIDAPI driver is used.
+//   - "0": HIDAPI driver is not used.
+//   - "1": HIDAPI driver is used.
 //
 // The default is the value of SDL_HINT_JOYSTICK_HIDAPI_XBOX.
 //
@@ -1705,8 +1705,8 @@ const HintJoystickHidapiXboxOne = "SDL_JOYSTICK_HIDAPI_XBOX_ONE"
 //
 // The variable can be set to the following values:
 //
-// - "0": Home button LED is turned off.
-// - "1": Home button LED is turned on.
+//   - "0": Home button LED is turned off.
+//   - "1": Home button LED is turned on.
 //
 // By default the Home button LED state is not changed. This hint can also be
 // set to a floating point value between 0.0 and 1.0 which controls the
@@ -1722,8 +1722,8 @@ const HintJoystickHidapiXboxOneHomeLed = "SDL_JOYSTICK_HIDAPI_XBOX_ONE_HOME_LED"
 //
 // The variable can be set to the following values:
 //
-// - "0": IOKit is not used.
-// - "1": IOKit is used. (default)
+//   - "0": IOKit is not used.
+//   - "1": IOKit is used. (default)
 //
 // This hint should be set before SDL is initialized.
 //
@@ -1735,8 +1735,8 @@ const HintJoystickIokit = "SDL_JOYSTICK_IOKIT"
 //
 // The variable can be set to the following values:
 //
-// - "0": Use /dev/input/event* (default)
-// - "1": Use /dev/input/js*
+//   - "0": Use /dev/input/event* (default)
+//   - "1": Use /dev/input/js*
 //
 // This hint should be set before SDL is initialized.
 //
@@ -1748,8 +1748,8 @@ const HintJoystickLinuxClassic = "SDL_JOYSTICK_LINUX_CLASSIC"
 //
 // The variable can be set to the following values:
 //
-// - "0": Return unfiltered joystick axis values. (default)
-// - "1": Return axis values with deadzones taken into account.
+//   - "0": Return unfiltered joystick axis values. (default)
+//   - "1": Return axis values with deadzones taken into account.
 //
 // This hint should be set before a controller is opened.
 //
@@ -1762,10 +1762,10 @@ const HintJoystickLinuxDeadzones = "SDL_JOYSTICK_LINUX_DEADZONES"
 //
 // The variable can be set to the following values:
 //
-// - "0": Only map hat axis inputs to digital hat outputs if the input axes
-// appear to actually be digital. (default)
-// - "1": Always handle the input axes numbered ABS_HAT0X to ABS_HAT3Y as
-// digital hats.
+//   - "0": Only map hat axis inputs to digital hat outputs if the input axes
+//     appear to actually be digital. (default)
+//   - "1": Always handle the input axes numbered ABS_HAT0X to ABS_HAT3Y as
+//     digital hats.
 //
 // This hint should be set before a controller is opened.
 //
@@ -1777,9 +1777,9 @@ const HintJoystickLinuxDigitalHats = "SDL_JOYSTICK_LINUX_DIGITAL_HATS"
 //
 // The variable can be set to the following values:
 //
-// - "0": Return digital hat values based on unfiltered input axis values.
-// - "1": Return digital hat values with deadzones on the input axes taken
-// into account. (default)
+//   - "0": Return digital hat values based on unfiltered input axis values.
+//   - "1": Return digital hat values with deadzones on the input axes taken
+//     into account. (default)
 //
 // This hint should be set before a controller is opened.
 //
@@ -1791,8 +1791,8 @@ const HintJoystickLinuxHatDeadzones = "SDL_JOYSTICK_LINUX_HAT_DEADZONES"
 //
 // The variable can be set to the following values:
 //
-// - "0": GCController is not used.
-// - "1": GCController is used. (default)
+//   - "0": GCController is not used.
+//   - "1": GCController is used. (default)
 //
 // This hint should be set before SDL is initialized.
 //
@@ -1804,8 +1804,8 @@ const HintJoystickMfi = "SDL_JOYSTICK_MFI"
 //
 // The variable can be set to the following values:
 //
-// - "0": RAWINPUT drivers are not used.
-// - "1": RAWINPUT drivers are used. (default)
+//   - "0": RAWINPUT drivers are not used.
+//   - "1": RAWINPUT drivers are used. (default)
 //
 // This hint should be set before SDL is initialized.
 //
@@ -1817,10 +1817,10 @@ const HintJoystickRawinput = "SDL_JOYSTICK_RAWINPUT"
 //
 // The variable can be set to the following values:
 //
-// - "0": RAWINPUT driver will only use data from raw input APIs.
-// - "1": RAWINPUT driver will also pull data from XInput and
-// Windows.Gaming.Input, providing better trigger axes, guide button
-// presses, and rumble support for Xbox controllers. (default)
+//   - "0": RAWINPUT driver will only use data from raw input APIs.
+//   - "1": RAWINPUT driver will also pull data from XInput and
+//     Windows.Gaming.Input, providing better trigger axes, guide button
+//     presses, and rumble support for Xbox controllers. (default)
 //
 // This hint should be set before a gamepad is opened.
 //
@@ -1832,8 +1832,8 @@ const HintJoystickRawinputCorrelateXinput = "SDL_JOYSTICK_RAWINPUT_CORRELATE_XIN
 //
 // The variable can be set to the following values:
 //
-// - "0": ROG Chakram mice do not show up as joysticks. (default)
-// - "1": ROG Chakram mice show up as joysticks.
+//   - "0": ROG Chakram mice do not show up as joysticks. (default)
+//   - "1": ROG Chakram mice show up as joysticks.
 //
 // This hint should be set before SDL is initialized.
 //
@@ -1845,8 +1845,8 @@ const HintJoystickRogChakram = "SDL_JOYSTICK_ROG_CHAKRAM"
 //
 // The variable can be set to the following values:
 //
-// - "0": A separate thread is not used.
-// - "1": A separate thread is used for handling raw input messages. (default)
+//   - "0": A separate thread is not used.
+//   - "1": A separate thread is used for handling raw input messages. (default)
 //
 // This hint should be set before SDL is initialized.
 //
@@ -1892,8 +1892,8 @@ const HintJoystickThrottleDevicesExcluded = "SDL_JOYSTICK_THROTTLE_DEVICES_EXCLU
 //
 // The variable can be set to the following values:
 //
-// - "0": WGI is not used.
-// - "1": WGI is used. (default)
+//   - "0": WGI is not used.
+//   - "1": WGI is used. (default)
 //
 // This hint should be set before SDL is initialized.
 //
@@ -1955,18 +1955,18 @@ const HintJoystickZeroCenteredDevices = "SDL_JOYSTICK_ZERO_CENTERED_DEVICES"
 // This variable is a comma separated set of options for translating keycodes
 // in events:
 //
-// - "none": Keycode options are cleared, this overrides other options.
-// - "hide_numpad": The numpad keysyms will be translated into their
-// non-numpad versions based on the current NumLock state. For example,
-// SDLK_KP_4 would become SDLK_4 if SDL_KMOD_NUM is set in the event
-// modifiers, and SDLK_LEFT if it is unset.
-// - "french_numbers": The number row on French keyboards is inverted, so
-// pressing the 1 key would yield the keycode SDLK_1, or '1', instead of
-// SDLK_AMPERSAND, or '&'
-// - "latin_letters": For keyboards using non-Latin letters, such as Russian
-// or Thai, the letter keys generate keycodes as though it had an en_US
-// layout. e.g. pressing the key associated with SDL_SCANCODE_A on a Russian
-// keyboard would yield 'a' instead of a Cyrillic letter.
+//   - "none": Keycode options are cleared, this overrides other options.
+//   - "hide_numpad": The numpad keysyms will be translated into their
+//     non-numpad versions based on the current NumLock state. For example,
+//     SDLK_KP_4 would become SDLK_4 if SDL_KMOD_NUM is set in the event
+//     modifiers, and SDLK_LEFT if it is unset.
+//   - "french_numbers": The number row on French keyboards is inverted, so
+//     pressing the 1 key would yield the keycode SDLK_1, or '1', instead of
+//     SDLK_AMPERSAND, or '&'
+//   - "latin_letters": For keyboards using non-Latin letters, such as Russian
+//     or Thai, the letter keys generate keycodes as though it had an en_US
+//     layout. e.g. pressing the key associated with SDL_SCANCODE_A on a Russian
+//     keyboard would yield 'a' instead of a Cyrillic letter.
 //
 // The default value for this hint is "french_numbers,latin_letters"
 //
@@ -2012,8 +2012,8 @@ const HintKmsdrmDeviceIndex = "SDL_KMSDRM_DEVICE_INDEX"
 //
 // The variable can be set to the following values:
 //
-// - "0": SDL will allow usage of the KMSDRM backend without DRM master.
-// - "1": SDL Will require DRM master to use the KMSDRM backend. (default)
+//   - "0": SDL will allow usage of the KMSDRM backend without DRM master.
+//   - "1": SDL Will require DRM master to use the KMSDRM backend. (default)
 //
 // This hint should be set before SDL is initialized.
 //
@@ -2049,9 +2049,9 @@ const HintLogging = "SDL_LOGGING"
 //
 // The variable can be set to the following values:
 //
-// - "0": The application is brought to the foreground when launched.
-// (default)
-// - "1": The application may remain in the background when launched.
+//   - "0": The application is brought to the foreground when launched.
+//     (default)
+//   - "1": The application may remain in the background when launched.
 //
 // This hint needs to be set before SDL_Init().
 //
@@ -2063,9 +2063,9 @@ const HintMacBackgroundApp = "SDL_MAC_BACKGROUND_APP"
 //
 // The variable can be set to the following values:
 //
-// - "0": Ctrl+Click does not generate a right mouse button click event.
-// (default)
-// - "1": Ctrl+Click generated a right mouse button click event.
+//   - "0": Ctrl+Click does not generate a right mouse button click event.
+//     (default)
+//   - "1": Ctrl+Click generated a right mouse button click event.
 //
 // This hint can be set anytime.
 //
@@ -2078,10 +2078,10 @@ const HintMacCtrlClickEmulateRightClick = "SDL_MAC_CTRL_CLICK_EMULATE_RIGHT_CLIC
 //
 // The variable can be set to the following values:
 //
-// - "0": Dispatching OpenGL context updates will block the dispatching thread
-// until the main thread finishes processing. (default)
-// - "1": Dispatching OpenGL context updates will allow the dispatching thread
-// to continue execution.
+//   - "0": Dispatching OpenGL context updates will block the dispatching thread
+//     until the main thread finishes processing. (default)
+//   - "1": Dispatching OpenGL context updates will allow the dispatching thread
+//     to continue execution.
 //
 // Generally you want the default, but if you have OpenGL code in a background
 // thread on a Mac, and the main thread hangs because it's waiting for that
@@ -2098,10 +2098,10 @@ const HintMacOpenglAsyncDispatch = "SDL_MAC_OPENGL_ASYNC_DISPATCH"
 //
 // The variable can be set to the following values:
 //
-// - "none": The Option key is not remapped to Alt. (default)
-// - "only_left": Only the left Option key is remapped to Alt.
-// - "only_right": Only the right Option key is remapped to Alt.
-// - "both": Both Option keys are remapped to Alt.
+//   - "none": The Option key is not remapped to Alt. (default)
+//   - "only_left": Only the left Option key is remapped to Alt.
+//   - "only_right": Only the right Option key is remapped to Alt.
+//   - "both": Both Option keys are remapped to Alt.
 //
 // This will prevent the triggering of key compositions that rely on the
 // Option key, but will still send the Alt modifier for keyboard events. In
@@ -2121,8 +2121,8 @@ const HintMacOptionAsAlt = "SDL_MAC_OPTION_AS_ALT"
 //
 // The variable can be set to the following values:
 //
-// - "0": The mouse wheel events will have no momentum. (default)
-// - "1": The mouse wheel events will have momentum.
+//   - "0": The mouse wheel events will have no momentum. (default)
+//   - "1": The mouse wheel events will have momentum.
 //
 // This hint needs to be set before SDL_Init().
 //
@@ -2158,8 +2158,8 @@ const HintMainCallbackRate = "SDL_MAIN_CALLBACK_RATE"
 //
 // The variable can be set to the following values:
 //
-// - "0": The mouse is not captured while mouse buttons are pressed.
-// - "1": The mouse is captured while mouse buttons are pressed.
+//   - "0": The mouse is not captured while mouse buttons are pressed.
+//   - "1": The mouse is captured while mouse buttons are pressed.
 //
 // By default the mouse is captured while mouse buttons are pressed so if the
 // mouse is dragged outside the window, the application continues to receive
@@ -2212,9 +2212,9 @@ const HintMouseDefaultSystemCursor = "SDL_MOUSE_DEFAULT_SYSTEM_CURSOR"
 //
 // The variable can be set to the following values:
 //
-// - "0": Attempts to warp the mouse will always be made.
-// - "1": Some mouse warps will be emulated by forcing relative mouse mode.
-// (default)
+//   - "0": Attempts to warp the mouse will always be made.
+//   - "1": Some mouse warps will be emulated by forcing relative mouse mode.
+//     (default)
 //
 // If not set, this is automatically enabled unless an application uses
 // relative mouse mode directly.
@@ -2228,8 +2228,8 @@ const HintMouseEmulateWarpWithRelative = "SDL_MOUSE_EMULATE_WARP_WITH_RELATIVE"
 //
 // The variable can be set to the following values:
 //
-// - "0": Ignore mouse clicks that activate a window. (default)
-// - "1": Generate events for mouse clicks that activate a window.
+//   - "0": Ignore mouse clicks that activate a window. (default)
+//   - "1": Generate events for mouse clicks that activate a window.
 //
 // This hint can be set anytime.
 //
@@ -2254,9 +2254,9 @@ const HintMouseNormalSpeedScale = "SDL_MOUSE_NORMAL_SPEED_SCALE"
 //
 // The variable can be set to the following values:
 //
-// - "0": Relative mouse mode constrains the mouse to the window.
-// - "1": Relative mouse mode constrains the mouse to the center of the
-// window. (default)
+//   - "0": Relative mouse mode constrains the mouse to the window.
+//   - "1": Relative mouse mode constrains the mouse to the center of the
+//     window. (default)
 //
 // This hint can be set anytime.
 //
@@ -2276,9 +2276,9 @@ const HintMouseRelativeSpeedScale = "SDL_MOUSE_RELATIVE_SPEED_SCALE"
 //
 // The variable can be set to the following values:
 //
-// - "0": Relative mouse motion will be unscaled. (default)
-// - "1": Relative mouse motion will be scaled using the system mouse
-// acceleration curve.
+//   - "0": Relative mouse motion will be unscaled. (default)
+//   - "1": Relative mouse motion will be scaled using the system mouse
+//     acceleration curve.
 //
 // If SDL_HINT_MOUSE_RELATIVE_SPEED_SCALE is set, that will be applied after
 // system speed scale.
@@ -2293,8 +2293,8 @@ const HintMouseRelativeSystemScale = "SDL_MOUSE_RELATIVE_SYSTEM_SCALE"
 //
 // The variable can be set to the following values:
 //
-// - "0": Warping the mouse will not generate a motion event in relative mode
-// - "1": Warping the mouse will generate a motion event in relative mode
+//   - "0": Warping the mouse will not generate a motion event in relative mode
+//   - "1": Warping the mouse will generate a motion event in relative mode
 //
 // By default warping the mouse will not generate motion events in relative
 // mode. This avoids the application having to filter out large relative
@@ -2310,8 +2310,8 @@ const HintMouseRelativeWarpMotion = "SDL_MOUSE_RELATIVE_WARP_MOTION"
 //
 // This variable can be set to the following values:
 //
-// - "0": The cursor will be hidden while relative mode is active (default)
-// - "1": The cursor will remain visible while relative mode is active
+//   - "0": The cursor will be hidden while relative mode is active (default)
+//   - "1": The cursor will remain visible while relative mode is active
 //
 // Note that for systems without raw hardware inputs, relative mode is
 // implemented using warping, so the hardware cursor will visibly warp between
@@ -2327,10 +2327,10 @@ const HintMouseRelativeCursorVisible = "SDL_MOUSE_RELATIVE_CURSOR_VISIBLE"
 //
 // The variable can be set to the following values:
 //
-// - "0": Mouse events will not generate touch events. (default for desktop
-// platforms)
-// - "1": Mouse events will generate touch events. (default for mobile
-// platforms, such as Android and iOS)
+//   - "0": Mouse events will not generate touch events. (default for desktop
+//     platforms)
+//   - "1": Mouse events will generate touch events. (default for mobile
+//     platforms, such as Android and iOS)
 //
 // This hint can be set anytime.
 //
@@ -2345,8 +2345,8 @@ const HintMouseTouchEvents = "SDL_MOUSE_TOUCH_EVENTS"
 //
 // The variable can be set to the following values:
 //
-// - "0": Allow keystrokes to go through to the console.
-// - "1": Mute keyboard input so it doesn't show up on the console. (default)
+//   - "0": Allow keystrokes to go through to the console.
+//   - "1": Mute keyboard input so it doesn't show up on the console. (default)
 //
 // This hint should be set before SDL is initialized.
 //
@@ -2357,9 +2357,9 @@ const HintMuteConsoleKeyboard = "SDL_MUTE_CONSOLE_KEYBOARD"
 //
 // The variable can be set to the following values:
 //
-// - "0": SDL will install a SIGINT and SIGTERM handler, and when it catches a
-// signal, convert it into an SDL_EVENT_QUIT event. (default)
-// - "1": SDL will not install a signal handler at all.
+//   - "0": SDL will install a SIGINT and SIGTERM handler, and when it catches a
+//     signal, convert it into an SDL_EVENT_QUIT event. (default)
+//   - "1": SDL will not install a signal handler at all.
 //
 // This hint should be set before SDL is initialized.
 //
@@ -2409,8 +2409,8 @@ const HintEglLibrary = "SDL_EGL_LIBRARY"
 //
 // The variable can be set to the following values:
 //
-// - "0": Use ES profile of OpenGL, if available. (default)
-// - "1": Load OpenGL ES library using the default library names.
+//   - "0": Use ES profile of OpenGL, if available. (default)
+//   - "1": Load OpenGL ES library using the default library names.
 //
 // This hint should be set before SDL is initialized.
 //
@@ -2434,10 +2434,10 @@ const HintOpenvrLibrary = "SDL_OPENVR_LIBRARY"
 //
 // This variable is a space delimited list of the following values:
 //
-// - "LandscapeLeft"
-// - "LandscapeRight"
-// - "Portrait"
-// - "PortraitUpsideDown"
+//   - "LandscapeLeft"
+//   - "LandscapeRight"
+//   - "Portrait"
+//   - "PortraitUpsideDown"
 //
 // This hint should be set before SDL is initialized.
 //
@@ -2454,8 +2454,8 @@ const HintOrientations = "SDL_ORIENTATIONS"
 //
 // The variable can be set to the following values:
 //
-// - "0": Disable poll sentinels.
-// - "1": Enable poll sentinels. (default)
+//   - "0": Disable poll sentinels.
+//   - "1": Enable poll sentinels. (default)
 //
 // This hint can be set anytime.
 //
@@ -2483,12 +2483,12 @@ const HintPreferredLocales = "SDL_PREFERRED_LOCALES"
 //
 // The variable can be set to the following values:
 //
-// - "0": SDL will not send an SDL_EVENT_QUIT event when the last window is
-// requesting to close. Note that in this case, there are still other
-// legitimate reasons one might get an SDL_EVENT_QUIT event: choosing "Quit"
-// from the macOS menu bar, sending a SIGINT (ctrl-c) on Unix, etc.
-// - "1": SDL will send a quit event when the last window is requesting to
-// close. (default)
+//   - "0": SDL will not send an SDL_EVENT_QUIT event when the last window is
+//     requesting to close. Note that in this case, there are still other
+//     legitimate reasons one might get an SDL_EVENT_QUIT event: choosing "Quit"
+//     from the macOS menu bar, sending a SIGINT (ctrl-c) on Unix, etc.
+//   - "1": SDL will send a quit event when the last window is requesting to
+//     close. (default)
 //
 // If there is at least one active system tray icon, SDL_EVENT_QUIT will
 // instead be sent when both the last window will be closed and the last tray
@@ -2504,8 +2504,8 @@ const HintQuitOnLastWindowClose = "SDL_QUIT_ON_LAST_WINDOW_CLOSE"
 //
 // The variable can be set to the following values:
 //
-// - "0": Thread-safety is not enabled. (default)
-// - "1": Thread-safety is enabled.
+//   - "0": Thread-safety is not enabled. (default)
+//   - "1": Thread-safety is enabled.
 //
 // This hint should be set before creating a renderer.
 //
@@ -2518,8 +2518,8 @@ const HintRenderDIRECT3DThreadsafe = "SDL_RENDER_DIRECT3D_THREADSAFE"
 //
 // The variable can be set to the following values:
 //
-// - "0": Disable Debug Layer use. (default)
-// - "1": Enable Debug Layer use.
+//   - "0": Disable Debug Layer use. (default)
+//   - "1": Enable Debug Layer use.
 //
 // This hint should be set before creating a renderer.
 //
@@ -2530,8 +2530,8 @@ const HintRenderDIRECT3D11Debug = "SDL_RENDER_DIRECT3D11_DEBUG"
 //
 // This variable can be set to the following values:
 //
-// - "0": Disable Validation Layer use
-// - "1": Enable Validation Layer use
+//   - "0": Disable Validation Layer use
+//   - "1": Enable Validation Layer use
 //
 // By default, SDL does not use Vulkan Validation Layers.
 //
@@ -2542,8 +2542,8 @@ const HintRenderVulkanDebug = "SDL_RENDER_VULKAN_DEBUG"
 //
 // This variable can be set to the following values:
 //
-// - "0": Disable debug mode use (default)
-// - "1": Enable debug mode use
+//   - "0": Disable debug mode use (default)
+//   - "1": Enable debug mode use
 //
 // This hint should be set before creating a renderer.
 //
@@ -2555,8 +2555,8 @@ const HintRenderGPUDebug = "SDL_RENDER_GPU_DEBUG"
 //
 // This variable can be set to the following values:
 //
-// - "0": Prefer high-performance GPU (default)
-// - "1": Prefer low-power GPU
+//   - "0": Prefer high-performance GPU (default)
+//   - "1": Prefer low-power GPU
 //
 // This hint should be set before creating a renderer.
 //
@@ -2571,16 +2571,16 @@ const HintRenderGPULowPower = "SDL_RENDER_GPU_LOW_POWER"
 //
 // This variable is case insensitive and can be set to the following values:
 //
-// - "direct3d"
-// - "direct3d11"
-// - "direct3d12"
-// - "opengl"
-// - "opengles2"
-// - "opengles"
-// - "metal"
-// - "vulkan"
-// - "gpu"
-// - "software"
+//   - "direct3d"
+//   - "direct3d11"
+//   - "direct3d12"
+//   - "opengl"
+//   - "opengles2"
+//   - "opengles"
+//   - "metal"
+//   - "vulkan"
+//   - "gpu"
+//   - "software"
 //
 // This hint accepts a comma-separated list of driver names, and each will be
 // tried in the order listed when creating a renderer until one succeeds or
@@ -2598,12 +2598,12 @@ const HintRenderDriver = "SDL_RENDER_DRIVER"
 //
 // The variable can be set to the following values:
 //
-// - "0": Use the default line drawing method (Bresenham's line algorithm)
-// - "1": Use the driver point API using Bresenham's line algorithm (correct,
-// draws many points)
-// - "2": Use the driver line API (occasionally misses line endpoints based on
-// hardware driver quirks
-// - "3": Use the driver geometry API (correct, draws thicker diagonal lines)
+//   - "0": Use the default line drawing method (Bresenham's line algorithm)
+//   - "1": Use the driver point API using Bresenham's line algorithm (correct,
+//     draws many points)
+//   - "2": Use the driver line API (occasionally misses line endpoints based on
+//     hardware driver quirks
+//   - "3": Use the driver geometry API (correct, draws thicker diagonal lines)
 //
 // This hint should be set before creating a renderer.
 //
@@ -2615,8 +2615,8 @@ const HintRenderLineMethod = "SDL_RENDER_LINE_METHOD"
 //
 // The variable can be set to the following values:
 //
-// - "0": Use the preferred OS device. (default)
-// - "1": Select a low power device.
+//   - "0": Use the preferred OS device. (default)
+//   - "1": Select a low power device.
 //
 // This hint should be set before creating a renderer.
 //
@@ -2630,8 +2630,8 @@ const HintRenderMetalPreferLowPowerDevice = "SDL_RENDER_METAL_PREFER_LOW_POWER_D
 //
 // The variable can be set to the following values:
 //
-// - "0": Disable vsync. (default)
-// - "1": Enable vsync.
+//   - "0": Disable vsync. (default)
+//   - "1": Enable vsync.
 //
 // This hint should be set before creating a renderer.
 //
@@ -2645,13 +2645,13 @@ const HintRenderVsync = "SDL_RENDER_VSYNC"
 //
 // The variable can be set to the following values:
 //
-// - "0": The return key will be handled as a key event. (default)
-// - "1": The return key will hide the keyboard.
+//   - "0": The return key will be handled as a key event. (default)
+//   - "1": The return key will hide the keyboard.
 //
 // This hint can be set anytime.
 //
 // This hint is available since SDL 3.2.0.
-const HintReturnKeyHidesIme = "SDL_RETURN_KEY_HIDES_IME"
+const HintReturnKeyHidesIME = "SDL_RETURN_KEY_HIDES_IME"
 
 // A variable containing a list of ROG gamepad capable mice.
 //
@@ -2725,8 +2725,8 @@ const HintScreensaverInhibitActivityName = "SDL_SCREENSAVER_INHIBIT_ACTIVITY_NAM
 //
 // The variable can be set to the following values:
 //
-// - "0": SDL will not call dbus_shutdown() on quit. (default)
-// - "1": SDL will call dbus_shutdown() on quit.
+//   - "0": SDL will not call dbus_shutdown() on quit. (default)
+//   - "1": SDL will call dbus_shutdown() on quit.
 //
 // This hint can be set anytime.
 //
@@ -2768,16 +2768,16 @@ const HintStorageUserDriver = "SDL_STORAGE_USER_DRIVER"
 // On Linux, SDL will apply the following configuration to any thread that
 // becomes realtime:
 //
-// - The SCHED_RESET_ON_FORK bit will be set on the scheduling policy,
-// - An RLIMIT_RTTIME budget will be configured to the rtkit specified limit.
-// - Exceeding this limit will result in the kernel sending SIGKILL to the
-// app, refer to the man pages for more information.
+//   - The SCHED_RESET_ON_FORK bit will be set on the scheduling policy,
+//   - An RLIMIT_RTTIME budget will be configured to the rtkit specified limit.
+//   - Exceeding this limit will result in the kernel sending SIGKILL to the
+//     app, refer to the man pages for more information.
 //
 // The variable can be set to the following values:
 //
-// - "0": default platform specific behaviour
-// - "1": Force SDL_THREAD_PRIORITY_TIME_CRITICAL to a realtime scheduling
-// policy
+//   - "0": default platform specific behaviour
+//   - "1": Force SDL_THREAD_PRIORITY_TIME_CRITICAL to a realtime scheduling
+//     policy
 //
 // This hint should be set before calling SDL_SetCurrentThreadPriority()
 //
@@ -2828,8 +2828,8 @@ const HintTimerResolution = "SDL_TIMER_RESOLUTION"
 //
 // The variable can be set to the following values:
 //
-// - "0": Touch events will not generate mouse events.
-// - "1": Touch events will generate mouse events. (default)
+//   - "0": Touch events will not generate mouse events.
+//   - "1": Touch events will generate mouse events. (default)
 //
 // This hint can be set anytime.
 //
@@ -2847,8 +2847,8 @@ const HintTouchMouseEvents = "SDL_TOUCH_MOUSE_EVENTS"
 //
 // The variable can be set to the following values:
 //
-// - "0": Trackpad will send mouse events. (default)
-// - "1": Trackpad will send touch events.
+//   - "0": Trackpad will send mouse events. (default)
+//   - "1": Trackpad will send touch events.
 //
 // This hint should be set before SDL is initialized.
 //
@@ -2860,8 +2860,8 @@ const HintTrackpadIsTouchOnly = "SDL_TRACKPAD_IS_TOUCH_ONLY"
 //
 // The variable can be set to the following values:
 //
-// - "0": Remotes send enter/escape/arrow key events.
-// - "1": Remotes are available as 2 axis, 2 button joysticks. (default)
+//   - "0": Remotes send enter/escape/arrow key events.
+//   - "1": Remotes are available as 2 axis, 2 button joysticks. (default)
 //
 // This hint should be set before SDL is initialized.
 //
@@ -2872,8 +2872,8 @@ const HintTvRemoteAsJoystick = "SDL_TV_REMOTE_AS_JOYSTICK"
 //
 // The variable can be set to the following values:
 //
-// - "0": Disable screensaver. (default)
-// - "1": Enable screensaver.
+//   - "0": Disable screensaver. (default)
+//   - "1": Enable screensaver.
 //
 // This hint should be set before SDL is initialized.
 //
@@ -2894,9 +2894,9 @@ const HintVideoAllowScreensaver = "SDL_VIDEO_ALLOW_SCREENSAVER"
 //
 // This hint is currently supported on the following drivers:
 //
-// - KMSDRM (kmsdrm)
-// - Wayland (wayland)
-// - X11 (x11)
+//   - KMSDRM (kmsdrm)
+//   - Wayland (wayland)
+//   - X11 (x11)
 //
 // This hint should be set before SDL is initialized.
 //
@@ -2916,8 +2916,8 @@ const HintVideoDisplayPriority = "SDL_VIDEO_DISPLAY_PRIORITY"
 //
 // This hint is currently supported on the following drivers:
 //
-// - Raspberry Pi (raspberrypi)
-// - Wayland (wayland)
+//   - Raspberry Pi (raspberrypi)
+//   - Wayland (wayland)
 //
 // This hint should be set before SDL is initialized.
 //
@@ -2942,9 +2942,9 @@ const HintVideoDriver = "SDL_VIDEO_DRIVER"
 
 // A variable controlling whether the dummy video driver saves output frames.
 //
-// - "0": Video frames are not saved to disk. (default)
-// - "1": Video frames are saved to files in the format "SDL_windowX-Y.bmp",
-// where X is the window ID, and Y is the frame number.
+//   - "0": Video frames are not saved to disk. (default)
+//   - "1": Video frames are saved to files in the format "SDL_windowX-Y.bmp",
+//     where X is the window ID, and Y is the frame number.
 //
 // This hint can be set anytime.
 //
@@ -2955,8 +2955,8 @@ const HintVideoDummySaveFrames = "SDL_VIDEO_DUMMY_SAVE_FRAMES"
 //
 // The variable can be set to one of the following values:
 //
-// - "0": Do not fall back to eglGetDisplay.
-// - "1": Fall back to eglGetDisplay if eglGetPlatformDisplay fails. (default)
+//   - "0": Do not fall back to eglGetDisplay.
+//   - "1": Fall back to eglGetDisplay if eglGetPlatformDisplay fails. (default)
 //
 // This hint should be set before SDL is initialized.
 //
@@ -2968,9 +2968,9 @@ const HintVideoEglAllowGetdisplayFallback = "SDL_VIDEO_EGL_ALLOW_GETDISPLAY_FALL
 //
 // The variable can be set to the following values:
 //
-// - "0": Use platform-specific GL context creation API (GLX, WGL, CGL, etc).
-// (default)
-// - "1": Use EGL
+//   - "0": Use platform-specific GL context creation API (GLX, WGL, CGL, etc).
+//     (default)
+//   - "1": Use EGL
 //
 // This hint should be set before SDL is initialized.
 //
@@ -2981,12 +2981,12 @@ const HintVideoForceEgl = "SDL_VIDEO_FORCE_EGL"
 //
 // The variable can be set to the following values:
 //
-// - "0": Disable Spaces support (FULLSCREEN_DESKTOP won't use them and
-// SDL_WINDOW_RESIZABLE windows won't offer the "fullscreen" button on their
-// titlebars).
-// - "1": Enable Spaces support (FULLSCREEN_DESKTOP will use them and
-// SDL_WINDOW_RESIZABLE windows will offer the "fullscreen" button on their
-// titlebars). (default)
+//   - "0": Disable Spaces support (FULLSCREEN_DESKTOP won't use them and
+//     SDL_WINDOW_RESIZABLE windows won't offer the "fullscreen" button on their
+//     titlebars).
+//   - "1": Enable Spaces support (FULLSCREEN_DESKTOP will use them and
+//     SDL_WINDOW_RESIZABLE windows will offer the "fullscreen" button on their
+//     titlebars). (default)
 //
 // This hint should be set before creating a window.
 //
@@ -2998,14 +2998,14 @@ const HintVideoMacFullscreenSpaces = "SDL_VIDEO_MAC_FULLSCREEN_SPACES"
 //
 // The variable can be set to the following values:
 //
-// - "0": The menu will be hidden when the window is in a fullscreen space,
-// and not accessible by moving the mouse to the top of the screen.
-// - "1": The menu will be accessible when the window is in a fullscreen
-// space.
-// - "auto": The menu will be hidden if fullscreen mode was toggled on
-// programmatically via `SDL_SetWindowFullscreen()`, and accessible if
-// fullscreen was entered via the "fullscreen" button on the window title
-// bar. (default)
+//   - "0": The menu will be hidden when the window is in a fullscreen space,
+//     and not accessible by moving the mouse to the top of the screen.
+//   - "1": The menu will be accessible when the window is in a fullscreen
+//     space.
+//   - "auto": The menu will be hidden if fullscreen mode was toggled on
+//     programmatically via `SDL_SetWindowFullscreen()`, and accessible if
+//     fullscreen was entered via the "fullscreen" button on the window title
+//     bar. (default)
 //
 // This hint can be set anytime.
 //
@@ -3017,9 +3017,9 @@ const HintVideoMacFullscreenMenuVisibility = "SDL_VIDEO_MAC_FULLSCREEN_MENU_VISI
 //
 // The variable can be set to the following values:
 //
-// - "0": Fullscreen windows will not be minimized when they lose focus.
-// (default)
-// - "1": Fullscreen windows are minimized when they lose focus.
+//   - "0": Fullscreen windows will not be minimized when they lose focus.
+//     (default)
+//   - "1": Fullscreen windows are minimized when they lose focus.
 //
 // This hint can be set anytime.
 //
@@ -3032,9 +3032,9 @@ const HintVideoMinimizeOnFocusLoss = "SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS"
 // This only saves frames that are generated using software rendering, not
 // accelerated OpenGL rendering.
 //
-// - "0": Video frames are not saved to disk. (default)
-// - "1": Video frames are saved to files in the format "SDL_windowX-Y.bmp",
-// where X is the window ID, and Y is the frame number.
+//   - "0": Video frames are not saved to disk. (default)
+//   - "1": Video frames are saved to files in the format "SDL_windowX-Y.bmp",
+//     where X is the window ID, and Y is the frame number.
 //
 // This hint can be set anytime.
 //
@@ -3057,8 +3057,8 @@ const HintVideoOffscreenSaveFrames = "SDL_VIDEO_OFFSCREEN_SAVE_FRAMES"
 //
 // The variable can be set to the following values:
 //
-// - "0": Window operations are non-blocking. (default)
-// - "1": Window operations will block until completed.
+//   - "0": Window operations are non-blocking. (default)
+//   - "1": Window operations will block until completed.
 //
 // This hint can be set anytime.
 //
@@ -3073,8 +3073,8 @@ const HintVideoSyncWindowOperations = "SDL_VIDEO_SYNC_WINDOW_OPERATIONS"
 //
 // The variable can be set to the following values:
 //
-// - "0": libdecor use is disabled.
-// - "1": libdecor use is enabled. (default)
+//   - "0": libdecor use is disabled.
+//   - "1": libdecor use is enabled. (default)
 //
 // This hint should be set before SDL is initialized.
 //
@@ -3091,8 +3091,8 @@ const HintVideoWaylandAllowLibdecor = "SDL_VIDEO_WAYLAND_ALLOW_LIBDECOR"
 //
 // The variable can be set to the following values:
 //
-// - "0": Video mode emulation is disabled.
-// - "1": Video mode emulation is enabled. (default)
+//   - "0": Video mode emulation is disabled.
+//   - "1": Video mode emulation is enabled. (default)
 //
 // This hint should be set before SDL is initialized.
 //
@@ -3108,11 +3108,11 @@ const HintVideoWaylandModeEmulation = "SDL_VIDEO_WAYLAND_MODE_EMULATION"
 //
 // The variable can be set to the following values:
 //
-// - "aspect" - Video modes will be displayed scaled, in their proper aspect
-// ratio, with black bars.
-// - "stretch" - Video modes will be scaled to fill the entire display.
-// (default)
-// - "none" - Video modes will be displayed as 1:1 with no scaling.
+//   - "aspect" - Video modes will be displayed scaled, in their proper aspect
+//     ratio, with black bars.
+//   - "stretch" - Video modes will be scaled to fill the entire display.
+//     (default)
+//   - "none" - Video modes will be displayed as 1:1 with no scaling.
 //
 // This hint should be set before creating a window.
 //
@@ -3128,9 +3128,9 @@ const HintVideoWaylandModeScaling = "SDL_VIDEO_WAYLAND_MODE_SCALING"
 //
 // The variable can be set to the following values:
 //
-// - "0": libdecor is enabled only if server-side decorations are unavailable.
-// (default)
-// - "1": libdecor is always enabled if available.
+//   - "0": libdecor is enabled only if server-side decorations are unavailable.
+//     (default)
+//   - "1": libdecor is always enabled if available.
 //
 // This hint should be set before SDL is initialized.
 //
@@ -3149,25 +3149,25 @@ const HintVideoWaylandPreferLibdecor = "SDL_VIDEO_WAYLAND_PREFER_LIBDECOR"
 // configurations, as this forces the window to behave in a way that Wayland
 // desktops were not designed to accommodate:
 //
-// - Rounding errors can result with odd window sizes and/or desktop scales,
-// which can cause the window contents to appear slightly blurry.
-// - Positioning the window may be imprecise due to unit conversions and
-// rounding.
-// - The window may be unusably small on scaled desktops.
-// - The window may jump in size when moving between displays of different
-// scale factors.
-// - Displays may appear to overlap when using a multi-monitor setup with
-// scaling enabled.
-// - Possible loss of cursor precision due to the logical size of the window
-// being reduced.
+//   - Rounding errors can result with odd window sizes and/or desktop scales,
+//     which can cause the window contents to appear slightly blurry.
+//   - Positioning the window may be imprecise due to unit conversions and
+//     rounding.
+//   - The window may be unusably small on scaled desktops.
+//   - The window may jump in size when moving between displays of different
+//     scale factors.
+//   - Displays may appear to overlap when using a multi-monitor setup with
+//     scaling enabled.
+//   - Possible loss of cursor precision due to the logical size of the window
+//     being reduced.
 //
 // New applications should be designed with proper DPI awareness handling
 // instead of enabling this.
 //
 // The variable can be set to the following values:
 //
-// - "0": Windows will be scaled normally.
-// - "1": Windows will be forced to scale to achieve 1:1 output.
+//   - "0": Windows will be scaled normally.
+//   - "1": Windows will be forced to scale to achieve 1:1 output.
 //
 // This hint should be set before creating a window.
 //
@@ -3184,10 +3184,10 @@ const HintVideoWaylandScaleToDisplay = "SDL_VIDEO_WAYLAND_SCALE_TO_DISPLAY"
 //
 // The variable can be set to the following values:
 //
-// - "d3dcompiler_46.dll" - best for Vista or later. (default)
-// - "d3dcompiler_43.dll" - for XP support.
-// - "none" - do not load any library, useful if you compiled ANGLE from
-// source and included the compiler in your binaries.
+//   - "d3dcompiler_46.dll" - best for Vista or later. (default)
+//   - "d3dcompiler_43.dll" - for XP support.
+//   - "none" - do not load any library, useful if you compiled ANGLE from
+//     source and included the compiler in your binaries.
 //
 // This hint should be set before SDL is initialized.
 //
@@ -3199,8 +3199,8 @@ const HintVideoWinD3DCOMPILER = "SDL_VIDEO_WIN_D3DCOMPILER"
 //
 // The variable can be set to the following values:
 //
-// - "0": Disable _NET_WM_BYPASS_COMPOSITOR.
-// - "1": Enable _NET_WM_BYPASS_COMPOSITOR. (default)
+//   - "0": Disable _NET_WM_BYPASS_COMPOSITOR.
+//   - "1": Enable _NET_WM_BYPASS_COMPOSITOR. (default)
 //
 // This hint should be set before creating a window.
 //
@@ -3216,8 +3216,8 @@ const HintVideoX11NetWmBypassCompositor = "SDL_VIDEO_X11_NET_WM_BYPASS_COMPOSITO
 //
 // The variable can be set to the following values:
 //
-// - "0": Disable _NET_WM_PING.
-// - "1": Enable _NET_WM_PING. (default)
+//   - "0": Disable _NET_WM_PING.
+//   - "1": Enable _NET_WM_PING. (default)
 //
 // This hint should be set before creating a window.
 //
@@ -3228,8 +3228,8 @@ const HintVideoX11NetWmPing = "SDL_VIDEO_X11_NET_WM_PING"
 //
 // The variable can be set to the following values:
 //
-// - "0": Disable DirectColor visuals.
-// - "1": Enable DirectColor visuals. (default)
+//   - "0": Disable DirectColor visuals.
+//   - "1": Enable DirectColor visuals. (default)
 //
 // This hint should be set before initializing the video subsystem.
 //
@@ -3263,8 +3263,8 @@ const HintVideoX11WindowVisualid = "SDL_VIDEO_X11_WINDOW_VISUALID"
 //
 // The variable can be set to the following values:
 //
-// - "0": Disable XRandR.
-// - "1": Enable XRandR. (default)
+//   - "0": Disable XRandR.
+//   - "1": Enable XRandR. (default)
 //
 // This hint should be set before SDL is initialized.
 //
@@ -3276,8 +3276,8 @@ const HintVideoX11Xrandr = "SDL_VIDEO_X11_XRANDR"
 //
 // The variable can be set to the following values:
 //
-// - "0": Disable touch on the back panel.
-// - "1": Enable touch on the back panel. (default)
+//   - "0": Disable touch on the back panel.
+//   - "1": Enable touch on the back panel. (default)
 //
 // This hint should be set before SDL is initialized.
 //
@@ -3289,8 +3289,8 @@ const HintVitaEnableBackTouch = "SDL_VITA_ENABLE_BACK_TOUCH"
 //
 // The variable can be set to the following values:
 //
-// - "0": Disable touch on the front panel.
-// - "1": Enable touch on the front panel. (default)
+//   - "0": Disable touch on the front panel.
+//   - "1": Enable touch on the front panel. (default)
 //
 // This hint should be set before SDL is initialized.
 //
@@ -3309,8 +3309,8 @@ const HintVitaModulePath = "SDL_VITA_MODULE_PATH"
 // A variable controlling whether to perform PVR initialization on the
 // PlayStation Vita.
 //
-// - "0": Skip PVR initialization.
-// - "1": Perform the normal PVR initialization. (default)
+//   - "0": Skip PVR initialization.
+//   - "1": Perform the normal PVR initialization. (default)
 //
 // This hint should be set before SDL is initialized.
 //
@@ -3321,9 +3321,9 @@ const HintVitaPvrInit = "SDL_VITA_PVR_INIT"
 //
 // The variable can be set to the following values:
 //
-// - "544": 544p (default)
-// - "720": 725p for PSTV
-// - "1080": 1088i for PSTV
+//   - "544": 544p (default)
+//   - "720": 725p for PSTV
+//   - "1080": 1088i for PSTV
 //
 // This hint should be set before SDL is initialized.
 //
@@ -3335,8 +3335,8 @@ const HintVitaResolution = "SDL_VITA_RESOLUTION"
 //
 // The variable can be set to the following values:
 //
-// - "0": Use OpenGL ES. (default)
-// - "1": Use OpenGL.
+//   - "0": Use OpenGL ES. (default)
+//   - "1": Use OpenGL.
 //
 // This hint should be set before SDL is initialized.
 //
@@ -3348,9 +3348,9 @@ const HintVitaPvrOpengl = "SDL_VITA_PVR_OPENGL"
 //
 // The variable can be set to the following values:
 //
-// - "0": Only front touchpad should generate mouse events. (default)
-// - "1": Only back touchpad should generate mouse events.
-// - "2": Both touchpads should generate mouse events.
+//   - "0": Only front touchpad should generate mouse events. (default)
+//   - "1": Only back touchpad should generate mouse events.
+//   - "2": Both touchpads should generate mouse events.
 //
 // This hint can be set anytime.
 //
@@ -3390,14 +3390,14 @@ const HintVulkanLibrary = "SDL_VULKAN_LIBRARY"
 //
 // The variable can be set to the following values:
 //
-// - "truncate" - Use the number of samples to truncate the wave data if the
-// fact chunk is present and valid.
-// - "strict" - Like "truncate", but raise an error if the fact chunk is
-// invalid, not present for non-PCM formats, or if the data chunk doesn't
-// have that many samples.
-// - "ignorezero" - Like "truncate", but ignore fact chunk if the number of
-// samples is zero.
-// - "ignore" - Ignore fact chunk entirely. (default)
+//   - "truncate" - Use the number of samples to truncate the wave data if the
+//     fact chunk is present and valid.
+//   - "strict" - Like "truncate", but raise an error if the fact chunk is
+//     invalid, not present for non-PCM formats, or if the data chunk doesn't
+//     have that many samples.
+//   - "ignorezero" - Like "truncate", but ignore fact chunk if the number of
+//     samples is zero.
+//   - "ignore" - Ignore fact chunk entirely. (default)
 //
 // This hint should be set before calling SDL_LoadWAV() or SDL_LoadWAV_IO()
 //
@@ -3428,12 +3428,12 @@ const HintWaveChunkLimit = "SDL_WAVE_CHUNK_LIMIT"
 //
 // The variable can be set to the following values:
 //
-// - "force" - Always use the RIFF chunk size as a boundary for the chunk
-// search.
-// - "ignorezero" - Like "force", but a zero size searches up to 4 GiB.
-// (default)
-// - "ignore" - Ignore the RIFF chunk size and always search up to 4 GiB.
-// - "maximum" - Search for chunks until the end of file. (not recommended)
+//   - "force" - Always use the RIFF chunk size as a boundary for the chunk
+//     search.
+//   - "ignorezero" - Like "force", but a zero size searches up to 4 GiB.
+//     (default)
+//   - "ignore" - Ignore the RIFF chunk size and always search up to 4 GiB.
+//   - "maximum" - Search for chunks until the end of file. (not recommended)
 //
 // This hint should be set before calling SDL_LoadWAV() or SDL_LoadWAV_IO()
 //
@@ -3448,10 +3448,10 @@ const HintWaveRiffChunkSize = "SDL_WAVE_RIFF_CHUNK_SIZE"
 //
 // The variable can be set to the following values:
 //
-// - "verystrict" - Raise an error if the file is truncated.
-// - "strict" - Like "verystrict", but the size of the RIFF chunk is ignored.
-// - "dropframe" - Decode until the first incomplete sample frame.
-// - "dropblock" - Decode until the first incomplete block. (default)
+//   - "verystrict" - Raise an error if the file is truncated.
+//   - "strict" - Like "verystrict", but the size of the RIFF chunk is ignored.
+//   - "dropframe" - Decode until the first incomplete sample frame.
+//   - "dropblock" - Decode until the first incomplete block. (default)
 //
 // This hint should be set before calling SDL_LoadWAV() or SDL_LoadWAV_IO()
 //
@@ -3463,10 +3463,10 @@ const HintWaveTruncation = "SDL_WAVE_TRUNCATION"
 //
 // The variable can be set to the following values:
 //
-// - "0": The window is not activated when the SDL_RaiseWindow function is
-// called.
-// - "1": The window is activated when the SDL_RaiseWindow function is called.
-// (default)
+//   - "0": The window is not activated when the SDL_RaiseWindow function is
+//     called.
+//   - "1": The window is activated when the SDL_RaiseWindow function is called.
+//     (default)
 //
 // This hint can be set anytime.
 //
@@ -3478,10 +3478,10 @@ const HintWindowActivateWhenRaised = "SDL_WINDOW_ACTIVATE_WHEN_RAISED"
 //
 // The variable can be set to the following values:
 //
-// - "0": The window is not activated when the SDL_ShowWindow function is
-// called.
-// - "1": The window is activated when the SDL_ShowWindow function is called.
-// (default)
+//   - "0": The window is not activated when the SDL_ShowWindow function is
+//     called.
+//   - "1": The window is activated when the SDL_ShowWindow function is called.
+//     (default)
 //
 // This hint can be set anytime.
 //
@@ -3496,8 +3496,8 @@ const HintWindowActivateWhenShown = "SDL_WINDOW_ACTIVATE_WHEN_SHOWN"
 //
 // The variable can be set to the following values:
 //
-// - "0": don't allow topmost
-// - "1": allow topmost (default)
+//   - "0": don't allow topmost
+//   - "1": allow topmost (default)
 //
 // This hint can be set anytime.
 //
@@ -3509,9 +3509,9 @@ const HintWindowAllowTopmost = "SDL_WINDOW_ALLOW_TOPMOST"
 //
 // The variable can be set to the following values:
 //
-// - "0": The window frame is not interactive when the cursor is hidden (no
-// move, resize, etc).
-// - "1": The window frame is interactive when the cursor is hidden. (default)
+//   - "0": The window frame is not interactive when the cursor is hidden (no
+//     move, resize, etc).
+//   - "1": The window frame is interactive when the cursor is hidden. (default)
 //
 // This hint can be set anytime.
 //
@@ -3523,9 +3523,9 @@ const HintWindowFrameUsableWhileCursorHidden = "SDL_WINDOW_FRAME_USABLE_WHILE_CU
 //
 // The variable can be set to the following values:
 //
-// - "0": SDL will only do normal key handling for Alt+F4.
-// - "1": SDL will generate a window-close event when it sees Alt+F4.
-// (default)
+//   - "0": SDL will only do normal key handling for Alt+F4.
+//   - "1": SDL will generate a window-close event when it sees Alt+F4.
+//     (default)
 //
 // This hint can be set anytime.
 //
@@ -3551,8 +3551,8 @@ const HintWindowsCloseOnAltF4 = "SDL_WINDOWS_CLOSE_ON_ALT_F4"
 //
 // The variable can be set to the following values:
 //
-// - "0": Alt+mnemonic does nothing, no beeping. (default)
-// - "1": Alt+mnemonic opens menus, invalid mnemonics produce a beep.
+//   - "0": Alt+mnemonic does nothing, no beeping. (default)
+//   - "1": Alt+mnemonic opens menus, invalid mnemonics produce a beep.
 //
 // This hint can be set anytime.
 //
@@ -3564,8 +3564,8 @@ const HintWindowsEnableMenuMnemonics = "SDL_WINDOWS_ENABLE_MENU_MNEMONICS"
 //
 // The variable can be set to the following values:
 //
-// - "0": The window message loop is not run.
-// - "1": The window message loop is processed in SDL_PumpEvents(). (default)
+//   - "0": The window message loop is not run.
+//   - "1": The window message loop is processed in SDL_PumpEvents(). (default)
 //
 // This hint can be set anytime.
 //
@@ -3577,9 +3577,9 @@ const HintWindowsEnableMessageloop = "SDL_WINDOWS_ENABLE_MESSAGELOOP"
 //
 // The variable can be set to the following values:
 //
-// - "0": GameInput is not used for raw keyboard and mouse events.
-// - "1": GameInput is used for raw keyboard and mouse events, if available.
-// (default)
+//   - "0": GameInput is not used for raw keyboard and mouse events.
+//   - "1": GameInput is used for raw keyboard and mouse events, if available.
+//     (default)
 //
 // This hint should be set before SDL is initialized.
 //
@@ -3590,8 +3590,8 @@ const HintWindowsGameinput = "SDL_WINDOWS_GAMEINPUT"
 //
 // The variable can be set to the following values:
 //
-// - "0": The Windows message loop is used for keyboard events. (default)
-// - "1": Low latency raw keyboard events are used.
+//   - "0": The Windows message loop is used for keyboard events. (default)
+//   - "1": Low latency raw keyboard events are used.
 //
 // This hint can be set anytime.
 //
@@ -3608,9 +3608,9 @@ const HintWindowsRawKeyboard = "SDL_WINDOWS_RAW_KEYBOARD"
 //
 // The variable can be set to the following values:
 //
-// - "0": Use Atomics and WaitOnAddress API when available, otherwise fall
-// back to Kernel Objects. (default)
-// - "1": Force the use of Kernel Objects in all cases.
+//   - "0": Use Atomics and WaitOnAddress API when available, otherwise fall
+//     back to Kernel Objects. (default)
+//   - "1": Force the use of Kernel Objects in all cases.
 //
 // This hint should be set before SDL is initialized.
 //
@@ -3643,14 +3643,14 @@ const HintWindowsIntresourceIconSmall = "SDL_WINDOWS_INTRESOURCE_ICON_SMALL"
 //
 // For more information on Direct3D 9Ex, see:
 //
-// - https://docs.microsoft.com/en-us/windows/win32/direct3darticles/graphics-apis-in-windows-vista#direct3d-9ex
-// - https://docs.microsoft.com/en-us/windows/win32/direct3darticles/direct3d-9ex-improvements
+//   - https://docs.microsoft.com/en-us/windows/win32/direct3darticles/graphics-apis-in-windows-vista#direct3d-9ex
+//   - https://docs.microsoft.com/en-us/windows/win32/direct3darticles/direct3d-9ex-improvements
 //
 // The variable can be set to the following values:
 //
-// - "0": Use the original Direct3D 9 API. (default)
-// - "1": Use the Direct3D 9Ex API on Vista and later (and fall back if D3D9Ex
-// is unavailable)
+//   - "0": Use the original Direct3D 9 API. (default)
+//   - "1": Use the Direct3D 9Ex API on Vista and later (and fall back if D3D9Ex
+//     is unavailable)
 //
 // This hint should be set before SDL is initialized.
 //
@@ -3662,10 +3662,10 @@ const HintWindowsUseD3D9EX = "SDL_WINDOWS_USE_D3D9EX"
 //
 // The variable can be set to the following values:
 //
-// - "0"/"never": Never clear the window.
-// - "1"/"initial": Clear the window when the first WM_ERASEBKGND event fires.
-// (default)
-// - "2"/"always": Clear the window on every WM_ERASEBKGND event.
+//   - "0"/"never": Never clear the window.
+//   - "1"/"initial": Clear the window when the first WM_ERASEBKGND event fires.
+//     (default)
+//   - "2"/"always": Clear the window on every WM_ERASEBKGND event.
 //
 // This hint should be set before creating a window.
 //
@@ -3683,8 +3683,8 @@ const HintWindowsEraseBackgroundMode = "SDL_WINDOWS_ERASE_BACKGROUND_MODE"
 //
 // The variable can be set to the following values:
 //
-// - "0": Do not mark the window as override-redirect. (default)
-// - "1": Mark the window as override-redirect.
+//   - "0": Do not mark the window as override-redirect. (default)
+//   - "1": Mark the window as override-redirect.
 //
 // This hint should be set before creating a window.
 //
@@ -3720,8 +3720,8 @@ const HintX11XcbLibrary = "SDL_X11_XCB_LIBRARY"
 //
 // The variable can be set to the following values:
 //
-// - "0": XInput is not enabled.
-// - "1": XInput is enabled. (default)
+//   - "0": XInput is not enabled.
+//   - "1": XInput is enabled. (default)
 //
 // This hint should be set before SDL is initialized.
 //
@@ -3732,13 +3732,13 @@ const HintXinputEnabled = "SDL_XINPUT_ENABLED"
 //
 // The variable can be set to the following case-sensitive values:
 //
-// - "abort": Program terminates immediately.
-// - "break": Program triggers a debugger breakpoint.
-// - "retry": Program reruns the SDL_assert's test again.
-// - "ignore": Program continues on, ignoring this assertion failure this
-// time.
-// - "always_ignore": Program continues on, ignoring this assertion failure
-// for the rest of the run.
+//   - "abort": Program terminates immediately.
+//   - "break": Program triggers a debugger breakpoint.
+//   - "retry": Program reruns the SDL_assert's test again.
+//   - "ignore": Program continues on, ignoring this assertion failure this
+//     time.
+//   - "always_ignore": Program continues on, ignoring this assertion failure
+//     for the rest of the run.
 //
 // Note that SDL_SetAssertionHandler offers a programmatic means to deal with
 // assertion failures through a callback, and this hint is largely intended to
@@ -3755,8 +3755,8 @@ const HintAssert = "SDL_ASSERT"
 //
 // The variable can be set to the following values:
 //
-// - "0": Pen events will not generate mouse events.
-// - "1": Pen events will generate mouse events. (default)
+//   - "0": Pen events will not generate mouse events.
+//   - "1": Pen events will generate mouse events. (default)
 //
 // This hint can be set anytime.
 //
@@ -3768,8 +3768,8 @@ const HintPenMouseEvents = "SDL_PEN_MOUSE_EVENTS"
 //
 // The variable can be set to the following values:
 //
-// - "0": Pen events will not generate touch events.
-// - "1": Pen events will generate touch events. (default)
+//   - "0": Pen events will not generate touch events.
+//   - "1": Pen events will generate touch events. (default)
 //
 // This hint can be set anytime.
 //

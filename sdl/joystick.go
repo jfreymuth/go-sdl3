@@ -153,17 +153,17 @@ import (
 // controller. For XInput controllers this returns the XInput user index. Many
 // joysticks will not be able to supply this information.
 //
-// SDL_GUID is used as a stable 128-bit identifier for a joystick device that
+// [GUID] is used as a stable 128-bit identifier for a joystick device that
 // does not change over time. It identifies class of the device (a X360 wired
 // controller for example). This identifier is platform dependent.
 //
-// In order to use these functions, SDL_Init() must have been called with the
-// SDL_INIT_JOYSTICK flag. This causes SDL to scan the system for joysticks,
+// In order to use these functions, [Init] must have been called with the
+// [InitJoystick] flag. This causes SDL to scan the system for joysticks,
 // and load appropriate drivers.
 //
 // If you would like to receive joystick updates while the application is in
 // the background, you should set the following hint before calling
-// SDL_Init(): SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS
+// [Init]: [HintJoystickAllowBackgroundEvents]
 
 // The joystick structure used to identify an SDL joystick.
 //
@@ -189,8 +189,8 @@ type JoystickID uint32
 // An enum of some common joystick types.
 //
 // In some cases, SDL can identify a low-level joystick as being a certain
-// type of device, and will report it through SDL_GetJoystickType (or
-// SDL_GetJoystickTypeForID).
+// type of device, and will report it through [Joystick.Type] (or
+// [JoystickID.Type]).
 //
 // This is by no means a complete list of everything that can be plugged into
 // a computer.
@@ -216,7 +216,7 @@ const (
 
 // Possible connection states for a joystick device.
 //
-// This is used by SDL_GetJoystickConnectionState to report how a device is
+// This is used by [Joystick.ConnectionState] to report how a device is
 // connected to the system.
 //
 // This enum is available since SDL 3.2.0.
@@ -232,12 +232,12 @@ const (
 	JoystickConnectionWireless
 )
 
-// The largest value an SDL_Joystick's axis can report.
+// The largest value a [Joystick]'s axis can report.
 //
 // This macro is available since SDL 3.2.0.
 const JoystickAxisMax = 32767
 
-// The smallest value an SDL_Joystick's axis can report.
+// The smallest value a [Joystick]'s axis can report.
 //
 // This is a negative number!
 //
@@ -279,12 +279,7 @@ func HasJoystick() bool {
 
 // Get a list of currently connected joysticks.
 //
-// count: a pointer filled in with the number of joysticks returned, may
-// be NULL.
-//
-// Returns a 0 terminated array of joystick instance IDs or NULL on failure;
-// call SDL_GetError() for more information. This should be freed
-// with SDL_free() when it is no longer needed.
+// Returns a slice of joystick instance IDs or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -310,7 +305,7 @@ func GetJoysticks() ([]JoystickID, error) {
 // id: the joystick instance ID.
 //
 // Returns the name of the selected joystick. If no name can be found, this
-// function returns NULL; call SDL_GetError() for more information.
+// function returns an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -330,7 +325,7 @@ func (id JoystickID) Name() (string, error) {
 // id: the joystick instance ID.
 //
 // Returns the path of the selected joystick. If no path can be found, this
-// function returns NULL; call SDL_GetError() for more information.
+// function returns an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -354,8 +349,8 @@ func (id JoystickID) Path() (string, error) {
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetJoystickPlayerIndexForID
-func (id JoystickID) PlayerIndex() int32 {
-	return (int32)(C.SDL_GetJoystickPlayerIndexForID((C.SDL_JoystickID)(id)))
+func (id JoystickID) PlayerIndex() int {
+	return (int)(C.SDL_GetJoystickPlayerIndexForID((C.SDL_JoystickID)(id)))
 }
 
 // Get the implementation-dependent GUID of a joystick.
@@ -431,9 +426,8 @@ func (id JoystickID) ProductVersion() uint16 {
 //
 // id: the joystick instance ID.
 //
-// Returns the SDL_JoystickType of the selected joystick. If called with an
-// invalid id, this function returns
-// `SDL_JOYSTICK_TYPE_UNKNOWN`.
+// Returns the [JoystickType] of the selected joystick. If called with an
+// invalid id, this function returns [JoystickTypeUnknown].
 //
 // This function is available since SDL 3.2.0.
 //
@@ -449,8 +443,7 @@ func (id JoystickID) Type() JoystickType {
 //
 // id: the joystick instance ID.
 //
-// Returns a joystick identifier or NULL on failure; call SDL_GetError() for
-// more information.
+// Returns a joystick identifier or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -463,12 +456,12 @@ func OpenJoystick(id JoystickID) (*Joystick, error) {
 	return j, nil
 }
 
-// Get the SDL_Joystick associated with an instance ID, if it has been opened.
+// Get the [Joystick] associated with an instance ID, if it has been opened.
 //
-// id: the instance ID to get the SDL_Joystick for.
+// id: the instance ID to get the [Joystick] for.
 //
-// Returns an SDL_Joystick on success or NULL on failure or if it hasn't been
-// opened yet; call SDL_GetError() for more information.
+// Returns a [Joystick] on success or an error on failure or if it hasn't been
+// opened yet.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -481,12 +474,11 @@ func GetJoystickFromID(id JoystickID) (*Joystick, error) {
 	return j, nil
 }
 
-// Get the SDL_Joystick associated with a player index.
+// Get the [Joystick] associated with a player index.
 //
-// player_index: the player index to get the SDL_Joystick for.
+// player_index: the player index to get the [Joystick] for.
 //
-// Returns an SDL_Joystick on success or NULL on failure; call SDL_GetError()
-// for more information.
+// Returns a [Joystick] or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -520,33 +512,30 @@ type VirtualJoystickSensorDesc struct {
 
 // The structure that describes a virtual joystick.
 //
-// This structure should be initialized using SDL_INIT_INTERFACE(). All
-// elements of this structure are optional.
-//
 // This struct is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_VirtualJoystickDesc
 type VirtualJoystickDesc struct {
-	Type       JoystickType                  // `SDL_JoystickType`
+	Type       JoystickType
 	VendorId   uint16                        // the USB vendor ID of this joystick
 	ProductId  uint16                        // the USB product ID of this joystick
 	NAxes      int                           // the number of axes on this joystick
 	NButtons   int                           // the number of buttons on this joystick
 	NBalls     int                           // the number of balls on this joystick
 	NHats      int                           // the number of hats on this joystick
-	ButtonMask GamepadButton                 // A mask of which buttons are valid for this controller e.g. (1 << SDL_GAMEPAD_BUTTON_SOUTH)
-	AxisMask   GamepadAxis                   // A mask of which axes are valid for this controller e.g. (1 << SDL_GAMEPAD_AXIS_LEFTX)
+	ButtonMask GamepadButton                 // A mask of which buttons are valid for this controller e.g. (1 << [GamepadButtonSouth])
+	AxisMask   GamepadAxis                   // A mask of which axes are valid for this controller e.g. (1 << [GamepadAxisLeftX])
 	Name       string                        // the name of the joystick
-	Touchpads  []VirtualJoystickTouchpadDesc // A pointer to an array of touchpad descriptions, required if `ntouchpads` is > 0
-	Sensors    []VirtualJoystickSensorDesc   // A pointer to an array of sensor descriptions, required if `nsensors` is > 0
+	Touchpads  []VirtualJoystickTouchpadDesc // An array of touchpad descriptions
+	Sensors    []VirtualJoystickSensorDesc   // An array of sensor descriptions
 
 	Update            func()                                                    // Called when the joystick state should be updated
 	SetPlayerIndex    func(playerIndex int)                                     // Called when the player index is set
-	Rumble            func(lowFrequencyRumble, highFrequencyRumble uint16) bool // Implements SDL_RumbleJoystick()
-	RumbleTriggers    func(leftRumble, rightRumble uint16) bool                 // Implements SDL_RumbleJoystickTriggers()
-	SetLED            func(red, green, blue byte) bool                          // Implements SDL_SetJoystickLED()
-	SendEffect        func(data []byte) bool                                    // Implements SDL_SendJoystickEffect()
-	SetSensorsEnabled func(enabled bool) bool                                   // Implements SDL_SetGamepadSensorEnabled()
+	Rumble            func(lowFrequencyRumble, highFrequencyRumble uint16) bool // Implements [Joystick.Rumble]
+	RumbleTriggers    func(leftRumble, rightRumble uint16) bool                 // Implements [Joystick.RumbleTriggers]
+	SetLED            func(red, green, blue byte) bool                          // Implements [Joystick.SetLED]
+	SendEffect        func(data []byte) bool                                    // Implements [Joystick.SendEffect]
+	SetSensorsEnabled func(enabled bool) bool                                   // Implements [Gamepad.SetSensorEnabled]
 	Cleanup           func()                                                    // Cleans up the userdata when the joystick is detached
 }
 
@@ -601,10 +590,9 @@ func cb_VirtualJoystickCleanup(userdata uintptr) {
 
 // Attach a new virtual joystick.
 //
-// desc: joystick description, initialized using SDL_INIT_INTERFACE().
+// desc: joystick description.
 //
-// Returns the joystick instance ID, or 0 on failure; call SDL_GetError() for
-// more information.
+// Returns the joystick instance ID or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -650,10 +638,9 @@ func AttachVirtualJoystick(desc *VirtualJoystickDesc) (JoystickID, error) {
 // Detach a virtual joystick.
 //
 // id: the joystick instance ID, previously returned from
-// SDL_AttachVirtualJoystick().
+// [AttachVirtualJoystick].
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -678,14 +665,14 @@ func (id JoystickID) Virtual() bool {
 // Set the state of an axis on an opened virtual joystick.
 //
 // Please note that values set here will not be applied until the next call to
-// SDL_UpdateJoysticks, which can either be called directly, or can be called
+// [UpdateJoysticks], which can either be called directly, or can be called
 // indirectly through various other SDL APIs, including, but not limited to
-// the following: SDL_PollEvent, SDL_PumpEvents, SDL_WaitEventTimeout,
-// SDL_WaitEvent.
+// the following: [PollEvent], [PumpEvents], [WaitEventTimeout],
+// [WaitEvent].
 //
 // Note that when sending trigger axes, you should scale the value to the full
-// range of Sint16. For example, a trigger at rest would have the value of
-// `SDL_JOYSTICK_AXIS_MIN`.
+// range of int16. For example, a trigger at rest would have the value of
+// [JoystickAxisMin].
 //
 // joystick: the virtual joystick on which to set state.
 //
@@ -693,8 +680,7 @@ func (id JoystickID) Virtual() bool {
 //
 // value: the new value for the specified axis.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -709,10 +695,10 @@ func (joystick *Joystick) SetVirtualAxis(axis int, value int16) error {
 // Generate ball motion on an opened virtual joystick.
 //
 // Please note that values set here will not be applied until the next call to
-// SDL_UpdateJoysticks, which can either be called directly, or can be called
+// [UpdateJoysticks], which can either be called directly, or can be called
 // indirectly through various other SDL APIs, including, but not limited to
-// the following: SDL_PollEvent, SDL_PumpEvents, SDL_WaitEventTimeout,
-// SDL_WaitEvent.
+// the following: [PollEvent], [PumpEvents], [WaitEventTimeout],
+// [WaitEvent].
 //
 // joystick: the virtual joystick on which to set state.
 //
@@ -722,8 +708,7 @@ func (joystick *Joystick) SetVirtualAxis(axis int, value int16) error {
 //
 // yrel: the relative motion on the Y axis.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -738,10 +723,10 @@ func (joystick *Joystick) SetVirtualBall(ball int, xrel int16, yrel int16) error
 // Set the state of a button on an opened virtual joystick.
 //
 // Please note that values set here will not be applied until the next call to
-// SDL_UpdateJoysticks, which can either be called directly, or can be called
+// [UpdateJoysticks], which can either be called directly, or can be called
 // indirectly through various other SDL APIs, including, but not limited to
-// the following: SDL_PollEvent, SDL_PumpEvents, SDL_WaitEventTimeout,
-// SDL_WaitEvent.
+// the following: [PollEvent], [PumpEvents], [WaitEventTimeout],
+// [WaitEvent].
 //
 // joystick: the virtual joystick on which to set state.
 //
@@ -749,8 +734,7 @@ func (joystick *Joystick) SetVirtualBall(ball int, xrel int16, yrel int16) error
 //
 // down: true if the button is pressed, false otherwise.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -765,10 +749,10 @@ func (joystick *Joystick) SetVirtualButton(button int, down bool) error {
 // Set the state of a hat on an opened virtual joystick.
 //
 // Please note that values set here will not be applied until the next call to
-// SDL_UpdateJoysticks, which can either be called directly, or can be called
+// [UpdateJoysticks], which can either be called directly, or can be called
 // indirectly through various other SDL APIs, including, but not limited to
-// the following: SDL_PollEvent, SDL_PumpEvents, SDL_WaitEventTimeout,
-// SDL_WaitEvent.
+// the following: [PollEvent], [PumpEvents], [WaitEventTimeout],
+// [WaitEvent].
 //
 // joystick: the virtual joystick on which to set state.
 //
@@ -776,8 +760,7 @@ func (joystick *Joystick) SetVirtualButton(button int, down bool) error {
 //
 // value: the new value for the specified hat.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -792,10 +775,10 @@ func (joystick *Joystick) SetVirtualHat(hat int, value JoystickHatState) error {
 // Set touchpad finger state on an opened virtual joystick.
 //
 // Please note that values set here will not be applied until the next call to
-// SDL_UpdateJoysticks, which can either be called directly, or can be called
+// [UpdateJoysticks], which can either be called directly, or can be called
 // indirectly through various other SDL APIs, including, but not limited to
-// the following: SDL_PollEvent, SDL_PumpEvents, SDL_WaitEventTimeout,
-// SDL_WaitEvent.
+// the following: [PollEvent], [PumpEvents], [WaitEventTimeout],
+// [WaitEvent].
 //
 // joystick: the virtual joystick on which to set state.
 //
@@ -814,8 +797,7 @@ func (joystick *Joystick) SetVirtualHat(hat int, value JoystickHatState) error {
 //
 // pressure: the pressure of the finger.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -830,30 +812,27 @@ func (joystick *Joystick) SetVirtualTouchpad(touchpad int, finger int, down bool
 // Send a sensor update for an opened virtual joystick.
 //
 // Please note that values set here will not be applied until the next call to
-// SDL_UpdateJoysticks, which can either be called directly, or can be called
+// [UpdateJoysticks], which can either be called directly, or can be called
 // indirectly through various other SDL APIs, including, but not limited to
-// the following: SDL_PollEvent, SDL_PumpEvents, SDL_WaitEventTimeout,
-// SDL_WaitEvent.
+// the following: [PollEvent], [PumpEvents], [WaitEventTimeout],
+// [WaitEvent].
 //
 // joystick: the virtual joystick on which to set state.
 //
 // type: the type of the sensor on the virtual joystick to update.
 //
-// sensor_timestamp: a 64-bit timestamp in nanoseconds associated with
+// sensorTimestamp: a 64-bit timestamp in nanoseconds associated with
 // the sensor reading.
 //
 // data: the data associated with the sensor reading.
 //
-// num_values: the number of values pointed to by `data`.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_SendJoystickVirtualSensorData
-func (joystick *Joystick) SendVirtualSensorData(typ SensorType, sensor_timestamp uint64, data []float32) error {
-	if !C.SDL_SendJoystickVirtualSensorData((*C.SDL_Joystick)(joystick), (C.SDL_SensorType)(typ), (C.Uint64)(sensor_timestamp), (*C.float)(unsafe.SliceData(data)), (C.int)(len(data))) {
+func (joystick *Joystick) SendVirtualSensorData(typ SensorType, sensorTimestamp uint64, data []float32) error {
+	if !C.SDL_SendJoystickVirtualSensorData((*C.SDL_Joystick)(joystick), (C.SDL_SensorType)(typ), (C.Uint64)(sensorTimestamp), (*C.float)(unsafe.SliceData(data)), (C.int)(len(data))) {
 		return getError()
 	}
 	return nil
@@ -863,21 +842,20 @@ func (joystick *Joystick) SendVirtualSensorData(typ SensorType, sensor_timestamp
 //
 // The following read-only properties are provided by SDL:
 //
-// - `SDL_PROP_JOYSTICK_CAP_MONO_LED_BOOLEAN`: true if this joystick has an
-// LED that has adjustable brightness
-// - `SDL_PROP_JOYSTICK_CAP_RGB_LED_BOOLEAN`: true if this joystick has an LED
-// that has adjustable color
-// - `SDL_PROP_JOYSTICK_CAP_PLAYER_LED_BOOLEAN`: true if this joystick has a
-// player LED
-// - `SDL_PROP_JOYSTICK_CAP_RUMBLE_BOOLEAN`: true if this joystick has
-// left/right rumble
-// - `SDL_PROP_JOYSTICK_CAP_TRIGGER_RUMBLE_BOOLEAN`: true if this joystick has
-// simple trigger rumble
+//   - [PropJoystickCapMonoLEDBoolean]: true if this joystick has an
+//     LED that has adjustable brightness
+//   - [PropJoystickCapRGBLEDBoolean]: true if this joystick has an LED
+//     that has adjustable color
+//   - [PropJoystickCapPlayerLEDBoolean]: true if this joystick has a
+//     player LED
+//   - [PropJoystickCapRumbleBoolean]: true if this joystick has
+//     left/right rumble
+//   - [PropJoystickCapTriggerRumbleBoolean]: true if this joystick has
+//     simple trigger rumble
 //
-// joystick: the SDL_Joystick obtained from SDL_OpenJoystick().
+// joystick: the [Joystick] obtained from [OpenJoystick].
 //
-// Returns a valid property ID on success or 0 on failure; call
-// SDL_GetError() for more information.
+// Returns a valid property ID or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -890,18 +868,18 @@ func (joystick *Joystick) Properties() (PropertiesID, error) {
 	return props, nil
 }
 
-const PropJoystickCapMonoLedBoolean = "SDL.joystick.cap.mono_led"
-const PropJoystickCapRgbLedBoolean = "SDL.joystick.cap.rgb_led"
-const PropJoystickCapPlayerLedBoolean = "SDL.joystick.cap.player_led"
+const PropJoystickCapMonoLEDBoolean = "SDL.joystick.cap.mono_led"
+const PropJoystickCapRGBLEDBoolean = "SDL.joystick.cap.rgb_led"
+const PropJoystickCapPlayerLEDBoolean = "SDL.joystick.cap.player_led"
 const PropJoystickCapRumbleBoolean = "SDL.joystick.cap.rumble"
 const PropJoystickCapTriggerRumbleBoolean = "SDL.joystick.cap.trigger_rumble"
 
 // Get the implementation dependent name of a joystick.
 //
-// joystick: the SDL_Joystick obtained from SDL_OpenJoystick().
+// joystick: the [Joystick] obtained from [OpenJoystick].
 //
 // Returns the name of the selected joystick. If no name can be found, this
-// function returns NULL; call SDL_GetError() for more information.
+// function returns an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -916,10 +894,10 @@ func (joystick *Joystick) Name() (string, error) {
 
 // Get the implementation dependent path of a joystick.
 //
-// joystick: the SDL_Joystick obtained from SDL_OpenJoystick().
+// joystick: the [Joystick] obtained from [OpenJoystick].
 //
 // Returns the path of the selected joystick. If no path can be found, this
-// function returns NULL; call SDL_GetError() for more information.
+// function returns an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -937,7 +915,7 @@ func (joystick *Joystick) Path() (string, error) {
 // For XInput controllers this returns the XInput user index. Many joysticks
 // will not be able to supply this information.
 //
-// joystick: the SDL_Joystick obtained from SDL_OpenJoystick().
+// joystick: the [Joystick] obtained from [OpenJoystick].
 //
 // Returns the player index, or -1 if it's not available.
 //
@@ -950,13 +928,12 @@ func (joystick *Joystick) PlayerIndex() int {
 
 // Set the player index of an opened joystick.
 //
-// joystick: the SDL_Joystick obtained from SDL_OpenJoystick().
+// joystick: the [Joystick] obtained from [OpenJoystick].
 //
-// player_index: player index to assign to this joystick, or -1 to clear
+// playerIndex: player index to assign to this joystick, or -1 to clear
 // the player index and turn off player LEDs.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -972,11 +949,10 @@ func (joystick *Joystick) SetPlayerIndex(playerIndex int) error {
 //
 // This function requires an open joystick.
 //
-// joystick: the SDL_Joystick obtained from SDL_OpenJoystick().
+// joystick: the [Joystick] obtained from [OpenJoystick].
 //
 // Returns the GUID of the given joystick. If called on an invalid index,
-// this function returns a zero GUID; call SDL_GetError() for more
-// information.
+// this function returns an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -993,7 +969,7 @@ func (joystick *Joystick) GUID() (GUID, error) {
 //
 // If the vendor ID isn't available this function returns 0.
 //
-// joystick: the SDL_Joystick obtained from SDL_OpenJoystick().
+// joystick: the [Joystick] obtained from [OpenJoystick].
 //
 // Returns the USB vendor ID of the selected joystick, or 0 if unavailable.
 //
@@ -1008,7 +984,7 @@ func (joystick *Joystick) Vendor() uint16 {
 //
 // If the product ID isn't available this function returns 0.
 //
-// joystick: the SDL_Joystick obtained from SDL_OpenJoystick().
+// joystick: the [Joystick] obtained from [OpenJoystick].
 //
 // Returns the USB product ID of the selected joystick, or 0 if unavailable.
 //
@@ -1023,7 +999,7 @@ func (joystick *Joystick) Product() uint16 {
 //
 // If the product version isn't available this function returns 0.
 //
-// joystick: the SDL_Joystick obtained from SDL_OpenJoystick().
+// joystick: the [Joystick] obtained from [OpenJoystick].
 //
 // Returns the product version of the selected joystick, or 0 if unavailable.
 //
@@ -1038,7 +1014,7 @@ func (joystick *Joystick) ProductVersion() uint16 {
 //
 // If the firmware version isn't available this function returns 0.
 //
-// joystick: the SDL_Joystick obtained from SDL_OpenJoystick().
+// joystick: the [Joystick] obtained from [OpenJoystick].
 //
 // Returns the firmware version of the selected joystick, or 0 if
 // unavailable.
@@ -1052,9 +1028,10 @@ func (joystick *Joystick) FirmwareVersion() uint16 {
 
 // Get the serial number of an opened joystick, if available.
 //
-// Returns the serial number of the joystick, or NULL if it is not available.
+// Returns the serial number of the joystick, or an empty string if it is not
+// available.
 //
-// joystick: the SDL_Joystick obtained from SDL_OpenJoystick().
+// joystick: the [Joystick] obtained from [OpenJoystick].
 //
 // Returns the serial number of the selected joystick, or NULL if
 // unavailable.
@@ -1068,9 +1045,9 @@ func (joystick *Joystick) Serial() string {
 
 // Get the type of an opened joystick.
 //
-// joystick: the SDL_Joystick obtained from SDL_OpenJoystick().
+// joystick: the [Joystick] obtained from [OpenJoystick].
 //
-// Returns the SDL_JoystickType of the selected joystick.
+// Returns the [JoystickType] of the selected joystick.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1079,21 +1056,18 @@ func (joystick *Joystick) Type() JoystickType {
 	return (JoystickType)(C.SDL_GetJoystickType((*C.SDL_Joystick)(joystick)))
 }
 
-// Get the device information encoded in a SDL_GUID structure.
+// Get the device information encoded in a [GUID] structure.
 //
-// guid: the SDL_GUID you wish to get info about.
+// guid: the GUID you wish to get info about.
 //
-// vendor: a pointer filled in with the device VID, or 0 if not
-// available.
+// vendor: the device VID, or 0 if not available.
 //
-// product: a pointer filled in with the device PID, or 0 if not
-// available.
+// product: the device PID, or 0 if not available.
 //
-// version: a pointer filled in with the device version, or 0 if not
-// available.
+// version: the device version, or 0 if not available.
 //
-// crc16: a pointer filled in with a CRC used to distinguish different
-// products with the same VID/PID, or 0 if not available.
+// crc16: a CRC used to distinguish different products with the same VID/PID,
+// or 0 if not available.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1108,7 +1082,7 @@ func GetJoystickGUIDInfo(guid GUID) (vendor, product, version, crc16 uint16) {
 // joystick: the joystick to query.
 //
 // Returns true if the joystick has been opened, false if it has not; call
-// SDL_GetError() for more information.
+// [GetError] for more information.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1119,10 +1093,9 @@ func (joystick *Joystick) Connected() bool {
 
 // Get the instance ID of an opened joystick.
 //
-// joystick: an SDL_Joystick structure containing joystick information.
+// joystick: a [Joystick] structure containing joystick information.
 //
-// Returns the instance ID of the specified joystick on success or 0 on
-// failure; call SDL_GetError() for more information.
+// Returns the instance ID of the specified joystick or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1141,10 +1114,9 @@ func (joystick *Joystick) ID() (JoystickID, error) {
 // separate buttons or a POV hat, and not axes, but all of this is up to the
 // device and platform.
 //
-// joystick: an SDL_Joystick structure containing joystick information.
+// joystick: a [Joystick] structure containing joystick information.
 //
-// Returns the number of axis controls/number of axes on success or -1 on
-// failure; call SDL_GetError() for more information.
+// Returns the number of axis controls/number of axes or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1164,10 +1136,9 @@ func (joystick *Joystick) NumAxes() (int, error) {
 //
 // Most joysticks do not have trackballs.
 //
-// joystick: an SDL_Joystick structure containing joystick information.
+// joystick: a [Joystick] structure containing joystick information.
 //
-// Returns the number of trackballs on success or -1 on failure; call
-// SDL_GetError() for more information.
+// Returns the number of trackballs or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1182,10 +1153,9 @@ func (joystick *Joystick) NumBalls() (int, error) {
 
 // Get the number of POV hats on a joystick.
 //
-// joystick: an SDL_Joystick structure containing joystick information.
+// joystick: a [Joystick] structure containing joystick information.
 //
-// Returns the number of POV hats on success or -1 on failure; call
-// SDL_GetError() for more information.
+// Returns the number of POV hats or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1200,10 +1170,9 @@ func (joystick *Joystick) NumHats() (int, error) {
 
 // Get the number of buttons on a joystick.
 //
-// joystick: an SDL_Joystick structure containing joystick information.
+// joystick: a [Joystick] structure containing joystick information.
 //
-// Returns the number of buttons on success or -1 on failure; call
-// SDL_GetError() for more information.
+// Returns the number of buttons or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1218,7 +1187,7 @@ func (joystick *Joystick) NumButtons() (int, error) {
 
 // Set the state of joystick event processing.
 //
-// If joystick events are disabled, you must call SDL_UpdateJoysticks()
+// If joystick events are disabled, you must call [UpdateJoysticks]
 // yourself and check the state of the joystick when you want joystick
 // information.
 //
@@ -1233,7 +1202,7 @@ func SetJoystickEventsEnabled(enabled bool) {
 
 // Query the state of joystick event processing.
 //
-// If joystick events are disabled, you must call SDL_UpdateJoysticks()
+// If joystick events are disabled, you must call [UpdateJoysticks]
 // yourself and check the state of the joystick when you want joystick
 // information.
 //
@@ -1266,16 +1235,16 @@ func UpdateJoysticks() {
 // Game Controller API makes a great effort to apply order to this lower-level
 // interface, so you know that a specific axis is the "left thumb stick," etc.
 //
-// The value returned by SDL_GetJoystickAxis() is a signed integer (-32768 to
+// The value returned by Axis is a signed integer (-32768 to
 // 32767) representing the current position of the axis. It may be necessary
 // to impose certain tolerances on these values to account for jitter.
 //
-// joystick: an SDL_Joystick structure containing joystick information.
+// joystick: a [Joystick] structure containing joystick information.
 //
 // axis: the axis to query; the axis indices start at index 0.
 //
 // Returns a 16-bit signed integer representing the current position of the
-// axis or 0 on failure; call SDL_GetError() for more information.
+// axis or 0 on failure; call [GetError] for more information.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1290,11 +1259,11 @@ func (joystick *Joystick) Axis(axis int) int16 {
 //
 // The axis indices start at index 0.
 //
-// joystick: an SDL_Joystick structure containing joystick information.
+// joystick: a [Joystick] structure containing joystick information.
 //
 // axis: the axis to query; the axis indices start at index 0.
 //
-// state: upon return, the initial value is supplied here.
+// state: the initial state.
 //
 // Returns true if this axis has any initial value, or false if not.
 //
@@ -1309,20 +1278,19 @@ func (joystick *Joystick) AxisInitialState(axis int) (state int16, hasInitialVal
 // Get the ball axis change since the last poll.
 //
 // Trackballs can only return relative motion since the last call to
-// SDL_GetJoystickBall(), these motion deltas are placed into `dx` and `dy`.
+// this method, these motion deltas are placed into dx and dy.
 //
 // Most joysticks do not have trackballs.
 //
-// joystick: the SDL_Joystick to query.
+// joystick: the [Joystick] to query.
 //
 // ball: the ball index to query; ball indices start at index 0.
 //
-// dx: stores the difference in the x axis position since the last poll.
+// dx: the difference in the x axis position since the last poll.
 //
-// dy: stores the difference in the y axis position since the last poll.
+// dy: the difference in the y axis position since the last poll.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1337,9 +1305,9 @@ func (joystick *Joystick) Ball(ball int) (dx, dy int, err error) {
 
 // Get the current state of a POV hat on a joystick.
 //
-// The returned value will be one of the `SDL_HAT_*` values.
+// The returned value will be one of the [JoystickHatState] values.
 //
-// joystick: an SDL_Joystick structure containing joystick information.
+// joystick: a [Joystick] structure containing joystick information.
 //
 // hat: the hat index to get the state from; indices start at index 0.
 //
@@ -1368,7 +1336,7 @@ const (
 
 // Get the current state of a button on a joystick.
 //
-// joystick: an SDL_Joystick structure containing joystick information.
+// joystick: a [Joystick] structure containing joystick information.
 //
 // button: the button index to get the state from; indices start at
 // index 0.
@@ -1388,17 +1356,17 @@ func (joystick *Joystick) Button(button int) bool {
 // it with 0 intensity stops any rumbling.
 //
 // This function requires you to process SDL events or call
-// SDL_UpdateJoysticks() to update rumble state.
+// [UpdateJoysticks] to update rumble state.
 //
 // joystick: the joystick to vibrate.
 //
-// low_frequency_rumble: the intensity of the low frequency (left)
+// lowFrequencyRumble: the intensity of the low frequency (left)
 // rumble motor, from 0 to 0xFFFF.
 //
-// high_frequency_rumble: the intensity of the high frequency (right)
+// highFrequencyRumble: the intensity of the high frequency (right)
 // rumble motor, from 0 to 0xFFFF.
 //
-// duration_ms: the duration of the rumble effect, in milliseconds.
+// durationMS: the duration of the rumble effect, in milliseconds.
 //
 // Returns true, or false if rumble isn't supported on this joystick.
 //
@@ -1416,24 +1384,23 @@ func (joystick *Joystick) Rumble(lowFrequencyRumble, highFrequencyRumble, durati
 //
 // Note that this is rumbling of the _triggers_ and not the game controller as
 // a whole. This is currently only supported on Xbox One controllers. If you
-// want the (more common) whole-controller rumble, use SDL_RumbleJoystick()
+// want the (more common) whole-controller rumble, use [RumbleJoystick]
 // instead.
 //
 // This function requires you to process SDL events or call
-// SDL_UpdateJoysticks() to update rumble state.
+// [UpdateJoysticks] to update rumble state.
 //
 // joystick: the joystick to vibrate.
 //
-// left_rumble: the intensity of the left trigger rumble motor, from 0
+// leftRumble: the intensity of the left trigger rumble motor, from 0
 // to 0xFFFF.
 //
-// right_rumble: the intensity of the right trigger rumble motor, from 0
+// rightRumble: the intensity of the right trigger rumble motor, from 0
 // to 0xFFFF.
 //
-// duration_ms: the duration of the rumble effect, in milliseconds.
+// durationMS: the duration of the rumble effect, in milliseconds.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1461,8 +1428,7 @@ func (joystick *Joystick) RumbleTriggers(leftRumble, rightRumble, durationMS uin
 //
 // blue: the intensity of the blue LED.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1480,10 +1446,7 @@ func (joystick *Joystick) SetLED(red byte, green byte, blue byte) error {
 //
 // data: the data to send to the joystick.
 //
-// size: the size of the data to send to the joystick.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1495,7 +1458,7 @@ func (joystick *Joystick) SendEffect(data []byte) error {
 	return nil
 }
 
-// Close a joystick previously opened with SDL_OpenJoystick().
+// Close a joystick previously opened with [OpenJoystick].
 //
 // joystick: the joystick device to close.
 //
@@ -1510,9 +1473,7 @@ func (joystick *Joystick) Close() {
 //
 // joystick: the joystick to query.
 //
-// Returns the connection state on success or
-// `SDL_JOYSTICK_CONNECTION_INVALID` on failure; call SDL_GetError()
-// for more information.
+// Returns the connection state or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1535,13 +1496,10 @@ func (joystick *Joystick) ConnectionState() (JoystickConnectionState, error) {
 //
 // joystick: the joystick to query.
 //
-// percent: a pointer filled in with the percentage of battery life
-// left, between 0 and 100, or NULL to ignore. This will be
-// filled in with -1 we can't determine a value or there is no
-// battery.
+// percent: the percentage of battery life left, between 0 and 100. This will be
+// -1 we can't determine a value or there is no battery.
 //
-// Returns the current battery state or `SDL_POWERSTATE_ERROR` on failure;
-// call SDL_GetError() for more information.
+// Returns the current battery state or an error.
 //
 // This function is available since SDL 3.2.0.
 //
