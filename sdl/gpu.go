@@ -491,7 +491,7 @@ import (
 // section of data that has already been referenced will produce unexpected
 // results.
 
-// An opaque handle representing the SDL_GPU context.
+// An opaque handle representing the GPU context.
 //
 // This struct is available since SDL 3.2.0.
 //
@@ -565,7 +565,7 @@ type GPUGraphicsPipeline C.struct_SDL_GPUGraphicsPipeline
 // Most state is managed via command buffers. When setting state using a
 // command buffer, that state is local to the command buffer.
 //
-// Commands only begin execution on the GPU once SDL_SubmitGPUCommandBuffer is
+// Commands only begin execution on the GPU once [GPUCommandBuffer.Submit] is
 // called. Once the command buffer is submitted, it is no longer valid to use
 // it.
 //
@@ -584,7 +584,7 @@ type GPUCommandBuffer C.struct_SDL_GPUCommandBuffer
 // An opaque handle representing a render pass.
 //
 // This handle is transient and should not be held or referenced after
-// SDL_EndGPURenderPass is called.
+// [GPURenderPass.End] is called.
 //
 // This struct is available since SDL 3.2.0.
 //
@@ -594,7 +594,7 @@ type GPURenderPass C.struct_SDL_GPURenderPass
 // An opaque handle representing a compute pass.
 //
 // This handle is transient and should not be held or referenced after
-// SDL_EndGPUComputePass is called.
+// [GPUComputePass.End] is called.
 //
 // This struct is available since SDL 3.2.0.
 //
@@ -604,7 +604,7 @@ type GPUComputePass C.struct_SDL_GPUComputePass
 // An opaque handle representing a copy pass.
 //
 // This handle is transient and should not be held or referenced after
-// SDL_EndGPUCopyPass is called.
+// [GPUCopyPass.End] is called.
 //
 // This struct is available since SDL 3.2.0.
 //
@@ -620,14 +620,14 @@ type GPUFence C.struct_SDL_GPUFence
 
 // Specifies the primitive topology of a graphics pipeline.
 //
-// If you are using POINTLIST you must include a point size output in the
-// vertex shader.
+// If you are using [GPUPrimitivetypePointlist] you must include a point size
+// output in the vertex shader.
 //
-// - For HLSL compiling to SPIRV you must decorate a float output with
-// [[vk::builtin("PointSize")]].
-// - For GLSL you must set the gl_PointSize builtin.
-// - For MSL you must include a float output with the [[point_size]]
-// decorator.
+//   - For HLSL compiling to SPIRV you must decorate a float output with
+//     [[vk::builtin("PointSize")]].
+//   - For GLSL you must set the gl_PointSize builtin.
+//   - For MSL you must include a float output with the [[point_size]]
+//     decorator.
 //
 // Note that sized point topology is totally unsupported on D3D12. Any size
 // other than 1 will be ignored. In general, you should avoid using point
@@ -691,7 +691,7 @@ const (
 // Specifies the pixel format of a texture.
 //
 // Texture format support varies depending on driver, hardware, and usage
-// flags. In general, you should use SDL_GPUTextureSupportsFormat to query if
+// flags. In general, you should use [GPUDevice.TextureSupportsFormat] to query if
 // a format is supported before using it. However, there are a few guaranteed
 // formats.
 //
@@ -700,69 +700,69 @@ const (
 //
 // For SAMPLER usage, the following formats are universally supported:
 //
-// - R8G8B8A8_UNORM
-// - B8G8R8A8_UNORM
-// - R8_UNORM
-// - R8_SNORM
-// - R8G8_UNORM
-// - R8G8_SNORM
-// - R8G8B8A8_SNORM
-// - R16_FLOAT
-// - R16G16_FLOAT
-// - R16G16B16A16_FLOAT
-// - R32_FLOAT
-// - R32G32_FLOAT
-// - R32G32B32A32_FLOAT
-// - R11G11B10_UFLOAT
-// - R8G8B8A8_UNORM_SRGB
-// - B8G8R8A8_UNORM_SRGB
-// - D16_UNORM
+//   - R8G8B8A8_UNORM
+//   - B8G8R8A8_UNORM
+//   - R8_UNORM
+//   - R8_SNORM
+//   - R8G8_UNORM
+//   - R8G8_SNORM
+//   - R8G8B8A8_SNORM
+//   - R16_FLOAT
+//   - R16G16_FLOAT
+//   - R16G16B16A16_FLOAT
+//   - R32_FLOAT
+//   - R32G32_FLOAT
+//   - R32G32B32A32_FLOAT
+//   - R11G11B10_UFLOAT
+//   - R8G8B8A8_UNORM_SRGB
+//   - B8G8R8A8_UNORM_SRGB
+//   - D16_UNORM
 //
 // For COLOR_TARGET usage, the following formats are universally supported:
 //
-// - R8G8B8A8_UNORM
-// - B8G8R8A8_UNORM
-// - R8_UNORM
-// - R16_FLOAT
-// - R16G16_FLOAT
-// - R16G16B16A16_FLOAT
-// - R32_FLOAT
-// - R32G32_FLOAT
-// - R32G32B32A32_FLOAT
-// - R8_UINT
-// - R8G8_UINT
-// - R8G8B8A8_UINT
-// - R16_UINT
-// - R16G16_UINT
-// - R16G16B16A16_UINT
-// - R8_INT
-// - R8G8_INT
-// - R8G8B8A8_INT
-// - R16_INT
-// - R16G16_INT
-// - R16G16B16A16_INT
-// - R8G8B8A8_UNORM_SRGB
-// - B8G8R8A8_UNORM_SRGB
+//   - R8G8B8A8_UNORM
+//   - B8G8R8A8_UNORM
+//   - R8_UNORM
+//   - R16_FLOAT
+//   - R16G16_FLOAT
+//   - R16G16B16A16_FLOAT
+//   - R32_FLOAT
+//   - R32G32_FLOAT
+//   - R32G32B32A32_FLOAT
+//   - R8_UINT
+//   - R8G8_UINT
+//   - R8G8B8A8_UINT
+//   - R16_UINT
+//   - R16G16_UINT
+//   - R16G16B16A16_UINT
+//   - R8_INT
+//   - R8G8_INT
+//   - R8G8B8A8_INT
+//   - R16_INT
+//   - R16G16_INT
+//   - R16G16B16A16_INT
+//   - R8G8B8A8_UNORM_SRGB
+//   - B8G8R8A8_UNORM_SRGB
 //
 // For STORAGE usages, the following formats are universally supported:
 //
-// - R8G8B8A8_UNORM
-// - R8G8B8A8_SNORM
-// - R16G16B16A16_FLOAT
-// - R32_FLOAT
-// - R32G32_FLOAT
-// - R32G32B32A32_FLOAT
-// - R8G8B8A8_UINT
-// - R16G16B16A16_UINT
-// - R8G8B8A8_INT
-// - R16G16B16A16_INT
+//   - R8G8B8A8_UNORM
+//   - R8G8B8A8_SNORM
+//   - R16G16B16A16_FLOAT
+//   - R32_FLOAT
+//   - R32G32_FLOAT
+//   - R32G32B32A32_FLOAT
+//   - R8G8B8A8_UINT
+//   - R16G16B16A16_UINT
+//   - R8G8B8A8_INT
+//   - R16G16B16A16_INT
 //
 // For DEPTH_STENCIL_TARGET usage, the following formats are universally
 // supported:
 //
-// - D16_UNORM
-// - Either (but not necessarily both!) D24_UNORM or D32_FLOAT
-// - Either (but not necessarily both!) D24_UNORM_S8_UINT or D32_FLOAT_S8_UINT
+//   - D16_UNORM
+//   - Either (but not necessarily both!) D24_UNORM or D32_FLOAT
+//   - Either (but not necessarily both!) D24_UNORM_S8_UINT or D32_FLOAT_S8_UINT
 //
 // Unless D16_UNORM is sufficient for your purposes, always check which of
 // D24/D32 is supported before creating a depth-stencil texture!
@@ -825,12 +825,12 @@ const (
 	GPUTextureformatR32Int
 	GPUTextureformatR32G32Int
 	GPUTextureformatR32G32B32A32Int
-	GPUTextureformatR8G8B8A8UnormSrgb
-	GPUTextureformatB8G8R8A8UnormSrgb
-	GPUTextureformatBC1RGBAUnormSrgb
-	GPUTextureformatBC2RGBAUnormSrgb
-	GPUTextureformatBC3RGBAUnormSrgb
-	GPUTextureformatBC7RGBAUnormSrgb
+	GPUTextureformatR8G8B8A8UnormSRGB
+	GPUTextureformatB8G8R8A8UnormSRGB
+	GPUTextureformatBC1RGBAUnormSRGB
+	GPUTextureformatBC2RGBAUnormSRGB
+	GPUTextureformatBC3RGBAUnormSRGB
+	GPUTextureformatBC7RGBAUnormSRGB
 	GPUTextureformatD16Unorm
 	GPUTextureformatD24Unorm
 	GPUTextureformatD32Float
@@ -850,20 +850,20 @@ const (
 	GPUTextureformatAstc10x10Unorm
 	GPUTextureformatAstc12x10Unorm
 	GPUTextureformatAstc12x12Unorm
-	GPUTextureformatAstc4x4UnormSrgb
-	GPUTextureformatAstc5x4UnormSrgb
-	GPUTextureformatAstc5x5UnormSrgb
-	GPUTextureformatAstc6x5UnormSrgb
-	GPUTextureformatAstc6x6UnormSrgb
-	GPUTextureformatAstc8x5UnormSrgb
-	GPUTextureformatAstc8x6UnormSrgb
-	GPUTextureformatAstc8x8UnormSrgb
-	GPUTextureformatAstc10x5UnormSrgb
-	GPUTextureformatAstc10x6UnormSrgb
-	GPUTextureformatAstc10x8UnormSrgb
-	GPUTextureformatAstc10x10UnormSrgb
-	GPUTextureformatAstc12x10UnormSrgb
-	GPUTextureformatAstc12x12UnormSrgb
+	GPUTextureformatAstc4x4UnormSRGB
+	GPUTextureformatAstc5x4UnormSRGB
+	GPUTextureformatAstc5x5UnormSRGB
+	GPUTextureformatAstc6x5UnormSRGB
+	GPUTextureformatAstc6x6UnormSRGB
+	GPUTextureformatAstc8x5UnormSRGB
+	GPUTextureformatAstc8x6UnormSRGB
+	GPUTextureformatAstc8x8UnormSRGB
+	GPUTextureformatAstc10x5UnormSRGB
+	GPUTextureformatAstc10x6UnormSRGB
+	GPUTextureformatAstc10x8UnormSRGB
+	GPUTextureformatAstc10x10UnormSRGB
+	GPUTextureformatAstc12x10UnormSRGB
+	GPUTextureformatAstc12x12UnormSRGB
 	GPUTextureformatAstc4x4Float
 	GPUTextureformatAstc5x4Float
 	GPUTextureformatAstc5x5Float
@@ -1264,17 +1264,17 @@ const (
 // VSYNC mode will always be supported. IMMEDIATE and MAILBOX modes may not be
 // supported on certain systems.
 //
-// It is recommended to query SDL_WindowSupportsGPUPresentMode after claiming
+// It is recommended to query [GPUDevice.WindowSupportsPresentMode] after claiming
 // the window if you wish to change the present mode to IMMEDIATE or MAILBOX.
 //
-// - VSYNC: Waits for vblank before presenting. No tearing is possible. If
-// there is a pending image to present, the new image is enqueued for
-// presentation. Disallows tearing at the cost of visual latency.
-// - IMMEDIATE: Immediately presents. Lowest latency option, but tearing may
-// occur.
-// - MAILBOX: Waits for vblank before presenting. No tearing is possible. If
-// there is a pending image to present, the pending image is replaced by the
-// new image. Similar to VSYNC, but with reduced visual latency.
+//   - VSYNC: Waits for vblank before presenting. No tearing is possible. If
+//     there is a pending image to present, the new image is enqueued for
+//     presentation. Disallows tearing at the cost of visual latency.
+//   - IMMEDIATE: Immediately presents. Lowest latency option, but tearing may
+//     occur.
+//   - MAILBOX: Waits for vblank before presenting. No tearing is possible. If
+//     there is a pending image to present, the pending image is replaced by the
+//     new image. Similar to VSYNC, but with reduced visual latency.
 //
 // This enum is available since SDL 3.2.0.
 //
@@ -1292,19 +1292,19 @@ const (
 // SDR will always be supported. Other compositions may not be supported on
 // certain systems.
 //
-// It is recommended to query SDL_WindowSupportsGPUSwapchainComposition after
+// It is recommended to query [GPUDevice.WindowSupportsSwapchainComposition] after
 // claiming the window if you wish to change the swapchain composition from
 // SDR.
 //
-// - SDR: B8G8R8A8 or R8G8B8A8 swapchain. Pixel values are in sRGB encoding.
-// - SDR_LINEAR: B8G8R8A8_SRGB or R8G8B8A8_SRGB swapchain. Pixel values are
-// stored in memory in sRGB encoding but accessed in shaders in "linear
-// sRGB" encoding which is sRGB but with a linear transfer function.
-// - HDR_EXTENDED_LINEAR: R16G16B16A16_FLOAT swapchain. Pixel values are in
-// extended linear sRGB encoding and permits values outside of the [0, 1]
-// range.
-// - HDR10_ST2084: A2R10G10B10 or A2B10G10R10 swapchain. Pixel values are in
-// BT.2020 ST2084 (PQ) encoding.
+//   - SDR: B8G8R8A8 or R8G8B8A8 swapchain. Pixel values are in sRGB encoding.
+//   - SDR_LINEAR: B8G8R8A8_SRGB or R8G8B8A8_SRGB swapchain. Pixel values are
+//     stored in memory in sRGB encoding but accessed in shaders in "linear
+//     sRGB" encoding which is sRGB but with a linear transfer function.
+//   - HDR_EXTENDED_LINEAR: R16G16B16A16_FLOAT swapchain. Pixel values are in
+//     extended linear sRGB encoding and permits values outside of the [0, 1]
+//     range.
+//   - HDR10_ST2084: A2R10G10B10 or A2B10G10R10 swapchain. Pixel values are in
+//     BT.2020 ST2084 (PQ) encoding.
 //
 // This enum is available since SDL 3.2.0.
 //
@@ -1434,7 +1434,7 @@ type GPUBufferRegion struct {
 
 // A structure specifying the parameters of an indirect draw command.
 //
-// Note that the `first_vertex` and `first_instance` parameters are NOT
+// Note that the FirstVertex and FirstInstance parameters are NOT
 // compatible with built-in vertex/instance ID variables in shaders (for
 // example, SV_VertexID); GPU APIs and shader languages do not define these
 // built-in variables consistently, so if your shader depends on them, the
@@ -1453,7 +1453,7 @@ type GPUIndirectDrawCommand struct {
 
 // A structure specifying the parameters of an indexed indirect draw command.
 //
-// Note that the `first_vertex` and `first_instance` parameters are NOT
+// Note that the FirstVertex and FirstInstance parameters are NOT
 // compatible with built-in vertex/instance ID variables in shaders (for
 // example, SV_VertexID); GPU APIs and shader languages do not define these
 // built-in variables consistently, so if your shader depends on them, the
@@ -1507,13 +1507,13 @@ type GPUSamplerCreateInfo struct {
 // A structure specifying the parameters of vertex buffers used in a graphics
 // pipeline.
 //
-// When you call SDL_BindGPUVertexBuffers, you specify the binding slots of
-// the vertex buffers. For example if you called SDL_BindGPUVertexBuffers with
-// a first_slot of 2 and num_bindings of 3, the binding slots 2, 3, 4 would be
-// used by the vertex buffers you pass in.
+// When you call [GPURenderPass.BindVertexBuffers], you specify the binding
+// slots of the vertex buffers. For example if you called
+// [GPURenderPass.BindVertexBuffers] with a firstSlot of 2 and numBindings of 3,
+// the binding slots 2, 3, 4 would be used by the vertex buffers you pass in.
 //
-// Vertex attributes are linked to buffers via the buffer_slot field of
-// SDL_GPUVertexAttribute. For example, if an attribute has a buffer_slot of
+// Vertex attributes are linked to buffers via the BufferSlot field of
+// [GPUVertexAttribute]. For example, if an attribute has a BufferSlot of
 // 0, then that attribute belongs to the vertex buffer bound at slot 0.
 //
 // This struct is available since SDL 3.2.0.
@@ -1523,12 +1523,12 @@ type GPUVertexBufferDescription struct {
 	Slot             int                // The binding slot of the vertex buffer.
 	Pitch            int                // The byte pitch between consecutive elements of the vertex buffer.
 	InputRate        GPUVertexInputRate // Whether attribute addressing is a function of the vertex index or instance index.
-	InstanceStepRate int                // The number of instances to draw using the same per-instance data before advancing in the instance buffer by one element. Ignored unless input_rate is SDL_GPU_VERTEXINPUTRATE_INSTANCE
+	InstanceStepRate int                // The number of instances to draw using the same per-instance data before advancing in the instance buffer by one element. Ignored unless input_rate is [GPUVertexinputrateInstance]
 }
 
 // A structure specifying a vertex attribute.
 //
-// All vertex attribute locations provided to an SDL_GPUVertexInputState must
+// All vertex attribute locations provided to a [GPUVertexInputState] must
 // be unique.
 //
 // This struct is available since SDL 3.2.0.
@@ -1576,7 +1576,7 @@ type GPUColorTargetBlendState struct {
 	SrcAlphaBlendfactor  GPUBlendFactor         // The value to be multiplied by the source alpha.
 	DstAlphaBlendfactor  GPUBlendFactor         // The value to be multiplied by the destination alpha.
 	AlphaBlendOp         GPUBlendOp             // The blend operation for the alpha component.
-	ColorWriteMask       GPUColorComponentFlags // A bitmask specifying which of the RGBA components are enabled for writing. Writes to all channels if enable_color_write_mask is false.
+	ColorWriteMask       GPUColorComponentFlags // A bitmask specifying which of the RGBA components are enabled for writing. Writes to all channels if EnableColorWriteMask is false.
 	EnableBlend          bool                   // Whether blending is enabled for the color target.
 	EnableColorWriteMask bool                   // Whether the color write mask is enabled.
 }
@@ -1587,8 +1587,8 @@ type GPUColorTargetBlendState struct {
 //
 // https://wiki.libsdl.org/SDL3/SDL_GPUShaderCreateInfo
 type GPUShaderCreateInfo struct {
-	Code               []byte          // A pointer to shader code.
-	Entrypoint         string          // A pointer to a null-terminated UTF-8 string specifying the entry point function name for the shader.
+	Code               []byte          // The shader code.
+	Entrypoint         string          // A string specifying the entry point function name for the shader.
 	Format             GPUShaderFormat // The format of the shader code.
 	Stage              GPUShaderStage  // The stage the shader program corresponds to.
 	NumSamplers        int             // The number of samplers defined in the shader.
@@ -1648,7 +1648,7 @@ type GPUTransferBufferCreateInfo struct {
 // state.
 //
 // NOTE: Some backend APIs (D3D11/12) will enable depth clamping even if
-// enable_depth_clip is true. If you rely on this clamp+clip behavior,
+// EnableDepthClip is true. If you rely on this clamp+clip behavior,
 // consider enabling depth clip and then manually clamping depth in your
 // fragment shaders on Metal and Vulkan.
 //
@@ -1674,7 +1674,7 @@ type GPURasterizerState struct {
 // https://wiki.libsdl.org/SDL3/SDL_GPUMultisampleState
 type GPUMultisampleState struct {
 	SampleCount GPUSampleCount // The number of samples to be used in rasterization.
-	SampleMask  uint32         // Determines which samples get updated in the render targets. Treated as 0xFFFFFFFF if enable_mask is false.
+	SampleMask  uint32         // Determines which samples get updated in the render targets. Treated as 0xFFFFFFFF if EnableMask is false.
 	EnableMask  bool           // Enables sample masking.
 }
 
@@ -1691,7 +1691,7 @@ type GPUDepthStencilState struct {
 	CompareMask       byte              // Selects the bits of the stencil values participating in the stencil test.
 	WriteMask         byte              // Selects the bits of the stencil values updated by the stencil test.
 	EnableDepthTest   bool              // true enables the depth test.
-	EnableDepthWrite  bool              // true enables depth writes. Depth writes are always disabled when enable_depth_test is false.
+	EnableDepthWrite  bool              // true enables depth writes. Depth writes are always disabled when EnableDepthTest is false.
 	EnableStencilTest bool              // true enables the stencil test.
 }
 
@@ -1714,7 +1714,7 @@ type GPUColorTargetDescription struct {
 // https://wiki.libsdl.org/SDL3/SDL_GPUGraphicsPipelineTargetInfo
 type GPUGraphicsPipelineTargetInfo struct {
 	ColorTargetDescriptions []GPUColorTargetDescription // A pointer to an array of color target descriptions.
-	DepthStencilFormat      GPUTextureFormat            // The pixel format of the depth-stencil target. Ignored if has_depth_stencil_target is false.
+	DepthStencilFormat      GPUTextureFormat            // The pixel format of the depth-stencil target. Ignored if HasDepthStencilTarget is false.
 	HasDepthStencilTarget   bool                        // true specifies that the pipeline uses a depth-stencil target.
 }
 
@@ -1741,8 +1741,8 @@ type GPUGraphicsPipelineCreateInfo struct {
 //
 // https://wiki.libsdl.org/SDL3/SDL_GPUComputePipelineCreateInfo
 type GPUComputePipelineCreateInfo struct {
-	Code                        []byte          // A pointer to compute shader code.
-	Entrypoint                  string          // A pointer to a null-terminated UTF-8 string specifying the entry point function name for the shader.
+	Code                        []byte          // The compute shader code.
+	Entrypoint                  string          // A string specifying the entry point function name for the shader.
 	Format                      GPUShaderFormat // The format of the compute shader code.
 	NumSamplers                 uint            // The number of samplers defined in the shader.
 	NumReadonlyStorageTextures  uint            // The number of readonly storage textures defined in the shader.
@@ -1759,32 +1759,32 @@ type GPUComputePipelineCreateInfo struct {
 // A structure specifying the parameters of a color target used by a render
 // pass.
 //
-// The load_op field determines what is done with the texture at the beginning
+// The LoadOp field determines what is done with the texture at the beginning
 // of the render pass.
 //
-// - LOAD: Loads the data currently in the texture. Not recommended for
-// multisample textures as it requires significant memory bandwidth.
-// - CLEAR: Clears the texture to a single color.
-// - DONT_CARE: The driver will do whatever it wants with the texture memory.
-// This is a good option if you know that every single pixel will be touched
-// in the render pass.
+//   - LOAD: Loads the data currently in the texture. Not recommended for
+//     multisample textures as it requires significant memory bandwidth.
+//   - CLEAR: Clears the texture to a single color.
+//   - DONT_CARE: The driver will do whatever it wants with the texture memory.
+//     This is a good option if you know that every single pixel will be touched
+//     in the render pass.
 //
-// The store_op field determines what is done with the color results of the
+// The StoreOp field determines what is done with the color results of the
 // render pass.
 //
-// - STORE: Stores the results of the render pass in the texture. Not
-// recommended for multisample textures as it requires significant memory
-// bandwidth.
-// - DONT_CARE: The driver will do whatever it wants with the texture memory.
-// This is often a good option for depth/stencil textures.
-// - RESOLVE: Resolves a multisample texture into resolve_texture, which must
-// have a sample count of 1. Then the driver may discard the multisample
-// texture memory. This is the most performant method of resolving a
-// multisample target.
-// - RESOLVE_AND_STORE: Resolves a multisample texture into the
-// resolve_texture, which must have a sample count of 1. Then the driver
-// stores the multisample texture's contents. Not recommended as it requires
-// significant memory bandwidth.
+//   - STORE: Stores the results of the render pass in the texture. Not
+//     recommended for multisample textures as it requires significant memory
+//     bandwidth.
+//   - DONT_CARE: The driver will do whatever it wants with the texture memory.
+//     This is often a good option for depth/stencil textures.
+//   - RESOLVE: Resolves a multisample texture into resolve_texture, which must
+//     have a sample count of 1. Then the driver may discard the multisample
+//     texture memory. This is the most performant method of resolving a
+//     multisample target.
+//   - RESOLVE_AND_STORE: Resolves a multisample texture into the
+//     resolve_texture, which must have a sample count of 1. Then the driver
+//     stores the multisample texture's contents. Not recommended as it requires
+//     significant memory bandwidth.
 //
 // This struct is available since SDL 3.2.0.
 //
@@ -1793,52 +1793,52 @@ type GPUColorTargetInfo struct {
 	Texture             *GPUTexture // The texture that will be used as a color target by a render pass.
 	MipLevel            int         // The mip level to use as a color target.
 	LayerOrDepthPlane   int         // The layer index or depth plane to use as a color target. This value is treated as a layer index on 2D array and cube textures, and as a depth plane on 3D textures.
-	ClearColor          FColor      // The color to clear the color target to at the start of the render pass. Ignored if SDL_GPU_LOADOP_CLEAR is not used.
+	ClearColor          FColor      // The color to clear the color target to at the start of the render pass. Ignored if [GPULoadopClear] is not used.
 	LoadOp              GPULoadOp   // What is done with the contents of the color target at the beginning of the render pass.
 	StoreOp             GPUStoreOp  // What is done with the results of the render pass.
-	ResolveTexture      *GPUTexture // The texture that will receive the results of a multisample resolve operation. Ignored if a RESOLVE* store_op is not used.
-	ResolveMipLevel     int         // The mip level of the resolve texture to use for the resolve operation. Ignored if a RESOLVE* store_op is not used.
-	ResolveLayer        int         // The layer index of the resolve texture to use for the resolve operation. Ignored if a RESOLVE* store_op is not used.
-	Cycle               bool        // true cycles the texture if the texture is bound and load_op is not LOAD
-	CycleResolveTexture bool        // true cycles the resolve texture if the resolve texture is bound. Ignored if a RESOLVE* store_op is not used.
+	ResolveTexture      *GPUTexture // The texture that will receive the results of a multisample resolve operation. Ignored if a RESOLVE* StoreOp is not used.
+	ResolveMipLevel     int         // The mip level of the resolve texture to use for the resolve operation. Ignored if a RESOLVE* StoreOp is not used.
+	ResolveLayer        int         // The layer index of the resolve texture to use for the resolve operation. Ignored if a RESOLVE* StoreOp is not used.
+	Cycle               bool        // true cycles the texture if the texture is bound and LoadOp is not LOAD
+	CycleResolveTexture bool        // true cycles the resolve texture if the resolve texture is bound. Ignored if a RESOLVE* StoreOp is not used.
 }
 
 // A structure specifying the parameters of a depth-stencil target used by a
 // render pass.
 //
-// The load_op field determines what is done with the depth contents of the
+// The LoadOp field determines what is done with the depth contents of the
 // texture at the beginning of the render pass.
 //
-// - LOAD: Loads the depth values currently in the texture.
-// - CLEAR: Clears the texture to a single depth.
-// - DONT_CARE: The driver will do whatever it wants with the memory. This is
-// a good option if you know that every single pixel will be touched in the
+//   - LOAD: Loads the depth values currently in the texture.
+//   - CLEAR: Clears the texture to a single depth.
+//   - DONT_CARE: The driver will do whatever it wants with the memory. This is
+//     a good option if you know that every single pixel will be touched in the
+//     render pass.
+//
+// The StoreOp field determines what is done with the depth results of the
 // render pass.
 //
-// The store_op field determines what is done with the depth results of the
-// render pass.
+//   - STORE: Stores the depth results in the texture.
+//   - DONT_CARE: The driver will do whatever it wants with the depth results.
+//     This is often a good option for depth/stencil textures that don't need to
+//     be reused again.
 //
-// - STORE: Stores the depth results in the texture.
-// - DONT_CARE: The driver will do whatever it wants with the depth results.
-// This is often a good option for depth/stencil textures that don't need to
-// be reused again.
-//
-// The stencil_load_op field determines what is done with the stencil contents
+// The StencilLoadOp field determines what is done with the stencil contents
 // of the texture at the beginning of the render pass.
 //
-// - LOAD: Loads the stencil values currently in the texture.
-// - CLEAR: Clears the stencil values to a single value.
-// - DONT_CARE: The driver will do whatever it wants with the memory. This is
-// a good option if you know that every single pixel will be touched in the
-// render pass.
+//   - LOAD: Loads the stencil values currently in the texture.
+//   - CLEAR: Clears the stencil values to a single value.
+//   - DONT_CARE: The driver will do whatever it wants with the memory. This is
+//     a good option if you know that every single pixel will be touched in the
+//     render pass.
 //
-// The stencil_store_op field determines what is done with the stencil results
+// The StencilStoreOp field determines what is done with the stencil results
 // of the render pass.
 //
-// - STORE: Stores the stencil results in the texture.
-// - DONT_CARE: The driver will do whatever it wants with the stencil results.
-// This is often a good option for depth/stencil textures that don't need to
-// be reused again.
+//   - STORE: Stores the stencil results in the texture.
+//   - DONT_CARE: The driver will do whatever it wants with the stencil results.
+//     This is often a good option for depth/stencil textures that don't need to
+//     be reused again.
 //
 // Note that depth/stencil targets do not support multisample resolves.
 //
@@ -1847,13 +1847,13 @@ type GPUColorTargetInfo struct {
 // https://wiki.libsdl.org/SDL3/SDL_GPUDepthStencilTargetInfo
 type GPUDepthStencilTargetInfo struct {
 	Texture        *GPUTexture // The texture that will be used as the depth stencil target by the render pass.
-	ClearDepth     float32     // The value to clear the depth component to at the beginning of the render pass. Ignored if SDL_GPU_LOADOP_CLEAR is not used.
+	ClearDepth     float32     // The value to clear the depth component to at the beginning of the render pass. Ignored if [GPULoadopClear] is not used.
 	LoadOp         GPULoadOp   // What is done with the depth contents at the beginning of the render pass.
 	StoreOp        GPUStoreOp  // What is done with the depth results of the render pass.
 	StencilLoadOp  GPULoadOp   // What is done with the stencil contents at the beginning of the render pass.
 	StencilStoreOp GPUStoreOp  // What is done with the stencil results of the render pass.
 	Cycle          bool        // true cycles the texture if the texture is bound and any load ops are not LOAD
-	ClearStencil   byte        // The value to clear the stencil component to at the beginning of the render pass. Ignored if SDL_GPU_LOADOP_CLEAR is not used.
+	ClearStencil   byte        // The value to clear the stencil component to at the beginning of the render pass. Ignored if [GPULoadopClear] is not used.
 }
 
 // A structure containing parameters for a blit command.
@@ -1865,7 +1865,7 @@ type GPUBlitInfo struct {
 	Source      GPUBlitRegion // The source region for the blit.
 	Destination GPUBlitRegion // The destination region for the blit.
 	LoadOp      GPULoadOp     // What is done with the contents of the destination before the blit.
-	ClearColor  FColor        // The color to clear the destination region to before the blit. Ignored if load_op is not SDL_GPU_LOADOP_CLEAR.
+	ClearColor  FColor        // The color to clear the destination region to before the blit. Ignored if load_op is not [GPULoadopClear].
 	FlipMode    FlipMode      // The flip mode for the source region.
 	Filter      GPUFilter     // The filter mode used when blitting.
 	Cycle       bool          // true cycles the destination texture if it is already bound.
@@ -1877,7 +1877,7 @@ type GPUBlitInfo struct {
 //
 // https://wiki.libsdl.org/SDL3/SDL_GPUBufferBinding
 type GPUBufferBinding struct {
-	Buffer *GPUBuffer // The buffer to bind. Must have been created with SDL_GPU_BUFFERUSAGE_VERTEX for SDL_BindGPUVertexBuffers, or SDL_GPU_BUFFERUSAGE_INDEX for SDL_BindGPUIndexBuffer.
+	Buffer *GPUBuffer // The buffer to bind. Must have been created with [GPUBufferusageVertex] for [GPURenderPass.BindVertexBuffers], or [GPUBufferusageIndex] for [GPURenderPass.BindIndexBuffer].
 	Offset int        // The starting byte of the data to bind in the buffer.
 }
 
@@ -1887,7 +1887,7 @@ type GPUBufferBinding struct {
 //
 // https://wiki.libsdl.org/SDL3/SDL_GPUTextureSamplerBinding
 type GPUTextureSamplerBinding struct {
-	Texture *GPUTexture // The texture to bind. Must have been created with SDL_GPU_TEXTUREUSAGE_SAMPLER.
+	Texture *GPUTexture // The texture to bind. Must have been created with [GPUTextureusageSampler].
 	Sampler *GPUSampler // The sampler to bind.
 }
 
@@ -1898,7 +1898,7 @@ type GPUTextureSamplerBinding struct {
 //
 // https://wiki.libsdl.org/SDL3/SDL_GPUStorageBufferReadWriteBinding
 type GPUStorageBufferReadWriteBinding struct {
-	Buffer *GPUBuffer // The buffer to bind. Must have been created with SDL_GPU_BUFFERUSAGE_COMPUTE_STORAGE_WRITE.
+	Buffer *GPUBuffer // The buffer to bind. Must have been created with [GPUBufferusageComputeStorageWrite].
 	Cycle  bool       // true cycles the buffer if it is already bound.
 }
 
@@ -1909,7 +1909,7 @@ type GPUStorageBufferReadWriteBinding struct {
 //
 // https://wiki.libsdl.org/SDL3/SDL_GPUStorageTextureReadWriteBinding
 type GPUStorageTextureReadWriteBinding struct {
-	Texture  *GPUTexture // The texture to bind. Must have been created with SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_WRITE or SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_SIMULTANEOUS_READ_WRITE.
+	Texture  *GPUTexture // The texture to bind. Must have been created with [GPUTextureusageComputeStorageWrite] or [GPUTextureusageComputeStorageSimultaneousReadWrite].
 	MipLevel int         // The mip level index to bind.
 	Layer    int         // The layer index to bind.
 	Cycle    bool        // true cycles the texture if it is already bound.
@@ -1917,11 +1917,11 @@ type GPUStorageTextureReadWriteBinding struct {
 
 // Checks for GPU runtime support.
 //
-// format_flags: a bitflag indicating which shader formats the app is
+// formatFlags: a bitflag indicating which shader formats the app is
 // able to provide.
 //
-// name: the preferred GPU driver, or NULL to let SDL pick the optimal
-// driver.
+// name: the preferred GPU driver, or an empty string to let SDL pick the
+// optimal driver.
 //
 // Returns true if supported, false otherwise.
 //
@@ -1947,16 +1947,15 @@ func GPUSupportsProperties(props PropertiesID) bool {
 
 // Creates a GPU context.
 //
-// format_flags: a bitflag indicating which shader formats the app is
+// formatFlags: a bitflag indicating which shader formats the app is
 // able to provide.
 //
-// debug_mode: enable debug mode properties and validations.
+// debugMode: enable debug mode properties and validations.
 //
-// name: the preferred GPU driver, or NULL to let SDL pick the optimal
-// driver.
+// name: the preferred GPU driver, or an empty string to let SDL pick the
+// optimal driver.
 //
-// Returns a GPU context on success or NULL on failure; call SDL_GetError()
-// for more information.
+// Returns a GPU context or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1973,37 +1972,36 @@ func CreateGPUDevice(formatFlags GPUShaderFormat, debugMode bool, name string) (
 //
 // These are the supported properties:
 //
-// - `SDL_PROP_GPU_DEVICE_CREATE_DEBUGMODE_BOOLEAN`: enable debug mode
-// properties and validations, defaults to true.
-// - `SDL_PROP_GPU_DEVICE_CREATE_PREFERLOWPOWER_BOOLEAN`: enable to prefer
-// energy efficiency over maximum GPU performance, defaults to false.
-// - `SDL_PROP_GPU_DEVICE_CREATE_NAME_STRING`: the name of the GPU driver to
-// use, if a specific one is desired.
+//   - [PropGPUDeviceCreateDebugmodeBoolean]: enable debug mode
+//     properties and validations, defaults to true.
+//   - [PropGPUDeviceCreatePreferlowpowerBoolean]: enable to prefer
+//     energy efficiency over maximum GPU performance, defaults to false.
+//   - [PropGPUDeviceCreateNameString]: the name of the GPU driver to
+//     use, if a specific one is desired.
 //
 // These are the current shader format properties:
 //
-// - `SDL_PROP_GPU_DEVICE_CREATE_SHADERS_PRIVATE_BOOLEAN`: The app is able to
-// provide shaders for an NDA platform.
-// - `SDL_PROP_GPU_DEVICE_CREATE_SHADERS_SPIRV_BOOLEAN`: The app is able to
-// provide SPIR-V shaders if applicable.
-// - `SDL_PROP_GPU_DEVICE_CREATE_SHADERS_DXBC_BOOLEAN`: The app is able to
-// provide DXBC shaders if applicable
-// - `SDL_PROP_GPU_DEVICE_CREATE_SHADERS_DXIL_BOOLEAN`: The app is able to
-// provide DXIL shaders if applicable.
-// - `SDL_PROP_GPU_DEVICE_CREATE_SHADERS_MSL_BOOLEAN`: The app is able to
-// provide MSL shaders if applicable.
-// - `SDL_PROP_GPU_DEVICE_CREATE_SHADERS_METALLIB_BOOLEAN`: The app is able to
-// provide Metal shader libraries if applicable.
+//   - [PropGPUDeviceCreateShadersPrivateBoolean]: The app is able to
+//     provide shaders for an NDA platform.
+//   - [PropGPUDeviceCreateShadersSPIRVBoolean]: The app is able to
+//     provide SPIR-V shaders if applicable.
+//   - [PropGPUDeviceCreateShadersDXBCBoolean]: The app is able to
+//     provide DXBC shaders if applicable
+//   - [PropGPUDeviceCreateShadersDXILBoolean]: The app is able to
+//     provide DXIL shaders if applicable.
+//   - [PropGPUDeviceCreateShadersMSLBoolean]: The app is able to
+//     provide MSL shaders if applicable.
+//   - [PropGPUDeviceCreateShadersMetallibBoolean]: The app is able to
+//     provide Metal shader libraries if applicable.
 //
 // With the D3D12 renderer:
 //
-// - `SDL_PROP_GPU_DEVICE_CREATE_D3D12_SEMANTIC_NAME_STRING`: the prefix to
-// use for all vertex semantics, default is "TEXCOORD".
+//   - [PropGPUDeviceCreateD3D12SemanticNameString]: the prefix to
+//     use for all vertex semantics, default is "TEXCOORD".
 //
 // props: the properties to use.
 //
-// Returns a GPU context on success or NULL on failure; call SDL_GetError()
-// for more information.
+// Returns a GPU context or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -2020,14 +2018,14 @@ const PropGPUDeviceCreateDebugmodeBoolean = "SDL.gpu.device.create.debugmode"
 const PropGPUDeviceCreatePreferlowpowerBoolean = "SDL.gpu.device.create.preferlowpower"
 const PropGPUDeviceCreateNameString = "SDL.gpu.device.create.name"
 const PropGPUDeviceCreateShadersPrivateBoolean = "SDL.gpu.device.create.shaders.private"
-const PropGPUDeviceCreateShadersSpirvBoolean = "SDL.gpu.device.create.shaders.spirv"
-const PropGPUDeviceCreateShadersDxbcBoolean = "SDL.gpu.device.create.shaders.dxbc"
-const PropGPUDeviceCreateShadersDxilBoolean = "SDL.gpu.device.create.shaders.dxil"
-const PropGPUDeviceCreateShadersMslBoolean = "SDL.gpu.device.create.shaders.msl"
+const PropGPUDeviceCreateShadersSPIRVBoolean = "SDL.gpu.device.create.shaders.spirv"
+const PropGPUDeviceCreateShadersDXBCBoolean = "SDL.gpu.device.create.shaders.dxbc"
+const PropGPUDeviceCreateShadersDXILBoolean = "SDL.gpu.device.create.shaders.dxil"
+const PropGPUDeviceCreateShadersMSLBoolean = "SDL.gpu.device.create.shaders.msl"
 const PropGPUDeviceCreateShadersMetallibBoolean = "SDL.gpu.device.create.shaders.metallib"
 const PropGPUDeviceCreateD3D12SemanticNameString = "SDL.gpu.device.create.d3d12.semantic"
 
-// Destroys a GPU context previously returned by SDL_CreateGPUDevice.
+// Destroys a GPU context previously returned by [CreateGPUDevice].
 //
 // device: a GPU Context to destroy.
 //
@@ -2073,7 +2071,7 @@ func GetGPUDriver(index int) string {
 //
 // device: a GPU context to query.
 //
-// Returns the name of the device's driver, or NULL on error.
+// Returns the name of the device's driver, or an empty string on error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -2103,39 +2101,38 @@ func (device *GPUDevice) ShaderFormats() GPUShaderFormat {
 //
 // For SPIR-V shaders, use the following resource sets:
 //
-// - 0: Sampled textures, followed by read-only storage textures, followed by
-// read-only storage buffers
-// - 1: Read-write storage textures, followed by read-write storage buffers
-// - 2: Uniform buffers
+//   - 0: Sampled textures, followed by read-only storage textures, followed by
+//     read-only storage buffers
+//   - 1: Read-write storage textures, followed by read-write storage buffers
+//   - 2: Uniform buffers
 //
 // For DXBC and DXIL shaders, use the following register order:
 //
-// - (t[n], space0): Sampled textures, followed by read-only storage textures,
-// followed by read-only storage buffers
-// - (u[n], space1): Read-write storage textures, followed by read-write
-// storage buffers
-// - (b[n], space2): Uniform buffers
+//   - (t[n], space0): Sampled textures, followed by read-only storage textures,
+//     followed by read-only storage buffers
+//   - (u[n], space1): Read-write storage textures, followed by read-write
+//     storage buffers
+//   - (b[n], space2): Uniform buffers
 //
 // For MSL/metallib, use the following order:
 //
-// - [[buffer]]: Uniform buffers, followed by read-only storage buffers,
-// followed by read-write storage buffers
-// - [[texture]]: Sampled textures, followed by read-only storage textures,
-// followed by read-write storage textures
+//   - [[buffer]]: Uniform buffers, followed by read-only storage buffers,
+//     followed by read-write storage buffers
+//   - [[texture]]: Sampled textures, followed by read-only storage textures,
+//     followed by read-write storage textures
 //
 // There are optional properties that can be provided through `props`. These
 // are the supported properties:
 //
-// - `SDL_PROP_GPU_COMPUTEPIPELINE_CREATE_NAME_STRING`: a name that can be
-// displayed in debugging tools.
+//   - [PropGPUComputepipelineCreateNameString]: a name that can be
+//     displayed in debugging tools.
 //
 // device: a GPU Context.
 //
 // createinfo: a struct describing the state of the compute pipeline to
 // create.
 //
-// Returns a compute pipeline object on success, or NULL on failure; call
-// SDL_GetError() for more information.
+// Returns a compute pipeline object or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -2174,16 +2171,15 @@ const PropGPUComputepipelineCreateNameString = "SDL.gpu.computepipeline.create.n
 // There are optional properties that can be provided through `props`. These
 // are the supported properties:
 //
-// - `SDL_PROP_GPU_GRAPHICSPIPELINE_CREATE_NAME_STRING`: a name that can be
-// displayed in debugging tools.
+//   - [PropGPUGraphicspipelineCreateNameString]: a name that can be
+//     displayed in debugging tools.
 //
 // device: a GPU Context.
 //
 // createinfo: a struct describing the state of the graphics pipeline to
 // create.
 //
-// Returns a graphics pipeline object on success, or NULL on failure; call
-// SDL_GetError() for more information.
+// Returns a graphics pipeline object or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -2297,15 +2293,14 @@ const PropGPUGraphicspipelineCreateNameString = "SDL.gpu.graphicspipeline.create
 // There are optional properties that can be provided through `props`. These
 // are the supported properties:
 //
-// - `SDL_PROP_GPU_SAMPLER_CREATE_NAME_STRING`: a name that can be displayed
+// - [PropGPUSamplerCreateNameString]: a name that can be displayed
 // in debugging tools.
 //
 // device: a GPU Context.
 //
 // createinfo: a struct describing the state of the sampler to create.
 //
-// Returns a sampler object on success, or NULL on failure; call
-// SDL_GetError() for more information.
+// Returns a sampler object or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -2344,43 +2339,43 @@ const PropGPUSamplerCreateNameString = "SDL.gpu.sampler.create.name"
 //
 // For vertex shaders:
 //
-// - 0: Sampled textures, followed by storage textures, followed by storage
-// buffers
-// - 1: Uniform buffers
+//   - 0: Sampled textures, followed by storage textures, followed by storage
+//     buffers
+//   - 1: Uniform buffers
 //
 // For fragment shaders:
 //
-// - 2: Sampled textures, followed by storage textures, followed by storage
-// buffers
-// - 3: Uniform buffers
+//   - 2: Sampled textures, followed by storage textures, followed by storage
+//     buffers
+//   - 3: Uniform buffers
 //
 // For DXBC and DXIL shaders, use the following register order:
 //
 // For vertex shaders:
 //
-// - (t[n], space0): Sampled textures, followed by storage textures, followed
-// by storage buffers
-// - (s[n], space0): Samplers with indices corresponding to the sampled
-// textures
-// - (b[n], space1): Uniform buffers
+//   - (t[n], space0): Sampled textures, followed by storage textures, followed
+//     by storage buffers
+//   - (s[n], space0): Samplers with indices corresponding to the sampled
+//     textures
+//   - (b[n], space1): Uniform buffers
 //
 // For pixel shaders:
 //
-// - (t[n], space2): Sampled textures, followed by storage textures, followed
-// by storage buffers
-// - (s[n], space2): Samplers with indices corresponding to the sampled
-// textures
-// - (b[n], space3): Uniform buffers
+//   - (t[n], space2): Sampled textures, followed by storage textures, followed
+//     by storage buffers
+//   - (s[n], space2): Samplers with indices corresponding to the sampled
+//     textures
+//   - (b[n], space3): Uniform buffers
 //
 // For MSL/metallib, use the following order:
 //
-// - [[texture]]: Sampled textures, followed by storage textures
-// - [[sampler]]: Samplers with indices corresponding to the sampled textures
-// - [[buffer]]: Uniform buffers, followed by storage buffers. Vertex buffer 0
-// is bound at [[buffer(14)]], vertex buffer 1 at [[buffer(15)]], and so on.
-// Rather than manually authoring vertex buffer indices, use the
-// [[stage_in]] attribute which will automatically use the vertex input
-// information from the SDL_GPUGraphicsPipeline.
+//   - [[texture]]: Sampled textures, followed by storage textures
+//   - [[sampler]]: Samplers with indices corresponding to the sampled textures
+//   - [[buffer]]: Uniform buffers, followed by storage buffers. Vertex buffer 0
+//     is bound at [[buffer(14)]], vertex buffer 1 at [[buffer(15)]], and so on.
+//     Rather than manually authoring vertex buffer indices, use the
+//     [[stage_in]] attribute which will automatically use the vertex input
+//     information from the [GPUGraphicsPipeline].
 //
 // Shader semantics other than system-value semantics do not matter in D3D12
 // and for ease of use the SDL implementation assumes that non system-value
@@ -2388,21 +2383,20 @@ const PropGPUSamplerCreateNameString = "SDL.gpu.sampler.create.name"
 // language, your vertex semantics should start at TEXCOORD0 and increment
 // like so: TEXCOORD1, TEXCOORD2, etc. If you wish to change the semantic
 // prefix to something other than TEXCOORD you can use
-// SDL_PROP_GPU_DEVICE_CREATE_D3D12_SEMANTIC_NAME_STRING with
-// SDL_CreateGPUDeviceWithProperties().
+// [PropGPUDeviceCreateD3D12SemanticNameString] with
+// [CreateGPUDeviceWithProperties].
 //
 // There are optional properties that can be provided through `props`. These
 // are the supported properties:
 //
-// - `SDL_PROP_GPU_SHADER_CREATE_NAME_STRING`: a name that can be displayed in
+// - [PropGPUShaderCreateNameString]: a name that can be displayed in
 // debugging tools.
 //
 // device: a GPU Context.
 //
 // createinfo: a struct describing the state of the shader to create.
 //
-// Returns a shader object on success, or NULL on failure; call
-// SDL_GetError() for more information.
+// Returns a shader object or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -2445,35 +2439,34 @@ const PropGPUShaderCreateNameString = "SDL.gpu.shader.create.name"
 // count.
 //
 // There are optional properties that can be provided through
-// SDL_GPUTextureCreateInfo's `props`. These are the supported properties:
+// [GPUTextureCreateInfo]'s Props. These are the supported properties:
 //
-// - `SDL_PROP_GPU_TEXTURE_CREATE_D3D12_CLEAR_R_FLOAT`: (Direct3D 12 only) if
-// the texture usage is SDL_GPU_TEXTUREUSAGE_COLOR_TARGET, clear the texture
-// to a color with this red intensity. Defaults to zero.
-// - `SDL_PROP_GPU_TEXTURE_CREATE_D3D12_CLEAR_G_FLOAT`: (Direct3D 12 only) if
-// the texture usage is SDL_GPU_TEXTUREUSAGE_COLOR_TARGET, clear the texture
-// to a color with this green intensity. Defaults to zero.
-// - `SDL_PROP_GPU_TEXTURE_CREATE_D3D12_CLEAR_B_FLOAT`: (Direct3D 12 only) if
-// the texture usage is SDL_GPU_TEXTUREUSAGE_COLOR_TARGET, clear the texture
-// to a color with this blue intensity. Defaults to zero.
-// - `SDL_PROP_GPU_TEXTURE_CREATE_D3D12_CLEAR_A_FLOAT`: (Direct3D 12 only) if
-// the texture usage is SDL_GPU_TEXTUREUSAGE_COLOR_TARGET, clear the texture
-// to a color with this alpha intensity. Defaults to zero.
-// - `SDL_PROP_GPU_TEXTURE_CREATE_D3D12_CLEAR_DEPTH_FLOAT`: (Direct3D 12 only)
-// if the texture usage is SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET, clear
-// the texture to a depth of this value. Defaults to zero.
-// - `SDL_PROP_GPU_TEXTURE_CREATE_D3D12_CLEAR_STENCIL_UINT8`: (Direct3D 12
-// only) if the texture usage is SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET,
-// clear the texture to a stencil of this value. Defaults to zero.
-// - `SDL_PROP_GPU_TEXTURE_CREATE_NAME_STRING`: a name that can be displayed
-// in debugging tools.
+//   - [PropGPUTextureCreateD3D12ClearRFloat]: (Direct3D 12 only) if
+//     the texture usage is [GPUTextureusageColorTarget], clear the texture
+//     to a color with this red intensity. Defaults to zero.
+//   - [PropGPUTextureCreateD3D12ClearGFloat]: (Direct3D 12 only) if
+//     the texture usage is [GPUTextureusageColorTarget], clear the texture
+//     to a color with this green intensity. Defaults to zero.
+//   - [PropGPUTextureCreateD3D12ClearBFloat]: (Direct3D 12 only) if
+//     the texture usage is [GPUTextureusageColorTarget], clear the texture
+//     to a color with this blue intensity. Defaults to zero.
+//   - [PropGPUTextureCreateD3D12ClearAFloat]: (Direct3D 12 only) if
+//     the texture usage is [GPUTextureusageColorTarget], clear the texture
+//     to a color with this alpha intensity. Defaults to zero.
+//   - [PropGPUTextureCreateD3D12ClearDepthFloat]: (Direct3D 12 only)
+//     if the texture usage is [GPUTextureusageDepthStencilTarget], clear
+//     the texture to a depth of this value. Defaults to zero.
+//   - [PropGPUTextureCreateD3D12ClearStencilUint8]: (Direct3D 12
+//     only) if the texture usage is [GPUTextureusageDepthStencilTarget],
+//     clear the texture to a stencil of this value. Defaults to zero.
+//   - [PropGPUTextureCreateNameString]: a name that can be displayed
+//     in debugging tools.
 //
 // device: a GPU Context.
 //
 // createinfo: a struct describing the state of the texture to create.
 //
-// Returns a texture object on success, or NULL on failure; call
-// SDL_GetError() for more information.
+// Returns a texture object or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -2501,7 +2494,7 @@ const PropGPUTextureCreateD3D12ClearGFloat = "SDL.gpu.texture.create.d3d12.clear
 const PropGPUTextureCreateD3D12ClearBFloat = "SDL.gpu.texture.create.d3d12.clear.b"
 const PropGPUTextureCreateD3D12ClearAFloat = "SDL.gpu.texture.create.d3d12.clear.a"
 const PropGPUTextureCreateD3D12ClearDepthFloat = "SDL.gpu.texture.create.d3d12.clear.depth"
-const PropGPUTextureCreateD3D12ClearStencilUINT8 = "SDL.gpu.texture.create.d3d12.clear.stencil"
+const PropGPUTextureCreateD3D12ClearStencilUint8 = "SDL.gpu.texture.create.d3d12.clear.stencil"
 const PropGPUTextureCreateNameString = "SDL.gpu.texture.create.name"
 
 // Creates a buffer object to be used in graphics or compute workflows.
@@ -2514,21 +2507,19 @@ const PropGPUTextureCreateNameString = "SDL.gpu.texture.create.name"
 //
 // For better understanding of underlying concepts and memory management with
 // SDL GPU API, you may refer
-// [this blog post](https://moonside.games/posts/sdl-gpu-concepts-cycling/)
-// .
+// [this blog post](https://moonside.games/posts/sdl-gpu-concepts-cycling/).
 //
 // There are optional properties that can be provided through `props`. These
 // are the supported properties:
 //
-// - `SDL_PROP_GPU_BUFFER_CREATE_NAME_STRING`: a name that can be displayed in
-// debugging tools.
+//   - [PropGPUBufferCreateNameString]: a name that can be displayed in
+//     debugging tools.
 //
 // device: a GPU Context.
 //
 // createinfo: a struct describing the state of the buffer to create.
 //
-// Returns a buffer object on success, or NULL on failure; call
-// SDL_GetError() for more information.
+// Returns a buffer object or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -2556,16 +2547,15 @@ const PropGPUBufferCreateNameString = "SDL.gpu.buffer.create.name"
 // There are optional properties that can be provided through `props`. These
 // are the supported properties:
 //
-// - `SDL_PROP_GPU_TRANSFERBUFFER_CREATE_NAME_STRING`: a name that can be
-// displayed in debugging tools.
+//   - [PropGPUTransferbufferCreateNameString]: a name that can be
+//     displayed in debugging tools.
 //
 // device: a GPU Context.
 //
 // createinfo: a struct describing the state of the transfer buffer to
 // create.
 //
-// Returns a transfer buffer on success, or NULL on failure; call
-// SDL_GetError() for more information.
+// Returns a transfer buffer or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -2586,8 +2576,8 @@ const PropGPUTransferbufferCreateNameString = "SDL.gpu.transferbuffer.create.nam
 
 // Sets an arbitrary string constant to label a buffer.
 //
-// You should use SDL_PROP_GPU_BUFFER_CREATE_NAME_STRING with
-// SDL_CreateGPUBuffer instead of this function to avoid thread safety issues.
+// You should use [PropGPUBufferCreateNameString] with
+// [GPUDevice.CreateBuffer] instead of this function to avoid thread safety issues.
 //
 // device: a GPU Context.
 //
@@ -2607,8 +2597,8 @@ func (device *GPUDevice) SetBufferName(buffer *GPUBuffer, text string) {
 
 // Sets an arbitrary string constant to label a texture.
 //
-// You should use SDL_PROP_GPU_TEXTURE_CREATE_NAME_STRING with
-// SDL_CreateGPUTexture instead of this function to avoid thread safety
+// You should use [PropGPUTextureCreateNameString] with
+// [GPUDevice.CreateTexture] instead of this function to avoid thread safety
 // issues.
 //
 // device: a GPU Context.
@@ -2631,7 +2621,7 @@ func (device *GPUDevice) SetTextureName(texture *GPUTexture, text string) {
 //
 // Useful for debugging.
 //
-// command_buffer: a command buffer.
+// cmd: a command buffer.
 //
 // text: a UTF-8 string constant to insert as the label.
 //
@@ -2647,15 +2637,15 @@ func (cmd *GPUCommandBuffer) InsertDebugLabel(text string) {
 // Used for denoting groups of calls when viewing the command buffer
 // callstream in a graphics debugging tool.
 //
-// Each call to SDL_PushGPUDebugGroup must have a corresponding call to
-// SDL_PopGPUDebugGroup.
+// Each call to PushDebugGroup must have a corresponding call to
+// [GPUCommandBuffer.PopDebugGroup].
 //
 // On some backends (e.g. Metal), pushing a debug group during a
 // render/blit/compute pass will create a group that is scoped to the native
 // pass rather than the command buffer. For best results, if you push a debug
 // group during a pass, always pop it in the same pass.
 //
-// command_buffer: a command buffer.
+// cmd: a command buffer.
 //
 // name: a UTF-8 string constant that names the group.
 //
@@ -2668,7 +2658,7 @@ func (cmd *GPUCommandBuffer) PushDebugGroup(name string) {
 
 // Ends the most-recently pushed debug group.
 //
-// command_buffer: a command buffer.
+// cmd: a command buffer.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -2801,8 +2791,7 @@ func (device *GPUDevice) ReleaseGraphicsPipeline(graphicsPipeline *GPUGraphicsPi
 //
 // device: a GPU context.
 //
-// Returns a command buffer, or NULL on failure; call SDL_GetError() for more
-// information.
+// Returns a command buffer or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -2819,13 +2808,11 @@ func (device *GPUDevice) AcquireCommandBuffer() (*GPUCommandBuffer, error) {
 //
 // Subsequent draw calls will use this uniform data.
 //
-// command_buffer: a command buffer.
+// cmd: a command buffer.
 //
-// slot_index: the vertex uniform slot to push data to.
+// slotIndex: the vertex uniform slot to push data to.
 //
 // data: client data to write.
-//
-// length: the length of the data to write.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -2838,13 +2825,11 @@ func (cmd *GPUCommandBuffer) PushVertexUniformData(slotIndex int, data []byte) {
 //
 // Subsequent draw calls will use this uniform data.
 //
-// command_buffer: a command buffer.
+// cmd: a command buffer.
 //
-// slot_index: the fragment uniform slot to push data to.
+// slotIndex: the fragment uniform slot to push data to.
 //
 // data: client data to write.
-//
-// length: the length of the data to write.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -2857,13 +2842,11 @@ func (cmd *GPUCommandBuffer) PushFragmentUniformData(slotIndex int, data []byte)
 //
 // Subsequent draw calls will use this uniform data.
 //
-// command_buffer: a command buffer.
+// cmd: a command buffer.
 //
-// slot_index: the uniform slot to push data to.
+// slotIndex: the uniform slot to push data to.
 //
 // data: client data to write.
-//
-// length: the length of the data to write.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -2882,17 +2865,13 @@ func (cmd *GPUCommandBuffer) PushComputeUniformData(slotIndex int, data []byte) 
 // is called. You cannot begin another render pass, or begin a compute pass or
 // copy pass until you have ended the render pass.
 //
-// command_buffer: a command buffer.
+// cmd: a command buffer.
 //
-// color_target_infos: an array of texture subresources with
+// colorTargetInfos: an array of texture subresources with
 // corresponding clear values and load/store ops.
 //
-// num_color_targets: the number of color targets in the
-// color_target_infos array.
-//
-// depth_stencil_target_info: a texture subresource with corresponding
-// clear value and load/store ops, may be
-// NULL.
+// depthStencilTargetInfo: a texture subresource with corresponding
+// clear value and load/store ops, may be nil.
 //
 // Returns a render pass handle.
 //
@@ -2936,9 +2915,9 @@ func (cmd *GPUCommandBuffer) BeginRenderPass(colorTargetInfos []GPUColorTargetIn
 //
 // A graphics pipeline must be bound before making any draw calls.
 //
-// render_pass: a render pass handle.
+// pass: a render pass handle.
 //
-// graphics_pipeline: the graphics pipeline to bind.
+// graphicsPipeline: the graphics pipeline to bind.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -2949,7 +2928,7 @@ func (pass *GPURenderPass) BindPipeline(graphicsPipeline *GPUGraphicsPipeline) {
 
 // Sets the current viewport state on a command buffer.
 //
-// render_pass: a render pass handle.
+// pass: a render pass handle.
 //
 // viewport: the viewport to set.
 //
@@ -2962,20 +2941,24 @@ func (pass *GPURenderPass) SetViewport(viewport *GPUViewport) {
 
 // Sets the current scissor state on a command buffer.
 //
-// render_pass: a render pass handle.
+// pass: a render pass handle.
 //
 // scissor: the scissor area to set.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_SetGPUScissor
-func (pass *GPURenderPass) SetScissor(scissor Rect) {
-	C.SDL_SetGPUScissor((*C.SDL_GPURenderPass)(pass), &C.SDL_Rect{C.int(scissor.X), C.int(scissor.Y), C.int(scissor.W), C.int(scissor.H)})
+func (pass *GPURenderPass) SetScissor(scissor *Rect) {
+	var cscissor *C.SDL_Rect
+	if scissor != nil {
+		cscissor = &C.SDL_Rect{C.int(scissor.X), C.int(scissor.Y), C.int(scissor.W), C.int(scissor.H)}
+	}
+	C.SDL_SetGPUScissor((*C.SDL_GPURenderPass)(pass), cscissor)
 }
 
 // Sets the current blend constants on a command buffer.
 //
-// render_pass: a render pass handle.
+// pass: a render pass handle.
 //
 // blend_constants: the blend constant color.
 //
@@ -2988,7 +2971,7 @@ func (pass *GPURenderPass) SetBlendConstants(c FColor) {
 
 // Sets the current stencil reference value on a command buffer.
 //
-// render_pass: a render pass handle.
+// pass: a render pass handle.
 //
 // reference: the stencil reference value to set.
 //
@@ -3002,14 +2985,12 @@ func (pass *GPURenderPass) SetStencilReference(reference byte) {
 // Binds vertex buffers on a command buffer for use with subsequent draw
 // calls.
 //
-// render_pass: a render pass handle.
+// pass: a render pass handle.
 //
-// first_slot: the vertex buffer slot to begin binding from.
+// firstSlot: the vertex buffer slot to begin binding from.
 //
-// bindings: an array of SDL_GPUBufferBinding structs containing vertex
+// bindings: an array of [GPUBufferBinding] structs containing vertex
 // buffers and offset values.
-//
-// num_bindings: the number of bindings in the bindings array.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -3025,11 +3006,11 @@ func (pass *GPURenderPass) BindVertexBuffers(firstSlot int, bindings []GPUBuffer
 // Binds an index buffer on a command buffer for use with subsequent draw
 // calls.
 //
-// render_pass: a render pass handle.
+// pass: a render pass handle.
 //
 // binding: a pointer to a struct containing an index buffer and offset.
 //
-// index_element_size: whether the index values in the buffer are 16- or
+// indexElementSize: whether the index values in the buffer are 16- or
 // 32-bit.
 //
 // This function is available since SDL 3.2.0.
@@ -3041,17 +3022,14 @@ func (pass *GPURenderPass) BindIndexBuffer(binding *GPUBufferBinding, indexEleme
 
 // Binds texture-sampler pairs for use on the vertex shader.
 //
-// The textures must have been created with SDL_GPU_TEXTUREUSAGE_SAMPLER.
+// The textures must have been created with [GPUTextureusageSampler].
 //
-// render_pass: a render pass handle.
+// pass: a render pass handle.
 //
-// first_slot: the vertex sampler slot to begin binding from.
+// firstSlot: the vertex sampler slot to begin binding from.
 //
-// texture_sampler_bindings: an array of texture-sampler binding
+// textureSamplerBindings: an array of texture-sampler binding
 // structs.
-//
-// num_bindings: the number of texture-sampler pairs to bind from the
-// array.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -3063,15 +3041,13 @@ func (pass *GPURenderPass) BindVertexSamplers(firstSlot int, textureSamplerBindi
 // Binds storage textures for use on the vertex shader.
 //
 // These textures must have been created with
-// SDL_GPU_TEXTUREUSAGE_GRAPHICS_STORAGE_READ.
+// [GPUTextureusageGraphicsStorageRead].
 //
-// render_pass: a render pass handle.
+// pass: a render pass handle.
 //
-// first_slot: the vertex storage texture slot to begin binding from.
+// firstSlot: the vertex storage texture slot to begin binding from.
 //
-// storage_textures: an array of storage textures.
-//
-// num_bindings: the number of storage texture to bind from the array.
+// storageTextures: an array of storage textures.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -3083,15 +3059,13 @@ func (pass *GPURenderPass) BindVertexStorageTextures(firstSlot int, storageTextu
 // Binds storage buffers for use on the vertex shader.
 //
 // These buffers must have been created with
-// SDL_GPU_BUFFERUSAGE_GRAPHICS_STORAGE_READ.
+// [GPUBufferusageGraphicsStorageRead].
 //
-// render_pass: a render pass handle.
+// pass: a render pass handle.
 //
-// first_slot: the vertex storage buffer slot to begin binding from.
+// firstSlot: the vertex storage buffer slot to begin binding from.
 //
-// storage_buffers: an array of buffers.
-//
-// num_bindings: the number of buffers to bind from the array.
+// storageBuffers: an array of buffers.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -3102,17 +3076,14 @@ func (pass *GPURenderPass) BindVertexStorageBuffers(firstSlot int, storageBuffer
 
 // Binds texture-sampler pairs for use on the fragment shader.
 //
-// The textures must have been created with SDL_GPU_TEXTUREUSAGE_SAMPLER.
+// The textures must have been created with [GPUTextureusageSampler].
 //
-// render_pass: a render pass handle.
+// pass: a render pass handle.
 //
-// first_slot: the fragment sampler slot to begin binding from.
+// firstSlot: the fragment sampler slot to begin binding from.
 //
-// texture_sampler_bindings: an array of texture-sampler binding
+// textureSamplerBindings: an array of texture-sampler binding
 // structs.
-//
-// num_bindings: the number of texture-sampler pairs to bind from the
-// array.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -3124,15 +3095,13 @@ func (pass *GPURenderPass) BindFragmentSamplers(firstSlot int, textureSamplerBin
 // Binds storage textures for use on the fragment shader.
 //
 // These textures must have been created with
-// SDL_GPU_TEXTUREUSAGE_GRAPHICS_STORAGE_READ.
+// [GPUTextureusageGraphicsStorageRead].
 //
-// render_pass: a render pass handle.
+// pass: a render pass handle.
 //
-// first_slot: the fragment storage texture slot to begin binding from.
+// firstSlot: the fragment storage texture slot to begin binding from.
 //
-// storage_textures: an array of storage textures.
-//
-// num_bindings: the number of storage textures to bind from the array.
+// storageTextures: an array of storage textures.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -3144,15 +3113,13 @@ func (pass *GPURenderPass) BindFragmentStorageTextures(firstSlot int, storageTex
 // Binds storage buffers for use on the fragment shader.
 //
 // These buffers must have been created with
-// SDL_GPU_BUFFERUSAGE_GRAPHICS_STORAGE_READ.
+// [GPUBufferusageGraphicsStorageRead].
 //
-// render_pass: a render pass handle.
+// pass: a render pass handle.
 //
-// first_slot: the fragment storage buffer slot to begin binding from.
+// firstSlot: the fragment storage buffer slot to begin binding from.
 //
-// storage_buffers: an array of storage buffers.
-//
-// num_bindings: the number of storage buffers to bind from the array.
+// storageBuffers: an array of storage buffers.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -3166,25 +3133,25 @@ func (pass *GPURenderPass) BindFragmentStorageBuffers(firstSlot int, storageBuff
 //
 // You must not call this function before binding a graphics pipeline.
 //
-// Note that the `first_vertex` and `first_instance` parameters are NOT
+// Note that the firstVertex and firstInstance parameters are NOT
 // compatible with built-in vertex/instance ID variables in shaders (for
 // example, SV_VertexID); GPU APIs and shader languages do not define these
 // built-in variables consistently, so if your shader depends on them, the
 // only way to keep behavior consistent and portable is to always pass 0 for
 // the correlating parameter in the draw calls.
 //
-// render_pass: a render pass handle.
+// pass: a render pass handle.
 //
-// num_indices: the number of indices to draw per instance.
+// numIndices: the number of indices to draw per instance.
 //
-// num_instances: the number of instances to draw.
+// numInstances: the number of instances to draw.
 //
-// first_index: the starting index within the index buffer.
+// firstIndex: the starting index within the index buffer.
 //
-// vertex_offset: value added to vertex index before indexing into the
+// vertexOffset: value added to vertex index before indexing into the
 // vertex buffer.
 //
-// first_instance: the ID of the first instance to draw.
+// firstInstance: the ID of the first instance to draw.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -3197,22 +3164,22 @@ func (pass *GPURenderPass) DrawIndexedPrimitives(numIndices int, numInstances in
 //
 // You must not call this function before binding a graphics pipeline.
 //
-// Note that the `first_vertex` and `first_instance` parameters are NOT
+// Note that the firstVertex and firstInstance parameters are NOT
 // compatible with built-in vertex/instance ID variables in shaders (for
 // example, SV_VertexID); GPU APIs and shader languages do not define these
 // built-in variables consistently, so if your shader depends on them, the
 // only way to keep behavior consistent and portable is to always pass 0 for
 // the correlating parameter in the draw calls.
 //
-// render_pass: a render pass handle.
+// pass: a render pass handle.
 //
-// num_vertices: the number of vertices to draw.
+// numVertices: the number of vertices to draw.
 //
-// num_instances: the number of instances that will be drawn.
+// numInstances: the number of instances that will be drawn.
 //
-// first_vertex: the index of the first vertex to draw.
+// firstVertex: the index of the first vertex to draw.
 //
-// first_instance: the ID of the first instance to draw.
+// firstInstance: the ID of the first instance to draw.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -3225,16 +3192,16 @@ func (pass *GPURenderPass) DrawPrimitives(numVertices int, numInstances int, fir
 // buffer.
 //
 // The buffer must consist of tightly-packed draw parameter sets that each
-// match the layout of SDL_GPUIndirectDrawCommand. You must not call this
+// match the layout of [GPUIndirectDrawCommand]. You must not call this
 // function before binding a graphics pipeline.
 //
-// render_pass: a render pass handle.
+// pass: a render pass handle.
 //
 // buffer: a buffer containing draw parameters.
 //
 // offset: the offset to start reading from the draw buffer.
 //
-// draw_count: the number of draw parameter sets that should be read
+// drawCount: the number of draw parameter sets that should be read
 // from the draw buffer.
 //
 // This function is available since SDL 3.2.0.
@@ -3248,16 +3215,16 @@ func (pass *GPURenderPass) DrawPrimitivesIndirect(buffer *GPUBuffer, offset int,
 // draw parameters set from a buffer.
 //
 // The buffer must consist of tightly-packed draw parameter sets that each
-// match the layout of SDL_GPUIndexedIndirectDrawCommand. You must not call
+// match the layout of [GPUIndexedIndirectDrawCommand]. You must not call
 // this function before binding a graphics pipeline.
 //
-// render_pass: a render pass handle.
+// pass: a render pass handle.
 //
 // buffer: a buffer containing draw parameters.
 //
 // offset: the offset to start reading from the draw buffer.
 //
-// draw_count: the number of draw parameter sets that should be read
+// drawCount: the number of draw parameter sets that should be read
 // from the draw buffer.
 //
 // This function is available since SDL 3.2.0.
@@ -3272,7 +3239,7 @@ func (pass *GPURenderPass) DrawIndexedPrimitivesIndirect(buffer *GPUBuffer, offs
 // All bound graphics state on the render pass command buffer is unset. The
 // render pass handle is now invalid.
 //
-// render_pass: a render pass handle.
+// pass: a render pass handle.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -3302,19 +3269,13 @@ func (pass *GPURenderPass) End() {
 // texture in the same compute pass is only supported by specific texture
 // formats. Make sure you check the format support!
 //
-// command_buffer: a command buffer.
+// cmd: a command buffer.
 //
-// storage_texture_bindings: an array of writeable storage texture
+// storageTextureBindings: an array of writeable storage texture
 // binding structs.
 //
-// num_storage_texture_bindings: the number of storage textures to bind
-// from the array.
-//
-// storage_buffer_bindings: an array of writeable storage buffer binding
+// storageBufferBindings: an array of writeable storage buffer binding
 // structs.
-//
-// num_storage_buffer_bindings: the number of storage buffers to bind
-// from the array.
 //
 // Returns a compute pass handle.
 //
@@ -3343,9 +3304,9 @@ func (cmd *GPUCommandBuffer) BeginComputePass(storageTextureBindings []*GPUStora
 
 // Binds a compute pipeline on a command buffer for use in compute dispatch.
 //
-// compute_pass: a compute pass handle.
+// pass: a compute pass handle.
 //
-// compute_pipeline: a compute pipeline to bind.
+// computePipeline: a compute pipeline to bind.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -3356,17 +3317,14 @@ func (pass *GPUComputePass) BindPipeline(computePipeline *GPUComputePipeline) {
 
 // Binds texture-sampler pairs for use on the compute shader.
 //
-// The textures must have been created with SDL_GPU_TEXTUREUSAGE_SAMPLER.
+// The textures must have been created with [GPUTextureusageSampler].
 //
-// compute_pass: a compute pass handle.
+// pass: a compute pass handle.
 //
-// first_slot: the compute sampler slot to begin binding from.
+// firstSlot: the compute sampler slot to begin binding from.
 //
-// texture_sampler_bindings: an array of texture-sampler binding
+// textureSamplerBindings: an array of texture-sampler binding
 // structs.
-//
-// num_bindings: the number of texture-sampler bindings to bind from the
-// array.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -3378,15 +3336,13 @@ func (pass *GPUComputePass) BindSamplers(firstSlot int, textureSamplerBindings [
 // Binds storage textures as readonly for use on the compute pipeline.
 //
 // These textures must have been created with
-// SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_READ.
+// [GPUTextureusageComputeStorageRead].
 //
-// compute_pass: a compute pass handle.
+// pass: a compute pass handle.
 //
-// first_slot: the compute storage texture slot to begin binding from.
+// firstSlot: the compute storage texture slot to begin binding from.
 //
-// storage_textures: an array of storage textures.
-//
-// num_bindings: the number of storage textures to bind from the array.
+// storageTextures: an array of storage textures.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -3398,15 +3354,13 @@ func (pass *GPUComputePass) BindStorageTextures(firstSlot int, storageTextures [
 // Binds storage buffers as readonly for use on the compute pipeline.
 //
 // These buffers must have been created with
-// SDL_GPU_BUFFERUSAGE_COMPUTE_STORAGE_READ.
+// [GPUBufferusageComputeStorageRead].
 //
-// compute_pass: a compute pass handle.
+// pass: a compute pass handle.
 //
-// first_slot: the compute storage buffer slot to begin binding from.
+// firstSlot: the compute storage buffer slot to begin binding from.
 //
-// storage_buffers: an array of storage buffer binding structs.
-//
-// num_bindings: the number of storage buffers to bind from the array.
+// storageBuffers: an array of storage buffer binding structs.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -3424,15 +3378,15 @@ func (pass *GPUComputePass) BindStorageBuffers(firstSlot int, storageBuffers []*
 // guarantee of which order the writes will occur. If the write order matters,
 // you MUST end the compute pass and begin another one.
 //
-// compute_pass: a compute pass handle.
+// pass: a compute pass handle.
 //
-// groupcount_x: number of local workgroups to dispatch in the X
+// groupcountX: number of local workgroups to dispatch in the X
 // dimension.
 //
-// groupcount_y: number of local workgroups to dispatch in the Y
+// groupcountY: number of local workgroups to dispatch in the Y
 // dimension.
 //
-// groupcount_z: number of local workgroups to dispatch in the Z
+// groupcountZ: number of local workgroups to dispatch in the Z
 // dimension.
 //
 // This function is available since SDL 3.2.0.
@@ -3445,7 +3399,7 @@ func (pass *GPUComputePass) Dispatch(groupcountX int, groupcountY int, groupcoun
 // Dispatches compute work with parameters set from a buffer.
 //
 // The buffer layout should match the layout of
-// SDL_GPUIndirectDispatchCommand. You must not call this function before
+// [GPUIndirectDispatchCommand]. You must not call this function before
 // binding a compute pipeline.
 //
 // A VERY IMPORTANT NOTE If you dispatch multiple times in a compute pass, and
@@ -3453,7 +3407,7 @@ func (pass *GPUComputePass) Dispatch(groupcountX int, groupcountY int, groupcoun
 // guarantee of which order the writes will occur. If the write order matters,
 // you MUST end the compute pass and begin another one.
 //
-// compute_pass: a compute pass handle.
+// pass: a compute pass handle.
 //
 // buffer: a buffer containing dispatch parameters.
 //
@@ -3471,7 +3425,7 @@ func (pass *GPUComputePass) DispatchIndirect(buffer *GPUBuffer, offset uint32) {
 // All bound compute state on the command buffer is unset. The compute pass
 // handle is now invalid.
 //
-// compute_pass: a compute pass handle.
+// pass: a compute pass handle.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -3486,12 +3440,11 @@ func (pass *GPUComputePass) End() {
 //
 // device: a GPU context.
 //
-// transfer_buffer: a transfer buffer.
+// transferBuffer: a transfer buffer.
 //
 // cycle: if true, cycles the transfer buffer if it is already bound.
 //
-// Returns the address of the mapped transfer buffer memory, or NULL on
-// failure; call SDL_GetError() for more information.
+// Returns a struct for accessing the mapped memory region or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -3567,7 +3520,7 @@ func (m *GPUTransferBufferMapping) Unmap() {
 // inside a copy pass. You must not begin another copy pass, or a render pass
 // or compute pass before ending the copy pass.
 //
-// command_buffer: a command buffer.
+// cmd: a command buffer.
 //
 // Returns a copy pass handle.
 //
@@ -3586,7 +3539,7 @@ func (cmd *GPUCommandBuffer) BeginCopyPass() *GPUCopyPass {
 // You must align the data in the transfer buffer to a multiple of the texel
 // size of the texture format.
 //
-// copy_pass: a copy pass handle.
+// pass: a copy pass handle.
 //
 // source: the source transfer buffer with image layout information.
 //
@@ -3622,7 +3575,7 @@ func (pass *GPUCopyPass) UploadToTexture(source *GPUTextureTransferInfo, destina
 // The upload occurs on the GPU timeline. You may assume that the upload has
 // finished in subsequent commands.
 //
-// copy_pass: a copy pass handle.
+// pass: a copy pass handle.
 //
 // source: the source transfer buffer with offset.
 //
@@ -3650,7 +3603,7 @@ func (pass *GPUCopyPass) UploadToBuffer(source *GPUTransferBufferLocation, desti
 // This copy occurs on the GPU timeline. You may assume the copy has finished
 // in subsequent commands.
 //
-// copy_pass: a copy pass handle.
+// pass: a copy pass handle.
 //
 // source: a source texture region.
 //
@@ -3691,7 +3644,7 @@ func (pass *GPUCopyPass) CopyTextureToTexture(source *GPUTextureLocation, destin
 // This copy occurs on the GPU timeline. You may assume the copy has finished
 // in subsequent commands.
 //
-// copy_pass: a copy pass handle.
+// pass: a copy pass handle.
 //
 // source: the buffer and offset to copy from.
 //
@@ -3720,7 +3673,7 @@ func (pass *GPUCopyPass) CopyBufferToBuffer(source *GPUBufferLocation, destinati
 // This data is not guaranteed to be copied until the command buffer fence is
 // signaled.
 //
-// copy_pass: a copy pass handle.
+// pass: a copy pass handle.
 //
 // source: the source texture region.
 //
@@ -3754,7 +3707,7 @@ func (pass *GPUCopyPass) DownloadFromTexture(source *GPUTextureRegion, destinati
 // This data is not guaranteed to be copied until the command buffer fence is
 // signaled.
 //
-// copy_pass: a copy pass handle.
+// pass: a copy pass handle.
 //
 // source: the source buffer with offset and size.
 //
@@ -3776,7 +3729,7 @@ func (pass *GPUCopyPass) DownloadFromBuffer(source *GPUBufferRegion, destination
 
 // Ends the current copy pass.
 //
-// copy_pass: a copy pass handle.
+// pass: a copy pass handle.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -3789,7 +3742,7 @@ func (pass *GPUCopyPass) End() {
 //
 // This function must not be called inside of any pass.
 //
-// command_buffer: a command_buffer.
+// cmd: a command buffer.
 //
 // texture: a texture with more than 1 mip level.
 //
@@ -3804,7 +3757,7 @@ func (cmd *GPUCommandBuffer) GenerateMipmapsForTexture(texture *GPUTexture) {
 //
 // This function must not be called inside of any pass.
 //
-// command_buffer: a command buffer.
+// cmd: a command buffer.
 //
 // info: the blit info struct containing the blit parameters.
 //
@@ -3845,9 +3798,9 @@ func (cmd *GPUCommandBuffer) BlitTexture(info *GPUBlitInfo) {
 //
 // device: a GPU context.
 //
-// window: an SDL_Window.
+// window: a [Window].
 //
-// swapchain_composition: the swapchain composition to check.
+// swapchainComposition: the swapchain composition to check.
 //
 // Returns true if supported, false if unsupported.
 //
@@ -3864,9 +3817,9 @@ func (device *GPUDevice) WindowSupportsSwapchainComposition(window *Window, swap
 //
 // device: a GPU context.
 //
-// window: an SDL_Window.
+// window: a [Window].
 //
-// present_mode: the presentation mode to check.
+// presentMode: the presentation mode to check.
 //
 // Returns true if supported, false if unsupported.
 //
@@ -3879,21 +3832,20 @@ func (device *GPUDevice) WindowSupportsPresentMode(window *Window, presentMode G
 
 // Claims a window, creating a swapchain structure for it.
 //
-// This must be called before SDL_AcquireGPUSwapchainTexture is called using
+// This must be called before [GPUCommandBuffer.AcquireSwapchainTexture] is called using
 // the window. You should only call this function from the thread that created
 // the window.
 //
-// The swapchain will be created with SDL_GPU_SWAPCHAINCOMPOSITION_SDR and
-// SDL_GPU_PRESENTMODE_VSYNC. If you want to have different swapchain
-// parameters, you must call SDL_SetGPUSwapchainParameters after claiming the
+// The swapchain will be created with [GPUSwapchaincompositionSDR] and
+// [GPUPresentmodeVSync]. If you want to have different swapchain
+// parameters, you must call [GPUDevice.SetSwapchainParameters] after claiming the
 // window.
 //
 // device: a GPU context.
 //
-// window: an SDL_Window.
+// window: a [Window].
 //
-// Returns true on success, or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success, or an error on failure.
 //
 // This function should only be called from the thread that
 // created the window.
@@ -3912,12 +3864,12 @@ func (device *GPUDevice) ClaimWindow(window *Window) error {
 //
 // device: a GPU context.
 //
-// window: an SDL_Window that has been claimed.
+// window: a [Window] that has been claimed.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_ReleaseWindowFromGPUDevice
-func (device *GPUDevice) ReleaseWindowFromGPUDevice(window *Window) {
+func (device *GPUDevice) ReleaseWindow(window *Window) {
 	C.SDL_ReleaseWindowFromGPUDevice((*C.SDL_GPUDevice)(device), (*C.SDL_Window)(window))
 }
 
@@ -3925,22 +3877,21 @@ func (device *GPUDevice) ReleaseWindowFromGPUDevice(window *Window) {
 //
 // This function will fail if the requested present mode or swapchain
 // composition are unsupported by the device. Check if the parameters are
-// supported via SDL_WindowSupportsGPUPresentMode /
-// SDL_WindowSupportsGPUSwapchainComposition prior to calling this function.
+// supported via [GPUDevice.WindowSupportsPresentMode] /
+// [GPUDevice.WindowSupportsSwapchainComposition] prior to calling this function.
 //
-// SDL_GPU_PRESENTMODE_VSYNC and SDL_GPU_SWAPCHAINCOMPOSITION_SDR are always
+// [GPUPresentmodeVSync] and [GPUSwapchaincompositionSDR] are always
 // supported.
 //
 // device: a GPU context.
 //
-// window: an SDL_Window that has been claimed.
+// window: a [Window] that has been claimed.
 //
-// swapchain_composition: the desired composition of the swapchain.
+// swapchainComposition: the desired composition of the swapchain.
 //
-// present_mode: the desired present mode for the swapchain.
+// presentMode: the desired present mode for the swapchain.
 //
-// Returns true if successful, false on error; call SDL_GetError() for more
-// information.
+// Returns nil on success, or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -3956,9 +3907,9 @@ func (device *GPUDevice) SetSwapchainParameters(window *Window, swapchainComposi
 //
 // The default value when the device is created is 2. This means that after
 // you have submitted 2 frames for presentation, if the GPU has not finished
-// working on the first frame, SDL_AcquireGPUSwapchainTexture() will fill the
-// swapchain texture pointer with NULL, and
-// SDL_WaitAndAcquireGPUSwapchainTexture() will block.
+// working on the first frame, [GPUCommandBuffer.AcquireSwapchainTexture] will
+// return a nil swapchain texture pointer, and
+// [GPUCommandBuffer.WaitAndAcquireSwapchainTexture] will block.
 //
 // Higher values increase throughput at the expense of visual latency. Lower
 // values decrease visual latency at the expense of throughput.
@@ -3970,11 +3921,10 @@ func (device *GPUDevice) SetSwapchainParameters(window *Window, swapchainComposi
 //
 // device: a GPU context.
 //
-// allowed_frames_in_flight: the maximum number of frames that can be
+// allowedFramesInFlight: the maximum number of frames that can be
 // pending on the GPU.
 //
-// Returns true if successful, false on error; call SDL_GetError() for more
-// information.
+// Returns nil on success, or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -3992,7 +3942,7 @@ func (device *GPUDevice) SetAllowedFramesInFlight(allowedFramesInFlight int) err
 //
 // device: a GPU context.
 //
-// window: an SDL_Window that has been claimed.
+// window: a [Window] that has been claimed.
 //
 // Returns the texture format of the swapchain.
 //
@@ -4010,34 +3960,28 @@ func (device *GPUDevice) GetSwapchainTextureFormat(window *Window) GPUTextureFor
 // submitted. The swapchain texture should only be referenced by the command
 // buffer used to acquire it.
 //
-// This function will fill the swapchain texture handle with NULL if too many
+// This function will return a nil swapchain texture handle if too many
 // frames are in flight. This is not an error.
 //
 // If you use this function, it is possible to create a situation where many
 // command buffers are allocated while the rendering context waits for the GPU
 // to catch up, which will cause memory usage to grow. You should use
-// SDL_WaitAndAcquireGPUSwapchainTexture() unless you know what you are doing
+// [GPUCommandBuffer.WaitAndAcquireSwapchainTexture] unless you know what you are doing
 // with timing.
 //
 // The swapchain texture is managed by the implementation and must not be
 // freed by the user. You MUST NOT call this function from any thread other
 // than the one that created the window.
 //
-// command_buffer: a command buffer.
+// cmd: a command buffer.
 //
 // window: a window that has been claimed.
 //
-// swapchain_texture: a pointer filled in with a swapchain texture
-// handle.
+// swapchainTexture: the swapchain texture handle.
 //
-// swapchain_texture_width: a pointer filled in with the swapchain
-// texture width, may be NULL.
+// width: the swapchain texture width.
 //
-// swapchain_texture_height: a pointer filled in with the swapchain
-// texture height, may be NULL.
-//
-// Returns true on success, false on error; call SDL_GetError() for more
-// information.
+// height: the swapchain texture height.
 //
 // This function should only be called from the thread that
 // created the window.
@@ -4061,8 +4005,7 @@ func (cmd *GPUCommandBuffer) AcquireSwapchainTexture(window *Window) (swapchainT
 //
 // window: a window that has been claimed.
 //
-// Returns true on success, false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success, or an error on failure.
 //
 // This function should only be called from the thread that
 // created the window.
@@ -4070,8 +4013,11 @@ func (cmd *GPUCommandBuffer) AcquireSwapchainTexture(window *Window) (swapchainT
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_WaitForGPUSwapchain
-func (device *GPUDevice) WaitForGPUSwapchain(window *Window) bool {
-	return (bool)(C.SDL_WaitForGPUSwapchain((*C.SDL_GPUDevice)(device), (*C.SDL_Window)(window)))
+func (device *GPUDevice) WaitForGPUSwapchain(window *Window) error {
+	if !C.SDL_WaitForGPUSwapchain((*C.SDL_GPUDevice)(device), (*C.SDL_Window)(window)) {
+		return getError()
+	}
+	return nil
 }
 
 // Blocks the thread until a swapchain texture is available to be acquired,
@@ -4081,7 +4027,7 @@ func (device *GPUDevice) WaitForGPUSwapchain(window *Window) bool {
 // automatically be submitted for presentation when the command buffer is
 // submitted. The swapchain texture should only be referenced by the command
 // buffer used to acquire it. It is an error to call
-// SDL_CancelGPUCommandBuffer() after a swapchain texture is acquired.
+// [GPUCommandBuffer.Cancel] after a swapchain texture is acquired.
 //
 // This function can fill the swapchain texture handle with NULL in certain
 // cases, for example if the window is minimized. This is not an error. You
@@ -4092,21 +4038,15 @@ func (device *GPUDevice) WaitForGPUSwapchain(window *Window) bool {
 // freed by the user. You MUST NOT call this function from any thread other
 // than the one that created the window.
 //
-// command_buffer: a command buffer.
+// cmd: a command buffer.
 //
 // window: a window that has been claimed.
 //
-// swapchain_texture: a pointer filled in with a swapchain texture
-// handle.
+// swapchainTexture: the swapchain texture handle.
 //
-// swapchain_texture_width: a pointer filled in with the swapchain
-// texture width, may be NULL.
+// width: the swapchain texture width.
 //
-// swapchain_texture_height: a pointer filled in with the swapchain
-// texture height, may be NULL.
-//
-// Returns true on success, false on error; call SDL_GetError() for more
-// information.
+// height: the swapchain texture height.
 //
 // This function should only be called from the thread that
 // created the window.
@@ -4133,10 +4073,9 @@ func (cmd *GPUCommandBuffer) WaitAndAcquireSwapchainTexture(window *Window) (swa
 // All commands in the submission are guaranteed to begin executing before any
 // command in a subsequent submission begins executing.
 //
-// command_buffer: a command buffer.
+// cmd: a command buffer.
 //
-// Returns true on success, false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success, or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -4159,10 +4098,9 @@ func (cmd *GPUCommandBuffer) Submit() error {
 // All commands in the submission are guaranteed to begin executing before any
 // command in a subsequent submission begins executing.
 //
-// command_buffer: a command buffer.
+// cmd: a command buffer.
 //
-// Returns a fence associated with the command buffer, or NULL on failure;
-// call SDL_GetError() for more information.
+// Returns a fence associated with the command buffer or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -4186,10 +4124,9 @@ func (cmd *GPUCommandBuffer) SubmitAndAcquireFence() (*GPUFence, error) {
 //
 // You must not reference the command buffer after calling this function.
 //
-// command_buffer: a command buffer.
+// cmd: a command buffer.
 //
-// Returns true on success, false on error; call SDL_GetError() for more
-// information.
+// Returns nil on success, or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -4205,8 +4142,7 @@ func (cmd *GPUCommandBuffer) Cancel() error {
 //
 // device: a GPU context.
 //
-// Returns true on success, false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success, or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -4222,15 +4158,12 @@ func (device *GPUDevice) WaitForIdle() error {
 //
 // device: a GPU context.
 //
-// wait_all: if 0, wait for any fence to be signaled, if 1, wait for all
+// waitAll: if false, wait for any fence to be signaled, if true, wait for all
 // fences to be signaled.
 //
 // fences: an array of fences to wait on.
 //
-// num_fences: the number of fences in the fences array.
-//
-// Returns true on success, false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success, or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -4257,7 +4190,7 @@ func (device *GPUDevice) QueryFence(fence *GPUFence) bool {
 	return (bool)(C.SDL_QueryGPUFence((*C.SDL_GPUDevice)(device), (*C.SDL_GPUFence)(fence)))
 }
 
-// Releases a fence obtained from SDL_SubmitGPUCommandBufferAndAcquireFence.
+// Releases a fence obtained from [GPUCommandBuffer.SubmitAndAcquireFence].
 //
 // device: a GPU context.
 //
@@ -4309,7 +4242,7 @@ func (device *GPUDevice) TextureSupportsFormat(format GPUTextureFormat, typ GPUT
 //
 // format: the texture format to check.
 //
-// sample_count: the sample count to check.
+// sampleCount: the sample count to check.
 //
 // Returns a hardware-specific version of min(preferred, possible).
 //
@@ -4328,7 +4261,7 @@ func (device *GPUDevice) GPUTextureSupportsSampleCount(format GPUTextureFormat, 
 //
 // height: height in pixels.
 //
-// depth_or_layer_count: depth for 3D textures or layer count otherwise.
+// depthOrLayerCount: depth for 3D textures or layer count otherwise.
 //
 // Returns the size of a texture with this format and dimensions.
 //

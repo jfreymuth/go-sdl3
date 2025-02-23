@@ -67,12 +67,12 @@ import "unsafe"
 // Supported values for the SDL_FILESYSTEM_BASE_DIR_TYPE property (Given an
 // application in /Applications/SDLApp/MyApp.app):
 //
-// - `resource`: bundle resource directory (the default). For example:
-// `/Applications/SDLApp/MyApp.app/Contents/Resources`
-// - `bundle`: the Bundle directory. For example:
-// `/Applications/SDLApp/MyApp.app/`
-// - `parent`: the containing directory of the bundle. For example:
-// `/Applications/SDLApp/`
+//   - `resource`: bundle resource directory (the default). For example:
+//     `/Applications/SDLApp/MyApp.app/Contents/Resources`
+//   - `bundle`: the Bundle directory. For example:
+//     `/Applications/SDLApp/MyApp.app/`
+//   - `parent`: the containing directory of the bundle. For example:
+//     `/Applications/SDLApp/`
 //
 // **Nintendo 3DS Specific Functionality**: This function returns "romfs"
 // directory of the application as it is uncommon to store resources outside
@@ -82,9 +82,8 @@ import "unsafe"
 // Windows, '/' on most other platforms).
 //
 // Returns an absolute path in UTF-8 encoding to the application data
-// directory. NULL will be returned on error or when the platform
-// doesn't implement this functionality, call SDL_GetError() for more
-// information.
+// directory. an error will be returned on error or when the platform
+// doesn't implement this functionality.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -109,31 +108,31 @@ func GetBasePath() (string, error) {
 //
 // On Windows, the string might look like:
 //
-// `C:\\Users\\bob\\AppData\\Roaming\\My Company\\My Program Name\\`
+//	"C:\\Users\\bob\\AppData\\Roaming\\My Company\\My Program Name\\"
 //
 // On Linux, the string might look like:
 //
-// `/home/bob/.local/share/My Program Name/`
+//	"/home/bob/.local/share/My Program Name/"
 //
 // On macOS, the string might look like:
 //
-// `/Users/bob/Library/Application Support/My Program Name/`
+//	"/Users/bob/Library/Application Support/My Program Name/"
 //
 // You should assume the path returned by this function is the only safe place
-// to write files (and that SDL_GetBasePath(), while it might be writable, or
+// to write files (and that [GetBasePath], while it might be writable, or
 // even the parent of the returned path, isn't where you should be writing
 // things).
 //
 // Both the org and app strings may become part of a directory name, so please
 // follow these rules:
 //
-// - Try to use the same org string (_including case-sensitivity_) for all
-// your applications that use this function.
-// - Always use a unique app string for each one, and make sure it never
-// changes for an app once you've decided on it.
-// - Unicode characters are legal, as long as they are UTF-8 encoded, but...
-// - ...only use letters, numbers, and spaces. Avoid punctuation like "Game
-// Name 2: Bad Guy's Revenge!" ... "Game Name 2" is sufficient.
+//   - Try to use the same org string (_including case-sensitivity_) for all
+//     your applications that use this function.
+//   - Always use a unique app string for each one, and make sure it never
+//     changes for an app once you've decided on it.
+//   - Unicode characters are legal, as long as they are UTF-8 encoded, but...
+//   - ...only use letters, numbers, and spaces. Avoid punctuation like "Game
+//     Name 2: Bad Guy's Revenge!" ... "Game Name 2" is sufficient.
 //
 // The returned path is guaranteed to end with a path separator ('\\' on
 // Windows, '/' on most other platforms).
@@ -142,10 +141,8 @@ func GetBasePath() (string, error) {
 //
 // app: the name of your application.
 //
-// Returns a UTF-8 string of the user directory in platform-dependent
-// notation. NULL if there's a problem (creating directory failed,
-// etc.). This should be freed with SDL_free() when it is no longer
-// needed.
+// Returns a string of the user directory in platform-dependent notation,
+// or an error if there's a problem (creating directory failed, etc.).
 //
 // This function is available since SDL 3.2.0.
 //
@@ -212,18 +209,16 @@ const (
 //
 // This function is specifically for _user_ folders, which are meant for the
 // user to access and manage. For application-specific folders, meant to hold
-// data for the application to manage, see SDL_GetBasePath() and
-// SDL_GetPrefPath().
+// data for the application to manage, see [GetBasePath] and
+// [GetPrefPath].
 //
 // The returned path is guaranteed to end with a path separator ('\\' on
 // Windows, '/' on most other platforms).
 //
-// If NULL is returned, the error may be obtained with SDL_GetError().
-//
 // folder: the type of folder to find.
 //
-// Returns either a null-terminated C string containing the full path to the
-// folder, or NULL if an error happened.
+// Returns either a string containing the full path to the
+// folder, or an error.
 //
 // This function is available since SDL 3.2.0.
 //

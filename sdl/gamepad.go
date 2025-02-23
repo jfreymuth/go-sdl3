@@ -189,21 +189,21 @@ import (
 // add their own controller details through an environment variable if it's
 // otherwise unknown to SDL.
 //
-// In order to use these functions, SDL_Init() must have been called with the
-// SDL_INIT_GAMEPAD flag. This causes SDL to scan the system for gamepads, and
+// In order to use these functions, [Init]() must have been called with the
+// [InitGamepad] flag. This causes SDL to scan the system for gamepads, and
 // load appropriate drivers.
 //
 // If you would like to receive gamepad updates while the application is in
 // the background, you should set the following hint before calling
-// SDL_Init(): SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS
+// [Init]: [HintJoystickAllowBackgroundEvents]
 //
 // Gamepads support various optional features such as rumble, color LEDs,
 // touchpad, gyro, etc. The support for these features varies depending on the
 // controller and OS support available. You can check for LED and rumble
-// capabilities at runtime by calling SDL_GetGamepadProperties() and checking
+// capabilities at runtime by calling [Gamepad.Properties] and checking
 // the various capability properties. You can check for touchpad by calling
-// SDL_GetNumGamepadTouchpads() and check for gyro and accelerometer by
-// calling SDL_GamepadHasSensor().
+// [Gamepad.NumTouchpads] and check for gyro and accelerometer by
+// calling [Gamepad.HasSensor].
 //
 // By default SDL will try to use the most capable driver available, but you
 // can tune which OS drivers to use with the various joystick hints in
@@ -266,7 +266,7 @@ const (
 // should allow remapping actions based on user preferences.
 //
 // You can query the labels for the face buttons using
-// SDL_GetGamepadButtonLabel()
+// [Gamepad.ButtonLabel]
 //
 // This enum is available since SDL 3.2.0.
 //
@@ -289,18 +289,20 @@ const (
 	GamepadButtonDpadDown
 	GamepadButtonDpadLeft
 	GamepadButtonDpadRight
-	GamepadButtonMISC1        // Additional button (e.g. Xbox Series X share button, PS5 microphone button, Nintendo Switch Pro capture button, Amazon Luna microphone button, Google Stadia capture button)
-	GamepadButtonRightPADDLE1 // Upper or primary paddle, under your right hand (e.g. Xbox Elite paddle P1)
-	GamepadButtonLeftPADDLE1  // Upper or primary paddle, under your left hand (e.g. Xbox Elite paddle P3)
-	GamepadButtonRightPADDLE2 // Lower or secondary paddle, under your right hand (e.g. Xbox Elite paddle P2)
-	GamepadButtonLeftPADDLE2  // Lower or secondary paddle, under your left hand (e.g. Xbox Elite paddle P4)
+	GamepadButtonMisc1        // Additional button (e.g. Xbox Series X share button, PS5 microphone button, Nintendo Switch Pro capture button, Amazon Luna microphone button, Google Stadia capture button)
+	GamepadButtonRightPaddle1 // Upper or primary paddle, under your right hand (e.g. Xbox Elite paddle P1)
+	GamepadButtonLeftPaddle1  // Upper or primary paddle, under your left hand (e.g. Xbox Elite paddle P3)
+	GamepadButtonRightPaddle2 // Lower or secondary paddle, under your right hand (e.g. Xbox Elite paddle P2)
+	GamepadButtonLeftPaddle2  // Lower or secondary paddle, under your left hand (e.g. Xbox Elite paddle P4)
 	GamepadButtonTouchpad     // PS4/PS5 touchpad button
-	GamepadButtonMISC2        // Additional button
-	GamepadButtonMISC3        // Additional button
-	GamepadButtonMISC4        // Additional button
-	GamepadButtonMISC5        // Additional button
-	GamepadButtonMISC6        // Additional button
+	GamepadButtonMisc2        // Additional button
+	GamepadButtonMisc3        // Additional button
+	GamepadButtonMisc4        // Additional button
+	GamepadButtonMisc5        // Additional button
+	GamepadButtonMisc6        // Additional button
 	GamepadButtonCount        = iota
+
+	GamepadButtonInvalid = 255
 )
 
 // The set of gamepad button labels
@@ -330,14 +332,14 @@ const (
 
 // The list of axes available on a gamepad
 //
-// Thumbstick axis values range from SDL_JOYSTICK_AXIS_MIN to
-// SDL_JOYSTICK_AXIS_MAX, and are centered within ~8000 of zero, though
+// Thumbstick axis values range from [JoystickAxisMin] to
+// [JoystickAxisMax], and are centered within ~8000 of zero, though
 // advanced UI will allow users to set or autodetect the dead zone, which
 // varies between gamepads.
 //
-// Trigger axis values range from 0 (released) to SDL_JOYSTICK_AXIS_MAX (fully
-// pressed) when reported by SDL_GetGamepadAxis(). Note that this is not the
-// same range that will be reported by the lower-level SDL_GetJoystickAxis().
+// Trigger axis values range from 0 (released) to [JoystickAxisMax] (fully
+// pressed) when reported by [Gamepad.Axis]. Note that this is not the
+// same range that will be reported by the lower-level [Joystick.Axis].
 //
 // This enum is available since SDL 3.2.0.
 //
@@ -352,6 +354,8 @@ const (
 	GamepadAxisLeftTrigger
 	GamepadAxisRightTrigger
 	GamepadAxisCount = iota
+
+	GamepadAxisInvalid GamepadAxis = 255
 )
 
 // Types of gamepad control bindings.
@@ -364,14 +368,14 @@ const (
 // This enum is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GamepadBindingType
-type GamepadBindingType uint32
-
-const (
-	GamepadBindtypeNone GamepadBindingType = 0
-	GamepadBindtypeButton
-	GamepadBindtypeAxis
-	GamepadBindtypeHat
-)
+//TODOtype GamepadBindingType uint32
+//TODO
+//TODOconst (
+//TODO	GamepadBindtypeNone GamepadBindingType = 0
+//TODO	GamepadBindtypeButton
+//TODO	GamepadBindtypeAxis
+//TODO	GamepadBindtypeHat
+//TODO)
 
 // A mapping between one joystick input to a gamepad control.
 //
@@ -403,30 +407,28 @@ const (
 // existing gamepad.
 //
 // The mapping string has the format "GUID,name,mapping", where GUID is the
-// string value from SDL_GUIDToString(), name is the human readable string for
+// string value from [GUID.String], name is the human readable string for
 // the device and mappings are gamepad mappings to joystick ones. Under
 // Windows there is a reserved GUID of "xinput" that covers all XInput
 // devices. The mapping format for joystick is:
 //
-// - `bX`: a joystick button, index X
-// - `hX.Y`: hat X with value Y
-// - `aX`: axis X of the joystick
+//   - `bX`: a joystick button, index X
+//   - `hX.Y`: hat X with value Y
+//   - `aX`: axis X of the joystick
 //
 // Buttons can be used as a gamepad axes and vice versa.
 //
 // If a device with this GUID is already plugged in, SDL will generate an
-// SDL_EVENT_GAMEPAD_ADDED event.
+// [EventGamepadAdded] event.
 //
 // This string shows an example of a valid mapping for a gamepad:
 //
-// ```c
-// "341a3608000000000000504944564944,Afterglow PS3 Controller,a:b1,b:b2,y:b3,x:b0,start:b9,guide:b12,back:b8,dpup:h0.1,dpleft:h0.8,dpdown:h0.4,dpright:h0.2,leftshoulder:b4,rightshoulder:b5,leftstick:b10,rightstick:b11,leftx:a0,lefty:a1,rightx:a2,righty:a3,lefttrigger:b6,righttrigger:b7"
-// ```
+//	"341a3608000000000000504944564944,Afterglow PS3 Controller,a:b1,b:b2,y:b3,x:b0,start:b9,guide:b12,back:b8,dpup:h0.1,dpleft:h0.8,dpdown:h0.4,dpright:h0.2,leftshoulder:b4,rightshoulder:b5,leftstick:b10,rightstick:b11,leftx:a0,lefty:a1,rightx:a2,righty:a3,lefttrigger:b6,righttrigger:b7"
 //
 // mapping: the mapping string.
 //
-// Returns 1 if a new mapping is added, 0 if an existing mapping is updated,
-// -1 on failure; call SDL_GetError() for more information.
+// Returns (true, nil) if a new mapping is added, (false, nil) if an existing
+// mapping is updated, or a non-nil error on failure.
 //
 // It is safe to call this function from any thread.
 //
@@ -441,7 +443,7 @@ func AddGamepadMapping(mapping string) (new bool, err error) {
 	return r == 1, nil
 }
 
-// Load a set of gamepad mappings from an SDL_IOStream.
+// Load a set of gamepad mappings from an [IOStream].
 //
 // You can call this function several times, if needed, to load different
 // database files.
@@ -450,7 +452,7 @@ func AddGamepadMapping(mapping string) (new bool, err error) {
 // version will overwrite the one currently loaded.
 //
 // Any new mappings for already plugged in controllers will generate
-// SDL_EVENT_GAMEPAD_ADDED events.
+// [EventGamepadAdded] events.
 //
 // Mappings not belonging to the current platform or with no platform field
 // specified will be ignored (i.e. mappings for Linux will be ignored in
@@ -462,11 +464,10 @@ func AddGamepadMapping(mapping string) (new bool, err error) {
 //
 // src: the data stream for the mappings to be added.
 //
-// closeio: if true, calls SDL_CloseIO() on `src` before returning, even
+// closeio: if true, calls [CloseIO] on src before returning, even
 // in the case of an error.
 //
-// Returns the number of mappings added or -1 on failure; call SDL_GetError()
-// for more information.
+// Returns the number of mappings added or an error.
 //
 // It is safe to call this function from any thread.
 //
@@ -488,7 +489,7 @@ func AddGamepadMappingsFromIO(src *IOStream, closeio bool) (int, error) {
 // version will overwrite the one currently loaded.
 //
 // Any new mappings for already plugged in controllers will generate
-// SDL_EVENT_GAMEPAD_ADDED events.
+// [EventGamepadAdded] events.
 //
 // Mappings not belonging to the current platform or with no platform field
 // specified will be ignored (i.e. mappings for Linux will be ignored in
@@ -496,8 +497,7 @@ func AddGamepadMappingsFromIO(src *IOStream, closeio bool) (int, error) {
 //
 // file: the mappings file to load.
 //
-// Returns the number of mappings added or -1 on failure; call SDL_GetError()
-// for more information.
+// Returns the number of mappings added or an error.
 //
 // It is safe to call this function from any thread.
 //
@@ -516,8 +516,7 @@ func AddGamepadMappingsFromFile(file string) (int, error) {
 //
 // This will generate gamepad events as needed if device mappings change.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -528,13 +527,7 @@ func ReloadGamepadMappings() bool {
 
 // Get the current gamepad mappings.
 //
-// count: a pointer filled in with the number of mappings returned, can
-// be NULL.
-//
-// Returns an array of the mapping strings, NULL-terminated, or NULL on
-// failure; call SDL_GetError() for more information. This is a
-// single allocation that should be freed with SDL_free() when it is
-// no longer needed.
+// Returns an array of the mapping strings or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -553,13 +546,11 @@ func GetGamepadMappings() ([]string, error) {
 	return result, nil
 }
 
-// Get the gamepad mapping string for a given GUID.
+// Get the gamepad mapping string for a given [GUID].
 //
 // guid: a structure containing the GUID for which a mapping is desired.
 //
-// Returns a mapping string or NULL on failure; call SDL_GetError() for more
-// information. This should be freed with SDL_free() when it is no
-// longer needed.
+// Returns a mapping string an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -576,18 +567,17 @@ func GetGamepadMappingForGUID(guid GUID) (string, error) {
 
 // Get the current mapping of a gamepad.
 //
-// Details about mappings are discussed with SDL_AddGamepadMapping().
+// Details about mappings are discussed with [AddGamepadMapping].
 //
 // gamepad: the gamepad you want to get the current mapping for.
 //
-// Returns a string that has the gamepad's mapping or NULL if no mapping is
-// available; call SDL_GetError() for more information. This should
-// be freed with SDL_free() when it is no longer needed.
+// Returns a string that has the gamepad's mapping or an error if no mapping is
+// available.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetGamepadMapping
-func GetGamepadMapping(gamepad *Gamepad) (string, error) {
+func (gamepad *Gamepad) Mapping() (string, error) {
 	mapping := C.SDL_GetGamepadMapping((*C.SDL_Gamepad)(gamepad))
 	if mapping == nil {
 		return "", getError()
@@ -599,20 +589,19 @@ func GetGamepadMapping(gamepad *Gamepad) (string, error) {
 
 // Set the current mapping of a joystick or gamepad.
 //
-// Details about mappings are discussed with SDL_AddGamepadMapping().
+// Details about mappings are discussed with [AddGamepadMapping].
 //
 // id: the joystick instance ID.
 //
 // mapping: the mapping to use for this device, or NULL to clear the
 // mapping.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_SetGamepadMapping
-func SetGamepadMapping(id JoystickID, mapping string) error {
+func (id JoystickID) SetGamepadMapping(mapping string) error {
 	if !C.SDL_SetGamepadMapping((C.SDL_JoystickID)(id), tmpstring(mapping)) {
 		return getError()
 	}
@@ -632,12 +621,7 @@ func HasGamepad() bool {
 
 // Get a list of currently connected gamepads.
 //
-// count: a pointer filled in with the number of gamepads returned, may
-// be NULL.
-//
-// Returns a 0 terminated array of joystick instance IDs or NULL on failure;
-// call SDL_GetError() for more information. This should be freed
-// with SDL_free() when it is no longer needed.
+// Returns a slice of joystick instance IDs or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -676,8 +660,7 @@ func (id JoystickID) IsGamepad() bool {
 //
 // id: the joystick instance ID.
 //
-// Returns the name of the selected gamepad. If no name can be found, this
-// function returns NULL; call SDL_GetError() for more information.
+// Returns the name of the selected gamepad or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -696,13 +679,12 @@ func (id JoystickID) GamepadName() (string, error) {
 //
 // id: the joystick instance ID.
 //
-// Returns the path of the selected gamepad. If no path can be found, this
-// function returns NULL; call SDL_GetError() for more information.
+// Returns the path of the selected gamepad or an error.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetGamepadPathForID
-func (id JoystickID) GetGamepadPathForID() (string, error) {
+func (id JoystickID) GamepadPath() (string, error) {
 	name := C.SDL_GetGamepadPathForID((C.SDL_JoystickID)(id))
 	if name == nil {
 		return "", getError()
@@ -828,8 +810,8 @@ func (id JoystickID) RealGamepadType() GamepadType {
 //
 // id: the joystick instance ID.
 //
-// Returns the mapping string. Returns NULL if no mapping is available. This
-// should be freed with SDL_free() when it is no longer needed.
+// Returns the mapping string. Returns an empty string if no mapping is
+// available.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -845,8 +827,7 @@ func (id JoystickID) GamepadMapping() string {
 //
 // id: the joystick instance ID.
 //
-// Returns a gamepad identifier or NULL if an error occurred; call
-// SDL_GetError() for more information.
+// Returns a gamepad identifier or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -859,18 +840,17 @@ func OpenGamepad(id JoystickID) (*Gamepad, error) {
 	return g, nil
 }
 
-// Get the SDL_Gamepad associated with a joystick instance ID, if it has been
+// Get the [Gamepad] associated with a joystick instance ID, if it has been
 // opened.
 //
 // id: the joystick instance ID of the gamepad.
 //
-// Returns an SDL_Gamepad on success or NULL on failure or if it hasn't been
-// opened yet; call SDL_GetError() for more information.
+// Returns a [Gamepad] on success or an error.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetGamepadFromID
-func GetGamepadFromID(id JoystickID) (*Gamepad, error) {
+func (id JoystickID) Gamepad() (*Gamepad, error) {
 	g := (*Gamepad)(C.SDL_GetGamepadFromID((C.SDL_JoystickID)(id)))
 	if g == nil {
 		return nil, getError()
@@ -878,17 +858,17 @@ func GetGamepadFromID(id JoystickID) (*Gamepad, error) {
 	return g, nil
 }
 
-// Get the SDL_Gamepad associated with a player index.
+// Get the [Gamepad] associated with a player index.
 //
-// player_index: the player index, which different from the instance ID.
+// playerIndex: the player index, which different from the instance ID.
 //
-// Returns the SDL_Gamepad associated with a player index.
+// Returns the [Gamepad] associated with a player index.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetGamepadFromPlayerIndex
-func GetGamepadFromPlayerIndex(player_index int32) (*Gamepad, error) {
-	g := (*Gamepad)(C.SDL_GetGamepadFromPlayerIndex((C.int)(player_index)))
+func GetGamepadFromPlayerIndex(playerIndex int32) (*Gamepad, error) {
+	g := (*Gamepad)(C.SDL_GetGamepadFromPlayerIndex((C.int)(playerIndex)))
 	if g == nil {
 		return nil, getError()
 	}
@@ -901,27 +881,25 @@ func GetGamepadFromPlayerIndex(player_index int32) (*Gamepad, error) {
 //
 // The following read-only properties are provided by SDL:
 //
-// - `SDL_PROP_GAMEPAD_CAP_MONO_LED_BOOLEAN`: true if this gamepad has an LED
-// that has adjustable brightness
-// - `SDL_PROP_GAMEPAD_CAP_RGB_LED_BOOLEAN`: true if this gamepad has an LED
-// that has adjustable color
-// - `SDL_PROP_GAMEPAD_CAP_PLAYER_LED_BOOLEAN`: true if this gamepad has a
-// player LED
-// - `SDL_PROP_GAMEPAD_CAP_RUMBLE_BOOLEAN`: true if this gamepad has
-// left/right rumble
-// - `SDL_PROP_GAMEPAD_CAP_TRIGGER_RUMBLE_BOOLEAN`: true if this gamepad has
-// simple trigger rumble
+//   - [PropGamepadCapMonoLedBoolean]: true if this gamepad has an LED
+//     that has adjustable brightness
+//   - [PropGamepadCapRgbLedBoolean]: true if this gamepad has an LED
+//     that has adjustable color
+//   - [PropGamepadCapPlayerLedBoolean]: true if this gamepad has a
+//     player LED
+//   - [PropGamepadCapRumbleBoolean]: true if this gamepad has
+//     left/right rumble
+//   - [PropGamepadCapTriggerRumbleBoolean]: true if this gamepad has
+//     simple trigger rumble
 //
-// gamepad: a gamepad identifier previously returned by
-// SDL_OpenGamepad().
+// gamepad: a gamepad identifier previously returned by [OpenGamepad].
 //
-// Returns a valid property ID on success or 0 on failure; call
-// SDL_GetError() for more information.
+// Returns a valid property ID on success or an error.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetGamepadProperties
-func GetGamepadProperties(gamepad *Gamepad) (PropertiesID, error) {
+func (gamepad *Gamepad) Properties() (PropertiesID, error) {
 	props := (PropertiesID)(C.SDL_GetGamepadProperties((*C.SDL_Gamepad)(gamepad)))
 	if props == 0 {
 		return 0, getError()
@@ -937,11 +915,10 @@ const PropGamepadCapTriggerRumbleBoolean = PropJoystickCapTriggerRumbleBoolean
 
 // Get the instance ID of an opened gamepad.
 //
-// gamepad: a gamepad identifier previously returned by
-// SDL_OpenGamepad().
+// gamepad: a gamepad identifier previously returned by [OpenGamepad].
 //
-// Returns the instance ID of the specified gamepad on success or 0 on
-// failure; call SDL_GetError() for more information.
+// Returns the instance ID of the specified gamepad on success or an error on
+// failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -956,11 +933,10 @@ func (gamepad *Gamepad) ID() (JoystickID, error) {
 
 // Get the implementation-dependent name for an opened gamepad.
 //
-// gamepad: a gamepad identifier previously returned by
-// SDL_OpenGamepad().
+// gamepad: a gamepad identifier previously returned by [OpenGamepad].
 //
-// Returns the implementation dependent name for the gamepad, or NULL if
-// there is no name or the identifier passed is invalid.
+// Returns the implementation dependent name for the gamepad, or an empty string
+// if there is no name or the identifier passed is invalid.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -971,8 +947,7 @@ func (gamepad *Gamepad) Name() string {
 
 // Get the implementation-dependent path for an opened gamepad.
 //
-// gamepad: a gamepad identifier previously returned by
-// SDL_OpenGamepad().
+// gamepad: a gamepad identifier previously returned by [OpenGamepad].
 //
 // Returns the implementation dependent path for the gamepad, or NULL if
 // there is no path or the identifier passed is invalid.
@@ -988,7 +963,7 @@ func (gamepad *Gamepad) Path() string {
 //
 // gamepad: the gamepad object to query.
 //
-// Returns the gamepad type, or SDL_GAMEPAD_TYPE_UNKNOWN if it's not
+// Returns the gamepad type, or [GamepadTypeUnknown] if it's not
 // available.
 //
 // This function is available since SDL 3.2.0.
@@ -1002,7 +977,7 @@ func (gamepad *Gamepad) Type() GamepadType {
 //
 // gamepad: the gamepad object to query.
 //
-// Returns the gamepad type, or SDL_GAMEPAD_TYPE_UNKNOWN if it's not
+// Returns the gamepad type, or [GamepadTypeUnknown] if it's not
 // available.
 //
 // This function is available since SDL 3.2.0.
@@ -1031,11 +1006,10 @@ func (gamepad *Gamepad) PlayerIndex() int {
 //
 // gamepad: the gamepad object to adjust.
 //
-// player_index: player index to assign to this gamepad, or -1 to clear
+// playerIndex: player index to assign to this gamepad, or -1 to clear
 // the player index and turn off player LEDs.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1109,11 +1083,12 @@ func (gamepad *Gamepad) FirmwareVersion() uint16 {
 
 // Get the serial number of an opened gamepad, if available.
 //
-// Returns the serial number of the gamepad, or NULL if it is not available.
+// Returns the serial number of the gamepad, or an empty string if it is not
+// available.
 //
 // gamepad: the gamepad object to query.
 //
-// Returns the serial number, or NULL if unavailable.
+// Returns the serial number, or an empty string if unavailable.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1142,9 +1117,8 @@ func (gamepad *Gamepad) SteamHandle() uint64 {
 //
 // gamepad: the gamepad object to query.
 //
-// Returns the connection state on success or
-// `SDL_JOYSTICK_CONNECTION_INVALID` on failure; call SDL_GetError()
-// for more information.
+// Returns the connection state on success or [JoystickConnectionInvalid] and
+// an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1167,10 +1141,8 @@ func (gamepad *Gamepad) ConnectionState() (JoystickConnectionState, error) {
 //
 // gamepad: the gamepad object to query.
 //
-// percent: a pointer filled in with the percentage of battery life
-// left, between 0 and 100, or NULL to ignore. This will be
-// filled in with -1 we can't determine a value or there is no
-// battery.
+// percent: the percentage of battery life left, between 0 and 100. This will be
+// -1 we can't determine a value or there is no battery.
 //
 // Returns the current battery state.
 //
@@ -1185,8 +1157,7 @@ func (gamepad *Gamepad) PowerInfo() (state PowerState, percent int) {
 
 // Check if a gamepad has been opened and is currently connected.
 //
-// gamepad: a gamepad identifier previously returned by
-// SDL_OpenGamepad().
+// gamepad: a gamepad identifier previously returned by [OpenGamepad].
 //
 // Returns true if the gamepad has been opened and is currently connected, or
 // false if not.
@@ -1200,19 +1171,18 @@ func (gamepad *Gamepad) Connected() bool {
 
 // Get the underlying joystick from a gamepad.
 //
-// This function will give you a SDL_Joystick object, which allows you to use
-// the SDL_Joystick functions with a SDL_Gamepad object. This would be useful
+// This function will give you a [Joystick] object, which allows you to use
+// the [Joystick] functions with a [Gamepad] object. This would be useful
 // for getting a joystick's position at any given time, even if it hasn't
 // moved (moving it would produce an event, which would have the axis' value).
 //
-// The pointer returned is owned by the SDL_Gamepad. You should not call
-// SDL_CloseJoystick() on it, for example, since doing so will likely cause
+// The pointer returned is owned by the [Gamepad]. You should not call
+// [Joystick.Close] on it, for example, since doing so will likely cause
 // SDL to crash.
 //
 // gamepad: the gamepad object that you want to get a joystick from.
 //
-// Returns an SDL_Joystick object, or NULL on failure; call SDL_GetError()
-// for more information.
+// Returns a [Joystick] object or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1227,7 +1197,7 @@ func (gamepad *Gamepad) Joystick() (*Joystick, error) {
 
 // Set the state of gamepad event processing.
 //
-// If gamepad events are disabled, you must call SDL_UpdateGamepads() yourself
+// If gamepad events are disabled, you must call [UpdateGamepads] yourself
 // and check the state of the gamepad when you want gamepad information.
 //
 // enabled: whether to process gamepad events or not.
@@ -1241,7 +1211,7 @@ func SetGamepadEventsEnabled(enabled bool) {
 
 // Query the state of gamepad event processing.
 //
-// If gamepad events are disabled, you must call SDL_UpdateGamepads() yourself
+// If gamepad events are disabled, you must call [UpdateGamepads] yourself
 // and check the state of the gamepad when you want gamepad information.
 //
 // Returns true if gamepad events are being processed, false otherwise.
@@ -1282,17 +1252,17 @@ func UpdateGamepads() {
 	C.SDL_UpdateGamepads()
 }
 
-// Convert a string into SDL_GamepadType enum.
+// Convert a string into [GamepadType] enum.
 //
-// This function is called internally to translate SDL_Gamepad mapping strings
-// for the underlying joystick device into the consistent SDL_Gamepad mapping.
+// This function is called internally to translate [Gamepad] mapping strings
+// for the underlying joystick device into the consistent [Gamepad] mapping.
 // You do not normally need to call this function unless you are parsing
-// SDL_Gamepad mappings in your own code.
+// [Gamepad] mappings in your own code.
 //
-// str: string representing a SDL_GamepadType type.
+// str: string representing a [GamepadType] type.
 //
-// Returns the SDL_GamepadType enum corresponding to the input string, or
-// `SDL_GAMEPAD_TYPE_UNKNOWN` if no match was found.
+// Returns the [GamepadType] enum corresponding to the input string, or
+// [GamepadTypeUnknown] if no match was found.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1301,36 +1271,36 @@ func GetGamepadTypeFromString(str string) GamepadType {
 	return (GamepadType)(C.SDL_GetGamepadTypeFromString(tmpstring(str)))
 }
 
-// Convert from an SDL_GamepadType enum to a string.
+// Convert from a [GamepadType] enum to a string.
 //
-// type: an enum value for a given SDL_GamepadType.
+// type: an enum value for a given [GamepadType].
 //
-// Returns a string for the given type, or NULL if an invalid type is
-// specified. The string returned is of the format used by
-// SDL_Gamepad mapping strings.
+// Returns a string for the given type, or an empty string if an invalid type is
+// specified. The string returned is of the format used by [Gamepad] mapping
+// strings.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetGamepadStringForType
-func GetGamepadStringForType(typ GamepadType) string {
+func (typ GamepadType) String() string {
 	return C.GoString(C.SDL_GetGamepadStringForType((C.SDL_GamepadType)(typ)))
 }
 
-// Convert a string into SDL_GamepadAxis enum.
+// Convert a string into [GamepadAxis] enum.
 //
-// This function is called internally to translate SDL_Gamepad mapping strings
-// for the underlying joystick device into the consistent SDL_Gamepad mapping.
+// This function is called internally to translate [Gamepad] mapping strings
+// for the underlying joystick device into the consistent [Gamepad] mapping.
 // You do not normally need to call this function unless you are parsing
-// SDL_Gamepad mappings in your own code.
+// [Gamepad] mappings in your own code.
 //
 // Note specially that "righttrigger" and "lefttrigger" map to
-// `SDL_GAMEPAD_AXIS_RIGHT_TRIGGER` and `SDL_GAMEPAD_AXIS_LEFT_TRIGGER`,
+// [GamepadAxisRightTrigger] and [GamepadAxisLeftTrigger],
 // respectively.
 //
-// str: string representing a SDL_Gamepad axis.
+// str: string representing a [Gamepad] axis.
 //
-// Returns the SDL_GamepadAxis enum corresponding to the input string, or
-// `SDL_GAMEPAD_AXIS_INVALID` if no match was found.
+// Returns the [GamepadAxis] enum corresponding to the input string, or
+// [GamepadAxisInvalid] if no match was found.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1339,19 +1309,19 @@ func GetGamepadAxisFromString(str string) GamepadAxis {
 	return (GamepadAxis)(C.SDL_GetGamepadAxisFromString(tmpstring(str)))
 }
 
-// Convert from an SDL_GamepadAxis enum to a string.
+// Convert from a [GamepadAxis] enum to a string.
 //
-// axis: an enum value for a given SDL_GamepadAxis.
+// axis: an enum value for a given [GamepadAxis].
 //
-// Returns a string for the given axis, or NULL if an invalid axis is
-// specified. The string returned is of the format used by
-// SDL_Gamepad mapping strings.
+// Returns a string for the given axis, or an empty string if an invalid axis is
+// specified. The string returned is of the format used by [Gamepad] mapping
+// strings.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetGamepadStringForAxis
-func GetGamepadStringForAxis(axis GamepadAxis) string {
-	return C.GoString(C.SDL_GetGamepadStringForAxis((C.SDL_GamepadAxis)(axis)))
+func (axis GamepadAxis) String() string {
+	return C.GoString(C.SDL_GetGamepadStringForAxis((C.SDL_GamepadAxis)(int8(axis))))
 }
 
 // Query whether a gamepad has a given axis.
@@ -1361,7 +1331,7 @@ func GetGamepadStringForAxis(axis GamepadAxis) string {
 //
 // gamepad: a gamepad.
 //
-// axis: an axis enum value (an SDL_GamepadAxis value).
+// axis: an axis enum value (a [GamepadAxis] value).
 //
 // Returns true if the gamepad has this axis, false otherwise.
 //
@@ -1369,7 +1339,7 @@ func GetGamepadStringForAxis(axis GamepadAxis) string {
 //
 // https://wiki.libsdl.org/SDL3/SDL_GamepadHasAxis
 func (gamepad *Gamepad) HasAxis(axis GamepadAxis) bool {
-	return (bool)(C.SDL_GamepadHasAxis((*C.SDL_Gamepad)(gamepad), (C.SDL_GamepadAxis)(axis)))
+	return (bool)(C.SDL_GamepadHasAxis((*C.SDL_Gamepad)(gamepad), (C.SDL_GamepadAxis)(int8(axis))))
 }
 
 // Get the current state of an axis control on a gamepad.
@@ -1381,33 +1351,33 @@ func (gamepad *Gamepad) HasAxis(axis GamepadAxis) bool {
 //
 // Triggers range from 0 when released to 32767 when fully pressed, and never
 // return a negative value. Note that this differs from the value reported by
-// the lower-level SDL_GetJoystickAxis(), which normally uses the full range.
+// the lower-level [Joystick.Axis], which normally uses the full range.
 //
 // gamepad: a gamepad.
 //
-// axis: an axis index (one of the SDL_GamepadAxis values).
+// axis: an axis index (one of the [GamepadAxis] values).
 //
 // Returns axis state (including 0) on success or 0 (also) on failure; call
-// SDL_GetError() for more information.
+// [GetError] for more information.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetGamepadAxis
 func (gamepad *Gamepad) Axis(axis GamepadAxis) int16 {
-	return (int16)(C.SDL_GetGamepadAxis((*C.SDL_Gamepad)(gamepad), (C.SDL_GamepadAxis)(axis)))
+	return (int16)(C.SDL_GetGamepadAxis((*C.SDL_Gamepad)(gamepad), (C.SDL_GamepadAxis)(int8(axis))))
 }
 
-// Convert a string into an SDL_GamepadButton enum.
+// Convert a string into a [GamepadButton] enum.
 //
-// This function is called internally to translate SDL_Gamepad mapping strings
-// for the underlying joystick device into the consistent SDL_Gamepad mapping.
+// This function is called internally to translate [Gamepad] mapping strings
+// for the underlying joystick device into the consistent [Gamepad] mapping.
 // You do not normally need to call this function unless you are parsing
-// SDL_Gamepad mappings in your own code.
+// [Gamepad] mappings in your own code.
 //
-// str: string representing a SDL_Gamepad axis.
+// str: string representing a [Gamepad] axis.
 //
-// Returns the SDL_GamepadButton enum corresponding to the input string, or
-// `SDL_GAMEPAD_BUTTON_INVALID` if no match was found.
+// Returns the [GamepadButton] enum corresponding to the input string, or
+// [GamepadButtonInvalid] if no match was found.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1416,19 +1386,19 @@ func GetGamepadButtonFromString(str string) GamepadButton {
 	return (GamepadButton)(C.SDL_GetGamepadButtonFromString(tmpstring(str)))
 }
 
-// Convert from an SDL_GamepadButton enum to a string.
+// Convert from a [GamepadButton] enum to a string.
 //
-// button: an enum value for a given SDL_GamepadButton.
+// button: an enum value for a given [GamepadButton].
 //
 // Returns a string for the given button, or NULL if an invalid button is
-// specified. The string returned is of the format used by
-// SDL_Gamepad mapping strings.
+// specified. The string returned is of the format used by [Gamepad] mapping
+// strings.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetGamepadStringForButton
-func GetGamepadStringForButton(button GamepadButton) string {
-	return C.GoString(C.SDL_GetGamepadStringForButton((C.SDL_GamepadButton)(button)))
+func (button GamepadButton) String() string {
+	return C.GoString(C.SDL_GetGamepadStringForButton((C.SDL_GamepadButton)(int8(button))))
 }
 
 // Query whether a gamepad has a given button.
@@ -1438,7 +1408,7 @@ func GetGamepadStringForButton(button GamepadButton) string {
 //
 // gamepad: a gamepad.
 //
-// button: a button enum value (an SDL_GamepadButton value).
+// button: a button enum value (a [GamepadButton] value).
 //
 // Returns true if the gamepad has this button, false otherwise.
 //
@@ -1446,14 +1416,14 @@ func GetGamepadStringForButton(button GamepadButton) string {
 //
 // https://wiki.libsdl.org/SDL3/SDL_GamepadHasButton
 func (gamepad *Gamepad) HasButton(button GamepadButton) bool {
-	return (bool)(C.SDL_GamepadHasButton((*C.SDL_Gamepad)(gamepad), (C.SDL_GamepadButton)(button)))
+	return (bool)(C.SDL_GamepadHasButton((*C.SDL_Gamepad)(gamepad), (C.SDL_GamepadButton)(int8(button))))
 }
 
 // Get the current state of a button on a gamepad.
 //
 // gamepad: a gamepad.
 //
-// button: a button index (one of the SDL_GamepadButton values).
+// button: a button index (one of the [GamepadButton] values).
 //
 // Returns true if the button is pressed, false otherwise.
 //
@@ -1461,37 +1431,37 @@ func (gamepad *Gamepad) HasButton(button GamepadButton) bool {
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetGamepadButton
 func (gamepad *Gamepad) Button(button GamepadButton) bool {
-	return (bool)(C.SDL_GetGamepadButton((*C.SDL_Gamepad)(gamepad), (C.SDL_GamepadButton)(button)))
+	return (bool)(C.SDL_GetGamepadButton((*C.SDL_Gamepad)(gamepad), (C.SDL_GamepadButton)(int8(button))))
 }
 
 // Get the label of a button on a gamepad.
 //
 // type: the type of gamepad to check.
 //
-// button: a button index (one of the SDL_GamepadButton values).
+// button: a button index (one of the [GamepadButton] values).
 //
-// Returns the SDL_GamepadButtonLabel enum corresponding to the button label.
+// Returns the [GamepadButtonLabel] enum corresponding to the button label.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetGamepadButtonLabelForType
 func GetGamepadButtonLabelForType(typ GamepadType, button GamepadButton) GamepadButtonLabel {
-	return (GamepadButtonLabel)(C.SDL_GetGamepadButtonLabelForType((C.SDL_GamepadType)(typ), (C.SDL_GamepadButton)(button)))
+	return (GamepadButtonLabel)(C.SDL_GetGamepadButtonLabelForType((C.SDL_GamepadType)(typ), (C.SDL_GamepadButton)(int8(button))))
 }
 
 // Get the label of a button on a gamepad.
 //
 // gamepad: a gamepad.
 //
-// button: a button index (one of the SDL_GamepadButton values).
+// button: a button index (one of the [GamepadButton] values).
 //
-// Returns the SDL_GamepadButtonLabel enum corresponding to the button label.
+// Returns the [GamepadButtonLabel] enum corresponding to the button label.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetGamepadButtonLabel
 func (gamepad *Gamepad) ButtonLabel(button GamepadButton) GamepadButtonLabel {
-	return (GamepadButtonLabel)(C.SDL_GetGamepadButtonLabel((*C.SDL_Gamepad)(gamepad), (C.SDL_GamepadButton)(button)))
+	return (GamepadButtonLabel)(C.SDL_GetGamepadButtonLabel((*C.SDL_Gamepad)(gamepad), (C.SDL_GamepadButton)(int8(button))))
 }
 
 // Get the number of touchpads on a gamepad.
@@ -1531,19 +1501,18 @@ func (gamepad *Gamepad) NumTouchpadFingers(touchpad int) int {
 //
 // finger: a finger.
 //
-// down: a pointer filled with true if the finger is down, false
-// otherwise, may be NULL.
+// down: true if the finger is down, false
+// otherwise.
 //
-// x: a pointer filled with the x position, normalized 0 to 1, with the
-// origin in the upper left, may be NULL.
+// x: the x position, normalized 0 to 1, with the
+// origin in the upper left.
 //
-// y: a pointer filled with the y position, normalized 0 to 1, with the
-// origin in the upper left, may be NULL.
+// y: the y position, normalized 0 to 1, with the
+// origin in the upper left.
 //
-// pressure: a pointer filled with pressure value, may be NULL.
+// pressure: the pressure value.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1578,8 +1547,7 @@ func (gamepad *Gamepad) HasSensor(typ SensorType) bool {
 //
 // enabled: whether data reporting should be enabled.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1634,8 +1602,7 @@ func (gamepad *Gamepad) SensorDataRate(typ SensorType) float32 {
 //
 // num_values: the number of values to write to data.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1653,20 +1620,19 @@ func (gamepad *Gamepad) SensorData(typ SensorType, data []float32) error {
 // it with 0 intensity stops any rumbling.
 //
 // This function requires you to process SDL events or call
-// SDL_UpdateJoysticks() to update rumble state.
+// [UpdateJoysticks] to update rumble state.
 //
 // gamepad: the gamepad to vibrate.
 //
-// low_frequency_rumble: the intensity of the low frequency (left)
+// lowFrequencyRumble: the intensity of the low frequency (left)
 // rumble motor, from 0 to 0xFFFF.
 //
-// high_frequency_rumble: the intensity of the high frequency (right)
+// highFrequencyRumble: the intensity of the high frequency (right)
 // rumble motor, from 0 to 0xFFFF.
 //
-// duration_ms: the duration of the rumble effect, in milliseconds.
+// durationMS: the duration of the rumble effect, in milliseconds.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1685,23 +1651,22 @@ func (gamepad *Gamepad) Rumble(lowFrequencyRumble uint16, highFrequencyRumble ui
 //
 // Note that this is rumbling of the _triggers_ and not the gamepad as a
 // whole. This is currently only supported on Xbox One gamepads. If you want
-// the (more common) whole-gamepad rumble, use SDL_RumbleGamepad() instead.
+// the (more common) whole-gamepad rumble, use [RumbleGamepad] instead.
 //
 // This function requires you to process SDL events or call
-// SDL_UpdateJoysticks() to update rumble state.
+// [UpdateJoysticks] to update rumble state.
 //
 // gamepad: the gamepad to vibrate.
 //
-// left_rumble: the intensity of the left trigger rumble motor, from 0
+// leftRumble: the intensity of the left trigger rumble motor, from 0
 // to 0xFFFF.
 //
-// right_rumble: the intensity of the right trigger rumble motor, from 0
+// rightRumble: the intensity of the right trigger rumble motor, from 0
 // to 0xFFFF.
 //
-// duration_ms: the duration of the rumble effect, in milliseconds.
+// durationMS: the duration of the rumble effect, in milliseconds.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1729,8 +1694,7 @@ func (gamepad *Gamepad) RumbleTriggers(leftRumble uint16, rightRumble uint16, du
 //
 // blue: the intensity of the blue LED.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1748,10 +1712,7 @@ func (gamepad *Gamepad) SetLED(red byte, green byte, blue byte) error {
 //
 // data: the data to send to the gamepad.
 //
-// size: the size of the data to send to the gamepad.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1763,10 +1724,9 @@ func (gamepad *Gamepad) SendEffect(data []byte) error {
 	return nil
 }
 
-// Close a gamepad previously opened with SDL_OpenGamepad().
+// Close a gamepad previously opened with [OpenGamepad].
 //
-// gamepad: a gamepad identifier previously returned by
-// SDL_OpenGamepad().
+// gamepad: a gamepad identifier previously returned by [OpenGamepad].
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1782,13 +1742,13 @@ func (gamepad *Gamepad) Close() {
 //
 // button: a button on the gamepad.
 //
-// Returns the sfSymbolsName or NULL if the name can't be found.
+// Returns the sfSymbolsName or an empty string if the name can't be found.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetGamepadAppleSFSymbolsNameForButton
 func (gamepad *Gamepad) AppleSFSymbolsNameForButton(button GamepadButton) string {
-	return C.GoString(C.SDL_GetGamepadAppleSFSymbolsNameForButton((*C.SDL_Gamepad)(gamepad), (C.SDL_GamepadButton)(button)))
+	return C.GoString(C.SDL_GetGamepadAppleSFSymbolsNameForButton((*C.SDL_Gamepad)(gamepad), (C.SDL_GamepadButton)(int8(button))))
 }
 
 // Return the sfSymbolsName for a given axis on a gamepad on Apple platforms.
@@ -1797,7 +1757,7 @@ func (gamepad *Gamepad) AppleSFSymbolsNameForButton(button GamepadButton) string
 //
 // axis: an axis on the gamepad.
 //
-// Returns the sfSymbolsName or NULL if the name can't be found.
+// Returns the sfSymbolsName or an empty string if the name can't be found.
 //
 // This function is available since SDL 3.2.0.
 //
