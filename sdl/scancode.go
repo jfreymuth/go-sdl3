@@ -51,99 +51,148 @@ import "C"
 type Scancode uint32
 
 const (
-	ScancodeUnknown            Scancode = 0
-	ScancodeA                  Scancode = 4
-	ScancodeB                  Scancode = 5
-	ScancodeC                  Scancode = 6
-	ScancodeD                  Scancode = 7
-	ScancodeE                  Scancode = 8
-	ScancodeF                  Scancode = 9
-	ScancodeG                  Scancode = 10
-	ScancodeH                  Scancode = 11
-	ScancodeI                  Scancode = 12
-	ScancodeJ                  Scancode = 13
-	ScancodeK                  Scancode = 14
-	ScancodeL                  Scancode = 15
-	ScancodeM                  Scancode = 16
-	ScancodeN                  Scancode = 17
-	ScancodeO                  Scancode = 18
-	ScancodeP                  Scancode = 19
-	ScancodeQ                  Scancode = 20
-	ScancodeR                  Scancode = 21
-	ScancodeS                  Scancode = 22
-	ScancodeT                  Scancode = 23
-	ScancodeU                  Scancode = 24
-	ScancodeV                  Scancode = 25
-	ScancodeW                  Scancode = 26
-	ScancodeX                  Scancode = 27
-	ScancodeY                  Scancode = 28
-	ScancodeZ                  Scancode = 29
-	Scancode1                  Scancode = 30
-	Scancode2                  Scancode = 31
-	Scancode3                  Scancode = 32
-	Scancode4                  Scancode = 33
-	Scancode5                  Scancode = 34
-	Scancode6                  Scancode = 35
-	Scancode7                  Scancode = 36
-	Scancode8                  Scancode = 37
-	Scancode9                  Scancode = 38
-	Scancode0                  Scancode = 39
-	ScancodeReturn             Scancode = 40
-	ScancodeEscape             Scancode = 41
-	ScancodeBackspace          Scancode = 42
-	ScancodeTab                Scancode = 43
-	ScancodeSpace              Scancode = 44
-	ScancodeMinus              Scancode = 45
-	ScancodeEquals             Scancode = 46
-	ScancodeLeftbracket        Scancode = 47
-	ScancodeRightbracket       Scancode = 48
-	ScancodeSemicolon          Scancode = 51
-	ScancodeApostrophe         Scancode = 52
-	ScancodeComma              Scancode = 54
-	ScancodePeriod             Scancode = 55
-	ScancodeSlash              Scancode = 56
-	ScancodeCapslock           Scancode = 57
-	ScancodeF1                 Scancode = 58
-	ScancodeF2                 Scancode = 59
-	ScancodeF3                 Scancode = 60
-	ScancodeF4                 Scancode = 61
-	ScancodeF5                 Scancode = 62
-	ScancodeF6                 Scancode = 63
-	ScancodeF7                 Scancode = 64
-	ScancodeF8                 Scancode = 65
-	ScancodeF9                 Scancode = 66
-	ScancodeF10                Scancode = 67
-	ScancodeF11                Scancode = 68
-	ScancodeF12                Scancode = 69
-	ScancodePrintscreen        Scancode = 70
-	ScancodeScrolllock         Scancode = 71
-	ScancodePause              Scancode = 72
-	ScancodeHome               Scancode = 74
-	ScancodePageup             Scancode = 75
-	ScancodeDelete             Scancode = 76
-	ScancodeEnd                Scancode = 77
-	ScancodePagedown           Scancode = 78
-	ScancodeRight              Scancode = 79
-	ScancodeLeft               Scancode = 80
-	ScancodeDown               Scancode = 81
-	ScancodeUp                 Scancode = 82
-	ScancodeKPDivide           Scancode = 84
-	ScancodeKPMultiply         Scancode = 85
-	ScancodeKPMinus            Scancode = 86
-	ScancodeKPPlus             Scancode = 87
-	ScancodeKPEnter            Scancode = 88
-	ScancodeKP1                Scancode = 89
-	ScancodeKP2                Scancode = 90
-	ScancodeKP3                Scancode = 91
-	ScancodeKP4                Scancode = 92
-	ScancodeKP5                Scancode = 93
-	ScancodeKP6                Scancode = 94
-	ScancodeKP7                Scancode = 95
-	ScancodeKP8                Scancode = 96
-	ScancodeKP9                Scancode = 97
-	ScancodeKP0                Scancode = 98
-	ScancodeKPPeriod           Scancode = 99
-	ScancodeApplication        Scancode = 101 // windows contextual menu, compose
+	ScancodeUnknown      Scancode = 0
+	ScancodeA            Scancode = 4
+	ScancodeB            Scancode = 5
+	ScancodeC            Scancode = 6
+	ScancodeD            Scancode = 7
+	ScancodeE            Scancode = 8
+	ScancodeF            Scancode = 9
+	ScancodeG            Scancode = 10
+	ScancodeH            Scancode = 11
+	ScancodeI            Scancode = 12
+	ScancodeJ            Scancode = 13
+	ScancodeK            Scancode = 14
+	ScancodeL            Scancode = 15
+	ScancodeM            Scancode = 16
+	ScancodeN            Scancode = 17
+	ScancodeO            Scancode = 18
+	ScancodeP            Scancode = 19
+	ScancodeQ            Scancode = 20
+	ScancodeR            Scancode = 21
+	ScancodeS            Scancode = 22
+	ScancodeT            Scancode = 23
+	ScancodeU            Scancode = 24
+	ScancodeV            Scancode = 25
+	ScancodeW            Scancode = 26
+	ScancodeX            Scancode = 27
+	ScancodeY            Scancode = 28
+	ScancodeZ            Scancode = 29
+	Scancode1            Scancode = 30
+	Scancode2            Scancode = 31
+	Scancode3            Scancode = 32
+	Scancode4            Scancode = 33
+	Scancode5            Scancode = 34
+	Scancode6            Scancode = 35
+	Scancode7            Scancode = 36
+	Scancode8            Scancode = 37
+	Scancode9            Scancode = 38
+	Scancode0            Scancode = 39
+	ScancodeReturn       Scancode = 40
+	ScancodeEscape       Scancode = 41
+	ScancodeBackspace    Scancode = 42
+	ScancodeTab          Scancode = 43
+	ScancodeSpace        Scancode = 44
+	ScancodeMinus        Scancode = 45
+	ScancodeEquals       Scancode = 46
+	ScancodeLeftbracket  Scancode = 47
+	ScancodeRightbracket Scancode = 48
+
+	// Located at the lower left of the return key on ISO keyboards and at the
+	// right end of the QWERTY row on ANSI keyboards. Produces REVERSE SOLIDUS
+	// (backslash) and VERTICAL LINE in a US layout, REVERSE SOLIDUS and
+	// VERTICAL LINE in a UK Mac layout, NUMBER SIGN and TILDE in a UK Windows
+	// layout, DOLLAR SIGN and POUND SIGN in a Swiss German layout, NUMBER SIGN
+	// and APOSTROPHE in a German layout, GRAVE ACCENT and POUND SIGN in a
+	// French Mac layout, and ASTERISK and MICRO SIGN in a French Windows layout.
+	ScancodeBackslash Scancode = 49
+
+	// ISO USB keyboards actually use this code instead of 49 for the same key,
+	// but all OSes I've seen treat the two codes identically. So, as an
+	// implementor, unless your keyboard generates both of those codes and your
+	// OS treats them differently, you should generate SDL_SCANCODE_BACKSLASH
+	// instead of this code. As a user, you should not rely on this code because
+	// SDL will never generate it with most (all?) keyboards.
+	ScancodeNonushash Scancode = 50
+
+	ScancodeSemicolon  Scancode = 51
+	ScancodeApostrophe Scancode = 52
+
+	//Located in the top left corner (on both ANSI and ISO keyboards). Produces
+	// GRAVE ACCENT and TILDE in a US Windows layout and in US and UK Mac
+	// layouts on ANSI keyboards, GRAVE ACCENT and NOT SIGN in a UK Windows
+	// layout, SECTION SIGN and PLUS-MINUS SIGN in US and UK Mac layouts on ISO
+	// keyboards, SECTION SIGN and DEGREE SIGN in a Swiss German layout (Mac:
+	// only on ISO keyboards), CIRCUMFLEX ACCENT and DEGREE SIGN in a German
+	// layout (Mac: only on ISO keyboards), SUPERSCRIPT TWO and TILDE in a
+	// French Windows layout, COMMERCIAL AT and NUMBER SIGN in a French Mac
+	// layout on ISO keyboards, and LESS-THAN SIGN and GREATER-THAN SIGN in a
+	// Swiss German, German, or French Mac layout on ANSI keyboards.
+	ScancodeGrave Scancode = 53
+
+	ScancodeComma       Scancode = 54
+	ScancodePeriod      Scancode = 55
+	ScancodeSlash       Scancode = 56
+	ScancodeCapslock    Scancode = 57
+	ScancodeF1          Scancode = 58
+	ScancodeF2          Scancode = 59
+	ScancodeF3          Scancode = 60
+	ScancodeF4          Scancode = 61
+	ScancodeF5          Scancode = 62
+	ScancodeF6          Scancode = 63
+	ScancodeF7          Scancode = 64
+	ScancodeF8          Scancode = 65
+	ScancodeF9          Scancode = 66
+	ScancodeF10         Scancode = 67
+	ScancodeF11         Scancode = 68
+	ScancodeF12         Scancode = 69
+	ScancodePrintscreen Scancode = 70
+	ScancodeScrolllock  Scancode = 71
+	ScancodePause       Scancode = 72
+
+	// insert on PC, help on some Mac keyboards (but does send code 73, not 117)
+	ScancodeInsert Scancode = 73
+
+	ScancodeHome         Scancode = 74
+	ScancodePageup       Scancode = 75
+	ScancodeDelete       Scancode = 76
+	ScancodeEnd          Scancode = 77
+	ScancodePagedown     Scancode = 78
+	ScancodeRight        Scancode = 79
+	ScancodeLeft         Scancode = 80
+	ScancodeDown         Scancode = 81
+	ScancodeUp           Scancode = 82
+	ScancodeNumlockClear Scancode = 83 // num lock on PC, clear on Mac keyboards
+	ScancodeKPDivide     Scancode = 84
+	ScancodeKPMultiply   Scancode = 85
+	ScancodeKPMinus      Scancode = 86
+	ScancodeKPPlus       Scancode = 87
+	ScancodeKPEnter      Scancode = 88
+	ScancodeKP1          Scancode = 89
+	ScancodeKP2          Scancode = 90
+	ScancodeKP3          Scancode = 91
+	ScancodeKP4          Scancode = 92
+	ScancodeKP5          Scancode = 93
+	ScancodeKP6          Scancode = 94
+	ScancodeKP7          Scancode = 95
+	ScancodeKP8          Scancode = 96
+	ScancodeKP9          Scancode = 97
+	ScancodeKP0          Scancode = 98
+	ScancodeKPPeriod     Scancode = 99
+
+	// This is the additional key that ISO keyboards have over ANSI ones,
+	// located between left shift and Y. Produces GRAVE ACCENT and TILDE in a US
+	// or UK Mac layout, REVERSE SOLIDUS (backslash) and VERTICAL LINE in a US
+	// or UK Windows layout, and LESS-THAN SIGN and GREATER-THAN SIGN in a Swiss
+	// German, German, or French layout.
+	ScancodeNonUSBackslash Scancode = 100
+
+	ScancodeApplication Scancode = 101 // windows contextual menu, compose
+
+	//The USB document says this is a status flag, not a physical key - but some
+	// Mac keyboards do have a power key.
+	ScancodePower Scancode = 102
+
 	ScancodeKPEquals           Scancode = 103
 	ScancodeF13                Scancode = 104
 	ScancodeF14                Scancode = 105
@@ -173,6 +222,7 @@ const (
 	ScancodeVolumedown         Scancode = 129
 	ScancodeKPComma            Scancode = 133
 	ScancodeKPEqualsas400      Scancode = 134
+	ScancodeInternational1     Scancode = 135 //used on Asian keyboards, see footnotes in USB doc
 	ScancodeInternational2     Scancode = 136
 	ScancodeInternational3     Scancode = 137 // Yen
 	ScancodeInternational4     Scancode = 138
@@ -256,6 +306,11 @@ const (
 	ScancodeRightShift         Scancode = 229
 	ScancodeRightAlt           Scancode = 230 // alt gr, option
 	ScancodeRightGui           Scancode = 231 // windows, command (apple), meta
+
+	// I'm not sure if this is really not covered by any of the above, but since
+	// there's a special SDL_KMOD_MODE for it I'm adding it here
+	ScancodeMode Scancode = 257
+
 	ScancodeSleep              Scancode = 258 // Sleep
 	ScancodeWake               Scancode = 259 // Wake
 	ScancodeChannelIncrement   Scancode = 260 // Channel Increment
@@ -284,8 +339,19 @@ const (
 	ScancodeACStop             Scancode = 284 // AC Stop
 	ScancodeACRefresh          Scancode = 285 // AC Refresh
 	ScancodeACBookmarks        Scancode = 286 // AC Bookmarks
-	ScancodeCall               Scancode = 289 // Used for accepting phone calls.
-	ScancodeEndcall            Scancode = 290 // Used for rejecting phone calls.
-	ScancodeReserved           Scancode = 400 // 400-500 reserved for dynamic keycodes
-	ScancodeCount                       = 512 // not a key, just marks the number of scancodes for array bounds
+
+	// Usually situated below the display on phones and used as a multi-function
+	// feature key for selecting a software defined function shown on the bottom
+	// left of the display.
+	ScancodeSoftleft Scancode = 287
+
+	// Usually situated below the display on phones and used as a multi-function
+	// feature key for selecting a software defined function shown on the bottom
+	// right of the display
+	ScancodeSoftright Scancode = 288
+
+	ScancodeCall     Scancode = 289 // Used for accepting phone calls.
+	ScancodeEndcall  Scancode = 290 // Used for rejecting phone calls.
+	ScancodeReserved Scancode = 400 // 400-500 reserved for dynamic keycodes
+	ScancodeCount             = 512 // not a key, just marks the number of scancodes for array bounds
 )
