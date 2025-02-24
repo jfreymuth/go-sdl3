@@ -207,11 +207,9 @@ const (
 
 // A macro for defining custom FourCC pixel formats.
 //
-// For example, defining SDL_PIXELFORMAT_YV12 looks like this:
+// For example, defining [PixelformatYV12] looks like this:
 //
-// ```c
-// SDL_DEFINE_PIXELFOURCC('Y', 'V', '1', '2')
-// ```
+//	DefinePixelFourCC('Y', 'V', '1', '2')
 //
 // A: the first character of the FourCC code.
 //
@@ -221,7 +219,7 @@ const (
 //
 // D: the fourth character of the FourCC code.
 //
-// Returns a format value in the style of SDL_PixelFormat.
+// Returns a format value in the style of [PixelFormat].
 //
 // It is safe to call this macro from any thread.
 //
@@ -234,25 +232,21 @@ func DefinePixelFourCC(a, b, c, d byte) PixelFormat {
 
 // A macro for defining custom non-FourCC pixel formats.
 //
-// For example, defining SDL_PIXELFORMAT_RGBA8888 looks like this:
+// For example, defining [PixelformatRGBA8888] looks like this:
 //
-// ```c
-// SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED32, SDL_PACKEDORDER_RGBA, SDL_PACKEDLAYOUT_8888, 32, 4)
-// ```
+//	DefinePixelFormat(PixeltypePacked32, PackedorderRGBA, Packedlayout8888, 32, 4)
 //
-// type: the type of the new format, probably a SDL_PixelType value.
+// pixelType: the type of the new format, probably a [PixelType] value.
 //
-// order: the order of the new format, probably a SDL_BitmapOrder,
-// SDL_PackedOrder, or SDL_ArrayOrder value.
+// order: the order of the new format, should match the format.
 //
-// layout: the layout of the new format, probably an SDL_PackedLayout
-// value or zero.
+// layout: the layout of the new format, or zero if not applicable.
 //
 // bits: the number of bits per pixel of the new format.
 //
 // bytes: the number of bytes per pixel of the new format.
 //
-// Returns a format value in the style of SDL_PixelFormat.
+// Returns a format value in the style of [PixelFormat].
 //
 // It is safe to call this macro from any thread.
 //
@@ -263,13 +257,13 @@ func DefinePixelFormat(pixelType PixelType, order PixelOrder, layout PackedLayou
 	return 1<<28 | PixelFormat(pixelType)<<24 | PixelFormat(order)<<20 | PixelFormat(layout)<<16 | PixelFormat(bits)<<8 | PixelFormat(bytes)
 }
 
-// A macro to retrieve the type of an SDL_PixelFormat.
+// A macro to retrieve the type of a [PixelFormat].
 //
-// This is usually a value from the SDL_PixelType enumeration.
+// This is usually a value from the [PixelType] enumeration.
 //
-// format: an SDL_PixelFormat to check.
+// f: a [PixelFormat] to check.
 //
-// Returns the type of `format`.
+// Returns the type of f.
 //
 // It is safe to call this macro from any thread.
 //
@@ -280,14 +274,14 @@ func (f PixelFormat) Type() PixelType {
 	return PixelType(f>>24) & 0xF
 }
 
-// A macro to retrieve the order of an SDL_PixelFormat.
+// A macro to retrieve the order of a [PixelFormat].
 //
-// This is usually a value from the SDL_BitmapOrder, SDL_PackedOrder, or
-// SDL_ArrayOrder enumerations, depending on the format type.
+// This is usually one of the Bitmaporder*, Packedorder*, or
+// Arrayorder* constants, depending on the format type.
 //
-// format: an SDL_PixelFormat to check.
+// f: a [PixelFormat] to check.
 //
-// Returns the order of `format`.
+// Returns the order of f.
 //
 // It is safe to call this macro from any thread.
 //
@@ -298,14 +292,14 @@ func (f PixelFormat) Order() PixelOrder {
 	return PixelOrder(f>>20) & 0xF
 }
 
-// A macro to retrieve the layout of an SDL_PixelFormat.
+// A macro to retrieve the layout of a [PixelFormat].
 //
-// This is usually a value from the SDL_PackedLayout enumeration, or zero if a
+// This is usually a value from the [PackedLayout] enumeration, or zero if a
 // layout doesn't make sense for the format type.
 //
-// format: an SDL_PixelFormat to check.
+// f: a [PixelFormat] to check.
 //
-// Returns the layout of `format`.
+// Returns the layout of f.
 //
 // It is safe to call this macro from any thread.
 //
@@ -316,17 +310,14 @@ func (f PixelFormat) Layout() PackedLayout {
 	return PackedLayout(f>>16) & 0xF
 }
 
-// A macro to determine an SDL_PixelFormat's bits per pixel.
-//
-// Note that this macro double-evaluates its parameter, so do not use
-// expressions with side-effects here.
+// A macro to determine a [PixelFormat]'s bits per pixel.
 //
 // FourCC formats will report zero here, as it rarely makes sense to measure
 // them per-pixel.
 //
-// format: an SDL_PixelFormat to check.
+// f: a [PixelFormat] to check.
 //
-// Returns the bits-per-pixel of `format`.
+// Returns the bits-per-pixel of f.
 //
 // It is safe to call this macro from any thread.
 //
@@ -340,17 +331,14 @@ func (f PixelFormat) BitsPerPixel() byte {
 	return byte(f >> 8)
 }
 
-// A macro to determine an SDL_PixelFormat's bytes per pixel.
-//
-// Note that this macro double-evaluates its parameter, so do not use
-// expressions with side-effects here.
+// A macro to determine a [PixelFormat]'s bytes per pixel.
 //
 // FourCC formats do their best here, but many of them don't have a meaningful
 // measurement of bytes per pixel.
 //
-// format: an SDL_PixelFormat to check.
+// f: a [PixelFormat] to check.
 //
-// Returns the bytes-per-pixel of `format`.
+// Returns the bytes-per-pixel of f.
 //
 // It is safe to call this macro from any thread.
 //
@@ -367,12 +355,9 @@ func (f PixelFormat) BytesPerPixel() byte {
 	return byte(f)
 }
 
-// A macro to determine if an SDL_PixelFormat is an indexed format.
+// A macro to determine if a [PixelFormat] is an indexed format.
 //
-// Note that this macro double-evaluates its parameter, so do not use
-// expressions with side-effects here.
-//
-// format: an SDL_PixelFormat to check.
+// f: a [PixelFormat] to check.
 //
 // Returns true if the format is indexed, false otherwise.
 //
@@ -385,12 +370,9 @@ func (f PixelFormat) Indexed() bool {
 	return !f.FourCC() && (f.Type() == PixeltypeIndex1 || f.Type() == PixeltypeIndex2 || f.Type() == PixeltypeIndex4 || f.Type() == PixeltypeIndex8)
 }
 
-// A macro to determine if an SDL_PixelFormat is a packed format.
+// A macro to determine if a [PixelFormat] is a packed format.
 //
-// Note that this macro double-evaluates its parameter, so do not use
-// expressions with side-effects here.
-//
-// format: an SDL_PixelFormat to check.
+// f: a [PixelFormat] to check.
 //
 // Returns true if the format is packed, false otherwise.
 //
@@ -403,12 +385,9 @@ func (f PixelFormat) Packed() bool {
 	return !f.FourCC() && (f.Type() == PixeltypePacked8 || f.Type() == PixeltypePacked16 || f.Type() == PixeltypePacked32)
 }
 
-// A macro to determine if an SDL_PixelFormat is an array format.
+// A macro to determine if a [PixelFormat] is an array format.
 //
-// Note that this macro double-evaluates its parameter, so do not use
-// expressions with side-effects here.
-//
-// format: an SDL_PixelFormat to check.
+// f: a [PixelFormat] to check.
 //
 // Returns true if the format is an array, false otherwise.
 //
@@ -421,12 +400,9 @@ func (f PixelFormat) Array() bool {
 	return !f.FourCC() && (f.Type() == PixeltypeArrayU8 || f.Type() == PixeltypeArrayU16 || f.Type() == PixeltypeArrayU32 || f.Type() == PixeltypeArrayF16 || f.Type() == PixeltypeArrayF32)
 }
 
-// A macro to determine if an SDL_PixelFormat is a 10-bit format.
+// A macro to determine if a [PixelFormat] is a 10-bit format.
 //
-// Note that this macro double-evaluates its parameter, so do not use
-// expressions with side-effects here.
-//
-// format: an SDL_PixelFormat to check.
+// f: a [PixelFormat] to check.
 //
 // Returns true if the format is 10-bit, false otherwise.
 //
@@ -439,12 +415,9 @@ func (f PixelFormat) Is10bit() bool {
 	return !f.FourCC() && f.Type() == PixeltypePacked32 && f.Layout() == Packedlayout2101010
 }
 
-// A macro to determine if an SDL_PixelFormat is a floating point format.
+// A macro to determine if a [PixelFormat] is a floating point format.
 //
-// Note that this macro double-evaluates its parameter, so do not use
-// expressions with side-effects here.
-//
-// format: an SDL_PixelFormat to check.
+// f: a [PixelFormat] to check.
 //
 // Returns true if the format is 10-bit, false otherwise.
 //
@@ -457,12 +430,9 @@ func (f PixelFormat) Float() bool {
 	return !f.FourCC() && (f.Type() == PixeltypeArrayF16 || f.Type() == PixeltypeArrayF32)
 }
 
-// A macro to determine if an SDL_PixelFormat has an alpha channel.
+// A macro to determine if a [PixelFormat] has an alpha channel.
 //
-// Note that this macro double-evaluates its parameter, so do not use
-// expressions with side-effects here.
-//
-// format: an SDL_PixelFormat to check.
+// f: a [PixelFormat] to check.
 //
 // Returns true if the format has alpha, false otherwise.
 //
@@ -481,16 +451,13 @@ func (f PixelFormat) Alpha() bool {
 	return false
 }
 
-// A macro to determine if an SDL_PixelFormat is a "FourCC" format.
+// A macro to determine if a [PixelFormat] is a "FourCC" format.
 //
 // This covers custom and other unusual formats.
 //
-// Note that this macro double-evaluates its parameter, so do not use
-// expressions with side-effects here.
+// f: a [PixelFormat] to check.
 //
-// format: an SDL_PixelFormat to check.
-//
-// Returns true if the format has alpha, false otherwise.
+// Returns true if the format is a "FourCC" format, false otherwise.
 //
 // It is safe to call this macro from any thread.
 //
@@ -505,30 +472,30 @@ func (f PixelFormat) FourCC() bool {
 //
 // SDL's pixel formats have the following naming convention:
 //
-// - Names with a list of components and a single bit count, such as RGB24 and
-// ABGR32, define a platform-independent encoding into bytes in the order
-// specified. For example, in RGB24 data, each pixel is encoded in 3 bytes
-// (red, green, blue) in that order, and in ABGR32 data, each pixel is
-// encoded in 4 bytes alpha, blue, green, red) in that order. Use these
-// names if the property of a format that is important to you is the order
-// of the bytes in memory or on disk.
-// - Names with a bit count per component, such as ARGB8888 and XRGB1555, are
-// "packed" into an appropriately-sized integer in the platform's native
-// endianness. For example, ARGB8888 is a sequence of 32-bit integers; in
-// each integer, the most significant bits are alpha, and the least
-// significant bits are blue. On a little-endian CPU such as x86, the least
-// significant bits of each integer are arranged first in memory, but on a
-// big-endian CPU such as s390x, the most significant bits are arranged
-// first. Use these names if the property of a format that is important to
-// you is the meaning of each bit position within a native-endianness
-// integer.
-// - In indexed formats such as INDEX4LSB, each pixel is represented by
-// encoding an index into the palette into the indicated number of bits,
-// with multiple pixels packed into each byte if appropriate. In LSB
-// formats, the first (leftmost) pixel is stored in the least-significant
-// bits of the byte; in MSB formats, it's stored in the most-significant
-// bits. INDEX8 does not need LSB/MSB variants, because each pixel exactly
-// fills one byte.
+//   - Names with a list of components and a single bit count, such as RGB24 and
+//     ABGR32, define a platform-independent encoding into bytes in the order
+//     specified. For example, in RGB24 data, each pixel is encoded in 3 bytes
+//     (red, green, blue) in that order, and in ABGR32 data, each pixel is
+//     encoded in 4 bytes alpha, blue, green, red) in that order. Use these
+//     names if the property of a format that is important to you is the order
+//     of the bytes in memory or on disk.
+//   - Names with a bit count per component, such as ARGB8888 and XRGB1555, are
+//     "packed" into an appropriately-sized integer in the platform's native
+//     endianness. For example, ARGB8888 is a sequence of 32-bit integers; in
+//     each integer, the most significant bits are alpha, and the least
+//     significant bits are blue. On a little-endian CPU such as x86, the least
+//     significant bits of each integer are arranged first in memory, but on a
+//     big-endian CPU such as s390x, the most significant bits are arranged
+//     first. Use these names if the property of a format that is important to
+//     you is the meaning of each bit position within a native-endianness
+//     integer.
+//   - In indexed formats such as Index4LSB, each pixel is represented by
+//     encoding an index into the palette into the indicated number of bits,
+//     with multiple pixels packed into each byte if appropriate. In LSB
+//     formats, the first (leftmost) pixel is stored in the least-significant
+//     bits of the byte; in MSB formats, it's stored in the most-significant
+//     bits. Index8 does not need LSB/MSB variants, because each pixel exactly
+//     fills one byte.
 //
 // The 32-bit byte-array encodings such as RGBA32 are aliases for the
 // appropriate 8888 encoding for the current platform. For example, RGBA32 is
@@ -604,7 +571,7 @@ const (
 	PixelformatNV12         PixelFormat = 0x3231564e // Planar mode: Y + U/V interleaved  (2 planes)
 	PixelformatNV21         PixelFormat = 0x3132564e // Planar mode: Y + V/U interleaved  (2 planes)
 	PixelformatP010         PixelFormat = 0x30313050 // Planar mode: Y + U/V interleaved  (2 planes)
-	PixelformatExternalOes  PixelFormat = 0x2053454f // Android video texture format
+	PixelformatExternalOES  PixelFormat = 0x2053454f // Android video texture format
 )
 
 // Colorspace color type.
@@ -649,7 +616,7 @@ const (
 	ColorPrimariesBT470M      ColorPrimaries = 4  // ITU-R BT.470-6 System M
 	ColorPrimariesBT470BG     ColorPrimaries = 5  // ITU-R BT.470-6 System B, G / ITU-R BT.601-7 625
 	ColorPrimariesBT601       ColorPrimaries = 6  // ITU-R BT.601-7 525, SMPTE 170M
-	ColorPrimariesSMPTE240    ColorPrimaries = 7  // SMPTE 240M, functionally the same as SDL_COLOR_PRIMARIES_BT601
+	ColorPrimariesSMPTE240    ColorPrimaries = 7  // SMPTE 240M, functionally the same as [ColorPrimariesBT601]
 	ColorPrimariesGenericFilm ColorPrimaries = 8  // Generic film (color filters using Illuminant C)
 	ColorPrimariesBT2020      ColorPrimaries = 9  // ITU-R BT.2020-2 / ITU-R BT.2100-0
 	ColorPrimariesXYZ         ColorPrimaries = 10 // SMPTE ST 428-1
@@ -704,7 +671,7 @@ const (
 	MatrixCoefficientsBT709            MatrixCoefficients = 1 // ITU-R BT.709-6
 	MatrixCoefficientsUnspecified      MatrixCoefficients = 2
 	MatrixCoefficientsFCC              MatrixCoefficients = 4 // US FCC Title 47
-	MatrixCoefficientsBT470BG          MatrixCoefficients = 5 // ITU-R BT.470-6 System B, G / ITU-R BT.601-7 625, functionally the same as SDL_MATRIX_COEFFICIENTS_BT601
+	MatrixCoefficientsBT470BG          MatrixCoefficients = 5 // ITU-R BT.470-6 System B, G / ITU-R BT.601-7 625, functionally the same as [MatrixCoefficientsBT601]
 	MatrixCoefficientsBT601            MatrixCoefficients = 6 // ITU-R BT.601-7 525
 	MatrixCoefficientsSMPTE240         MatrixCoefficients = 7 // SMPTE 240M
 	MatrixCoefficientsYCgCo            MatrixCoefficients = 8
@@ -731,36 +698,34 @@ const (
 	ChromaLocationTopleft ChromaLocation = 3 // In HEVC for BT.2020 and BT.2100 content (in particular on Blu-rays), Cb and Cr are sampled at the same location as the group's top-left Y pixel ("co-sited", "co-located").
 )
 
-// A macro for defining custom SDL_Colorspace formats.
+// A macro for defining custom [Colorspace] formats.
 //
-// For example, defining SDL_COLORSPACE_SRGB looks like this:
+// For example, defining ColorspaceSRGB looks like this:
 //
-// ```c
-// SDL_DEFINE_COLORSPACE(SDL_COLOR_TYPE_RGB,
-// SDL_COLOR_RANGE_FULL,
-// SDL_COLOR_PRIMARIES_BT709,
-// SDL_TRANSFER_CHARACTERISTICS_SRGB,
-// SDL_MATRIX_COEFFICIENTS_IDENTITY,
-// SDL_CHROMA_LOCATION_NONE)
-// ```
+//	SDL_DEFINE_COLORSPACE(ColorTypeRGB,
+//		ColorRangeFull,
+//		ColorPrimariesBT709,
+//		TransferCharacteristicsSRGB,
+//		MatrixCoefficientsIdentity,
+//		ChromaLocationNone)
 //
-// type: the type of the new format, probably an SDL_ColorType value.
+// colorType: the type of the new format, probably a [ColorType] value.
 //
-// range: the range of the new format, probably a SDL_ColorRange value.
+// range: the range of the new format, probably a [ColorRange] value.
 //
-// primaries: the primaries of the new format, probably an
-// SDL_ColorPrimaries value.
+// primaries: the primaries of the new format, probably a
+// [ColorPrimaries] value.
 //
-// transfer: the transfer characteristics of the new format, probably an
-// SDL_TransferCharacteristics value.
+// transfer: the transfer characteristics of the new format, probably a
+// [TransferCharacteristics] value.
 //
-// matrix: the matrix coefficients of the new format, probably an
-// SDL_MatrixCoefficients value.
+// matrix: the matrix coefficients of the new format, probably a
+// [MatrixCoefficients] value.
 //
-// chroma: the chroma sample location of the new format, probably an
-// SDL_ChromaLocation value.
+// chroma: the chroma sample location of the new format, probably a
+// [ChromaLocation] value.
 //
-// Returns a format value in the style of SDL_Colorspace.
+// Returns a format value in the style of [Colorspace].
 //
 // It is safe to call this macro from any thread.
 //
@@ -772,11 +737,11 @@ func DefineColorspace(colorType ColorType, colorRange ColorRange, primaries Colo
 		((Colorspace)(primaries) << 10) | ((Colorspace)(transfer) << 5) | ((Colorspace)(matrix) << 0)
 }
 
-// A macro to retrieve the type of an SDL_Colorspace.
+// A macro to retrieve the type of a [Colorspace].
 //
-// cspace: an SDL_Colorspace to check.
+// c: a [Colorspace] to check.
 //
-// Returns the SDL_ColorType for `cspace`.
+// Returns the [ColorType] for c.
 //
 // It is safe to call this macro from any thread.
 //
@@ -787,11 +752,11 @@ func (c Colorspace) Type() ColorType {
 	return (ColorType)(((c) >> 28) & 0x0F)
 }
 
-// A macro to retrieve the range of an SDL_Colorspace.
+// A macro to retrieve the range of a [Colorspace].
 //
-// cspace: an SDL_Colorspace to check.
+// c: a [Colorspace] to check.
 //
-// Returns the SDL_ColorRange of `cspace`.
+// Returns the [ColorRange] of c.
 //
 // It is safe to call this macro from any thread.
 //
@@ -802,11 +767,11 @@ func (c Colorspace) Range() ColorRange {
 	return (ColorRange)(((c) >> 24) & 0x0F)
 }
 
-// A macro to retrieve the chroma sample location of an SDL_Colorspace.
+// A macro to retrieve the chroma sample location of a [Colorspace].
 //
-// cspace: an SDL_Colorspace to check.
+// c: a [Colorspace] to check.
 //
-// Returns the SDL_ChromaLocation of `cspace`.
+// Returns the [ChromaLocation] of c.
 //
 // It is safe to call this macro from any thread.
 //
@@ -817,11 +782,11 @@ func (c Colorspace) Chroma() ChromaLocation {
 	return (ChromaLocation)(((c) >> 20) & 0x0F)
 }
 
-// A macro to retrieve the primaries of an SDL_Colorspace.
+// A macro to retrieve the primaries of a [Colorspace].
 //
-// cspace: an SDL_Colorspace to check.
+// c: a [Colorspace] to check.
 //
-// Returns the SDL_ColorPrimaries of `cspace`.
+// Returns the [ColorPrimaries] of c.
 //
 // It is safe to call this macro from any thread.
 //
@@ -832,11 +797,11 @@ func (c Colorspace) Primaries() ColorPrimaries {
 	return (ColorPrimaries)(((c) >> 10) & 0x1F)
 }
 
-// A macro to retrieve the transfer characteristics of an SDL_Colorspace.
+// A macro to retrieve the transfer characteristics of a [Colorspace].
 //
-// cspace: an SDL_Colorspace to check.
+// c: a [Colorspace] to check.
 //
-// Returns the SDL_TransferCharacteristics of `cspace`.
+// Returns the [TransferCharacteristics] of c.
 //
 // It is safe to call this macro from any thread.
 //
@@ -847,11 +812,11 @@ func (c Colorspace) Transfer() TransferCharacteristics {
 	return (TransferCharacteristics)(((c) >> 5) & 0x1F)
 }
 
-// A macro to retrieve the matrix coefficients of an SDL_Colorspace.
+// A macro to retrieve the matrix coefficients of a [Colorspace].
 //
-// cspace: an SDL_Colorspace to check.
+// c: a [Colorspace] to check.
 //
-// Returns the SDL_MatrixCoefficients of `cspace`.
+// Returns the [MatrixCoefficients] of c.
 //
 // It is safe to call this macro from any thread.
 //
@@ -862,13 +827,10 @@ func (c Colorspace) Matrix() MatrixCoefficients {
 	return (MatrixCoefficients)((c) & 0x1F)
 }
 
-// A macro to determine if an SDL_Colorspace uses BT601 (or BT470BG) matrix
+// A macro to determine if a [Colorspace] uses BT601 (or BT470BG) matrix
 // coefficients.
 //
-// Note that this macro double-evaluates its parameter, so do not use
-// expressions with side-effects here.
-//
-// cspace: an SDL_Colorspace to check.
+// c: a [Colorspace] to check.
 //
 // Returns true if BT601 or BT470BG, false otherwise.
 //
@@ -881,9 +843,9 @@ func (c Colorspace) MatrixBT601() bool {
 	return c.Matrix() == MatrixCoefficientsBT601 || c.Matrix() == MatrixCoefficientsBT470BG
 }
 
-// A macro to determine if an SDL_Colorspace uses BT709 matrix coefficients.
+// A macro to determine if a [Colorspace] uses BT709 matrix coefficients.
 //
-// cspace: an SDL_Colorspace to check.
+// c: a [Colorspace] to check.
 //
 // Returns true if BT709, false otherwise.
 //
@@ -896,10 +858,10 @@ func (c Colorspace) MatrixBT709() bool {
 	return c.Matrix() == MatrixCoefficientsBT709
 }
 
-// A macro to determine if an SDL_Colorspace uses BT2020_NCL matrix
+// A macro to determine if a [Colorspace] uses BT2020_NCL matrix
 // coefficients.
 //
-// cspace: an SDL_Colorspace to check.
+// c: a [Colorspace] to check.
 //
 // Returns true if BT2020_NCL, false otherwise.
 //
@@ -912,9 +874,9 @@ func (c Colorspace) MatrixBT2020NCL() bool {
 	return c.Matrix() == MatrixCoefficientsBT2020NCL
 }
 
-// A macro to determine if an SDL_Colorspace has a limited range.
+// A macro to determine if a [Colorspace] has a limited range.
 //
-// cspace: an SDL_Colorspace to check.
+// c: a [Colorspace] to check.
 //
 // Returns true if limited range, false otherwise.
 //
@@ -927,9 +889,9 @@ func (c Colorspace) LimitedRange() bool {
 	return c.Range() != ColorRangeFull
 }
 
-// A macro to determine if an SDL_Colorspace has a full range.
+// A macro to determine if a [Colorspace] has a full range.
 //
-// cspace: an SDL_Colorspace to check.
+// c: a [Colorspace] to check.
 //
 // Returns true if full range, false otherwise.
 //
@@ -972,9 +934,9 @@ const (
 // A structure that represents a color as RGBA components.
 //
 // The bits of this structure can be directly reinterpreted as an
-// integer-packed color which uses the SDL_PIXELFORMAT_RGBA32 format
-// (SDL_PIXELFORMAT_ABGR8888 on little-endian systems and
-// SDL_PIXELFORMAT_RGBA8888 on big-endian systems).
+// integer-packed color which uses the [PixelformatRGBA32] format
+// ([PixelformatABGR8888] on little-endian systems and
+// [PixelformatRGBA8888] on big-endian systems).
 //
 // This struct is available since SDL 3.2.0.
 //
@@ -987,7 +949,7 @@ type Color struct {
 }
 
 // The bits of this structure can be directly reinterpreted as a float-packed
-// color which uses the SDL_PIXELFORMAT_RGBA128_FLOAT format
+// color which uses the [PixelformatRGBA128Float] format
 //
 // This struct is available since SDL 3.2.0.
 //
@@ -1042,7 +1004,7 @@ type PixelFormatDetails struct {
 
 // Get the human readable name of a pixel format.
 //
-// format: the pixel format to query.
+// f: the pixel format to query.
 //
 // Returns the human readable name of the specified pixel format or
 // "SDL_PIXELFORMAT_UNKNOWN" if the format isn't recognized.
@@ -1052,80 +1014,79 @@ type PixelFormatDetails struct {
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetPixelFormatName
-func GetPixelFormatName(format PixelFormat) string {
+func (format PixelFormat) Name() string {
 	return C.GoString(C.SDL_GetPixelFormatName((C.SDL_PixelFormat)(format)))
 }
 
 // Convert one of the enumerated pixel formats to a bpp value and RGBA masks.
 //
-// format: one of the SDL_PixelFormat values.
+// f: one of the [PixelFormat] values.
 //
 // bpp: a bits per pixel value; usually 15, 16, or 32.
 //
-// Rmask: a pointer filled in with the red mask for the format.
+// rMask: the red mask for the format.
 //
-// Gmask: a pointer filled in with the green mask for the format.
+// gMask: the green mask for the format.
 //
-// Bmask: a pointer filled in with the blue mask for the format.
+// bMask: the blue mask for the format.
 //
-// Amask: a pointer filled in with the alpha mask for the format.
+// aMask: the alpha mask for the format.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns an error on failure.
 //
 // It is safe to call this function from any thread.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetMasksForPixelFormat
-func GetMasksForPixelFormat(format PixelFormat, bpp *int32, Rmask *uint32, Gmask *uint32, Bmask *uint32, Amask *uint32) bool {
-	return (bool)(C.SDL_GetMasksForPixelFormat((C.SDL_PixelFormat)(format), (*C.int)(bpp), (*C.Uint32)(Rmask), (*C.Uint32)(Gmask), (*C.Uint32)(Bmask), (*C.Uint32)(Amask)))
+func (format PixelFormat) Masks() (bpp int, rMask, gMask, bMask, aMask uint32, err error) {
+	var cbpp C.int
+	var Rmask, Gmask, Bmask, Amask C.Uint32
+	if !C.SDL_GetMasksForPixelFormat((C.SDL_PixelFormat)(format), &cbpp, &Rmask, &Gmask, &Bmask, &Amask) {
+		return 0, 0, 0, 0, 0, getError()
+	}
+	return int(cbpp), uint32(Rmask), uint32(Gmask), uint32(Bmask), uint32(Amask), nil
 }
 
 // Convert a bpp value and RGBA masks to an enumerated pixel format.
 //
-// This will return `SDL_PIXELFORMAT_UNKNOWN` if the conversion wasn't
+// This will return [PixelformatUnknown] if the conversion wasn't
 // possible.
 //
 // bpp: a bits per pixel value; usually 15, 16, or 32.
 //
-// Rmask: the red mask for the format.
+// rMask: the red mask for the format.
 //
-// Gmask: the green mask for the format.
+// gMask: the green mask for the format.
 //
-// Bmask: the blue mask for the format.
+// bMask: the blue mask for the format.
 //
-// Amask: the alpha mask for the format.
+// aMask: the alpha mask for the format.
 //
-// Returns the SDL_PixelFormat value corresponding to the format masks, or
-// SDL_PIXELFORMAT_UNKNOWN if there isn't a match.
+// Returns the [PixelFormat] value corresponding to the format masks, or
+// [PixelformatUnknown] if there isn't a match.
 //
 // It is safe to call this function from any thread.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetPixelFormatForMasks
-func GetPixelFormatForMasks(bpp int32, Rmask uint32, Gmask uint32, Bmask uint32, Amask uint32) PixelFormat {
-	return (PixelFormat)(C.SDL_GetPixelFormatForMasks((C.int)(bpp), (C.Uint32)(Rmask), (C.Uint32)(Gmask), (C.Uint32)(Bmask), (C.Uint32)(Amask)))
+func GetPixelFormatForMasks(bpp int, rMask, gMask, bMask, aMask uint32) PixelFormat {
+	return (PixelFormat)(C.SDL_GetPixelFormatForMasks((C.int)(bpp), (C.Uint32)(rMask), (C.Uint32)(gMask), (C.Uint32)(bMask), (C.Uint32)(aMask)))
 }
 
-// Create an SDL_PixelFormatDetails structure corresponding to a pixel format.
+// Create a [PixelFormatDetails] structure corresponding to a pixel format.
 //
-// Returned structure may come from a shared global cache (i.e. not newly
-// allocated), and hence should not be modified, especially the palette. Weird
-// errors such as `Blit combination not supported` may occur.
+// f: one of the [PixelFormat] values.
 //
-// format: one of the SDL_PixelFormat values.
-//
-// Returns a pointer to a SDL_PixelFormatDetails structure or NULL on
-// failure; call SDL_GetError() for more information.
+// Returns a pointer to a [PixelFormatDetails] structure or an error.
 //
 // It is safe to call this function from any thread.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetPixelFormatDetails
-func GetPixelFormatDetails(format PixelFormat) (*PixelFormatDetails, error) {
+func (format PixelFormat) Details() (*PixelFormatDetails, error) {
 	details := C.SDL_GetPixelFormatDetails((C.SDL_PixelFormat)(format))
 	if details == nil {
 		return nil, getError()
@@ -1155,9 +1116,7 @@ func GetPixelFormatDetails(format PixelFormat) (*PixelFormatDetails, error) {
 //
 // ncolors: represents the number of color entries in the color palette.
 //
-// Returns a new SDL_Palette structure on success or NULL on failure (e.g. if
-// there wasn't enough memory); call SDL_GetError() for more
-// information.
+// Returns a new [Palette] structure or an error.
 //
 // It is safe to call this function from any thread.
 //
@@ -1174,16 +1133,13 @@ func CreatePalette(ncolors int) (*Palette, error) {
 
 // Set a range of colors in a palette.
 //
-// palette: the SDL_Palette structure to modify.
+// palette: the [Palette] structure to modify.
 //
-// colors: an array of SDL_Color structures to copy into the palette.
+// colors: an array of [Color] structures to copy into the palette.
 //
-// firstcolor: the index of the first palette entry to modify.
+// first: the index of the first palette entry to modify.
 //
-// ncolors: the number of entries to modify.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread, as long as
 // the palette is not modified or destroyed in another thread.
@@ -1198,9 +1154,9 @@ func (palette *Palette) SetColors(colors []Color, first int) error {
 	return nil
 }
 
-// Free a palette created with SDL_CreatePalette().
+// Free a palette created with [CreatePalette].
 //
-// palette: the SDL_Palette structure to be freed.
+// palette: the [Palette] structure to be freed.
 //
 // It is safe to call this function from any thread, as long as
 // the palette is not modified or destroyed in another thread.
@@ -1226,13 +1182,12 @@ func (palette *Palette) Destroy() {
 //
 // If the pixel format bpp (color depth) is less than 32-bpp then the unused
 // upper bits of the return value can safely be ignored (e.g., with a 16-bpp
-// format the return value can be assigned to a Uint16, and similarly a Uint8
+// format the return value can be assigned to a uint16, and similarly a uint8
 // for an 8-bpp format).
 //
-// format: a pointer to SDL_PixelFormatDetails describing the pixel
-// format.
+// format: a pointer to [PixelFormatDetails] describing the pixel format.
 //
-// palette: an optional palette for indexed formats, may be NULL.
+// palette: an optional palette for indexed formats, may be nil.
 //
 // r: the red component of the pixel in the range 0-255.
 //
@@ -1248,28 +1203,27 @@ func (palette *Palette) Destroy() {
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_MapRGB
-func MapRGB(format *PixelFormatDetails, palette *Palette, r byte, g byte, b byte) uint32 {
+func (format *PixelFormatDetails) MapRGB(palette *Palette, r byte, g byte, b byte) uint32 {
 	var p *C.SDL_Palette
 	if palette != nil {
 		p = palette.internal
 	}
 	return uint32(C.SDL_MapRGB(&C.SDL_PixelFormatDetails{
-		C.SDL_PixelFormat(format.Format),
-		C.Uint8(format.BitsPerPixel),
-		C.Uint8(format.BytesPerPixel),
-		[2]C.Uint8{},
-		C.Uint32(format.RMask),
-		C.Uint32(format.GMask),
-		C.Uint32(format.BMask),
-		C.Uint32(format.AMask),
-		C.Uint8(format.RBits),
-		C.Uint8(format.GBits),
-		C.Uint8(format.BBits),
-		C.Uint8(format.ABits),
-		C.Uint8(format.RShift),
-		C.Uint8(format.GShift),
-		C.Uint8(format.BShift),
-		C.Uint8(format.AShift),
+		format:          C.SDL_PixelFormat(format.Format),
+		bits_per_pixel:  C.Uint8(format.BitsPerPixel),
+		bytes_per_pixel: C.Uint8(format.BytesPerPixel),
+		Rmask:           C.Uint32(format.RMask),
+		Gmask:           C.Uint32(format.GMask),
+		Bmask:           C.Uint32(format.BMask),
+		Amask:           C.Uint32(format.AMask),
+		Rbits:           C.Uint8(format.RBits),
+		Gbits:           C.Uint8(format.GBits),
+		Bbits:           C.Uint8(format.BBits),
+		Abits:           C.Uint8(format.ABits),
+		Rshift:          C.Uint8(format.RShift),
+		Gshift:          C.Uint8(format.GShift),
+		Bshift:          C.Uint8(format.BShift),
+		Ashift:          C.Uint8(format.AShift),
 	}, p, C.Uint8(r), C.Uint8(g), C.Uint8(b)))
 }
 
@@ -1287,13 +1241,13 @@ func MapRGB(format *PixelFormatDetails, palette *Palette, r byte, g byte, b byte
 //
 // If the pixel format bpp (color depth) is less than 32-bpp then the unused
 // upper bits of the return value can safely be ignored (e.g., with a 16-bpp
-// format the return value can be assigned to a Uint16, and similarly a Uint8
+// format the return value can be assigned to a uint16, and similarly a uint8
 // for an 8-bpp format).
 //
-// format: a pointer to SDL_PixelFormatDetails describing the pixel
+// f: a pointer to [PixelFormatDetails] describing the pixel
 // format.
 //
-// palette: an optional palette for indexed formats, may be NULL.
+// palette: an optional palette for indexed formats, may be nil.
 //
 // r: the red component of the pixel in the range 0-255.
 //
@@ -1311,28 +1265,27 @@ func MapRGB(format *PixelFormatDetails, palette *Palette, r byte, g byte, b byte
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_MapRGBA
-func MapRGBA(format *PixelFormatDetails, palette *Palette, r byte, g byte, b byte, a byte) uint32 {
+func (format *PixelFormatDetails) MapRGBA(palette *Palette, r byte, g byte, b byte, a byte) uint32 {
 	var p *C.SDL_Palette
 	if palette != nil {
 		p = palette.internal
 	}
 	return uint32(C.SDL_MapRGBA(&C.SDL_PixelFormatDetails{
-		C.SDL_PixelFormat(format.Format),
-		C.Uint8(format.BitsPerPixel),
-		C.Uint8(format.BytesPerPixel),
-		[2]C.Uint8{},
-		C.Uint32(format.RMask),
-		C.Uint32(format.GMask),
-		C.Uint32(format.BMask),
-		C.Uint32(format.AMask),
-		C.Uint8(format.RBits),
-		C.Uint8(format.GBits),
-		C.Uint8(format.BBits),
-		C.Uint8(format.ABits),
-		C.Uint8(format.RShift),
-		C.Uint8(format.GShift),
-		C.Uint8(format.BShift),
-		C.Uint8(format.AShift),
+		format:          C.SDL_PixelFormat(format.Format),
+		bits_per_pixel:  C.Uint8(format.BitsPerPixel),
+		bytes_per_pixel: C.Uint8(format.BytesPerPixel),
+		Rmask:           C.Uint32(format.RMask),
+		Gmask:           C.Uint32(format.GMask),
+		Bmask:           C.Uint32(format.BMask),
+		Amask:           C.Uint32(format.AMask),
+		Rbits:           C.Uint8(format.RBits),
+		Gbits:           C.Uint8(format.GBits),
+		Bbits:           C.Uint8(format.BBits),
+		Abits:           C.Uint8(format.ABits),
+		Rshift:          C.Uint8(format.RShift),
+		Gshift:          C.Uint8(format.GShift),
+		Bshift:          C.Uint8(format.BShift),
+		Ashift:          C.Uint8(format.AShift),
 	}, p, C.Uint8(r), C.Uint8(g), C.Uint8(b), C.Uint8(a)))
 }
 
@@ -1345,16 +1298,15 @@ func MapRGBA(format *PixelFormatDetails, palette *Palette, r byte, g byte, b byt
 //
 // pixel: a pixel value.
 //
-// format: a pointer to SDL_PixelFormatDetails describing the pixel
-// format.
+// format: a pointer to [PixelFormatDetails] describing the pixel format.
 //
 // palette: an optional palette for indexed formats, may be NULL.
 //
-// r: a pointer filled in with the red component, may be NULL.
+// r: the red component.
 //
-// g: a pointer filled in with the green component, may be NULL.
+// g: the green component.
 //
-// b: a pointer filled in with the blue component, may be NULL.
+// b: the blue component.
 //
 // It is safe to call this function from any thread, as long as
 // the palette is not modified.
@@ -1362,28 +1314,27 @@ func MapRGBA(format *PixelFormatDetails, palette *Palette, r byte, g byte, b byt
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetRGB
-func GetRGB(pixel uint32, format *PixelFormatDetails, palette *Palette) (r, b, g byte) {
+func (format *PixelFormatDetails) GetRGB(pixel uint32, palette *Palette) (r, b, g byte) {
 	var p *C.SDL_Palette
 	if palette != nil {
 		p = palette.internal
 	}
 	C.SDL_GetRGB((C.Uint32)(pixel), &C.SDL_PixelFormatDetails{
-		C.SDL_PixelFormat(format.Format),
-		C.Uint8(format.BitsPerPixel),
-		C.Uint8(format.BytesPerPixel),
-		[2]C.Uint8{},
-		C.Uint32(format.RMask),
-		C.Uint32(format.GMask),
-		C.Uint32(format.BMask),
-		C.Uint32(format.AMask),
-		C.Uint8(format.RBits),
-		C.Uint8(format.GBits),
-		C.Uint8(format.BBits),
-		C.Uint8(format.ABits),
-		C.Uint8(format.RShift),
-		C.Uint8(format.GShift),
-		C.Uint8(format.BShift),
-		C.Uint8(format.AShift),
+		format:          C.SDL_PixelFormat(format.Format),
+		bits_per_pixel:  C.Uint8(format.BitsPerPixel),
+		bytes_per_pixel: C.Uint8(format.BytesPerPixel),
+		Rmask:           C.Uint32(format.RMask),
+		Gmask:           C.Uint32(format.GMask),
+		Bmask:           C.Uint32(format.BMask),
+		Amask:           C.Uint32(format.AMask),
+		Rbits:           C.Uint8(format.RBits),
+		Gbits:           C.Uint8(format.GBits),
+		Bbits:           C.Uint8(format.BBits),
+		Abits:           C.Uint8(format.ABits),
+		Rshift:          C.Uint8(format.RShift),
+		Gshift:          C.Uint8(format.GShift),
+		Bshift:          C.Uint8(format.BShift),
+		Ashift:          C.Uint8(format.AShift),
 	}, p, (*C.Uint8)(&r), (*C.Uint8)(&g), (*C.Uint8)(&b))
 	return
 }
@@ -1400,18 +1351,17 @@ func GetRGB(pixel uint32, format *PixelFormatDetails, palette *Palette) (r, b, g
 //
 // pixel: a pixel value.
 //
-// format: a pointer to SDL_PixelFormatDetails describing the pixel
-// format.
+// format: a pointer to [PixelFormatDetails] describing the pixel format.
 //
 // palette: an optional palette for indexed formats, may be NULL.
 //
-// r: a pointer filled in with the red component, may be NULL.
+// r: the red component.
 //
-// g: a pointer filled in with the green component, may be NULL.
+// g: the green component.
 //
-// b: a pointer filled in with the blue component, may be NULL.
+// b: the blue component.
 //
-// a: a pointer filled in with the alpha component, may be NULL.
+// a: the alpha component.
 //
 // It is safe to call this function from any thread, as long as
 // the palette is not modified.
@@ -1419,7 +1369,7 @@ func GetRGB(pixel uint32, format *PixelFormatDetails, palette *Palette) (r, b, g
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetRGBA
-func GetRGBA(pixel uint32, format *PixelFormatDetails, palette *Palette) (r, g, b, a byte) {
+func (format *PixelFormatDetails) GetRGBA(pixel uint32, palette *Palette) (r, g, b, a byte) {
 	var p *C.SDL_Palette
 	if palette != nil {
 		p = palette.internal

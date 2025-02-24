@@ -38,9 +38,9 @@ import (
 //
 // These message boxes are native system dialogs where possible.
 //
-// There is both a customizable function (SDL_ShowMessageBox()) that offers
+// There is both a customizable function ([ShowMessageBox]) that offers
 // lots of options for what to display and reports on what choice the user
-// made, and also a much-simplified version (SDL_ShowSimpleMessageBox()),
+// made, and also a much-simplified version ([ShowSimpleMessageBox]),
 // merely takes a text message and title, and waits until the user presses a
 // single "OK" UI button. Often, this is all that is necessary.
 
@@ -61,7 +61,7 @@ const (
 	MessageboxButtonsRightToLeft MessageBoxFlags = 0x00000100 //buttons placed right to left
 )
 
-// SDL_MessageBoxButtonData flags.
+// [MessageBoxButtonData] flags.
 //
 // This datatype is available since SDL 3.2.0.
 //
@@ -80,7 +80,7 @@ const (
 // https://wiki.libsdl.org/SDL3/SDL_MessageBoxButtonData
 type MessageBoxButtonData struct {
 	Flags    MessageBoxButtonFlags
-	ButtonID int    // User defined button id (value returned via SDL_ShowMessageBox)
+	ButtonID int    // User defined button id (value returned via [ShowMessageBox])
 	Text     string // The UTF-8 button text
 }
 
@@ -94,7 +94,7 @@ type MessageBoxColor struct {
 }
 
 // An enumeration of indices inside the colors array of
-// SDL_MessageBoxColorScheme.
+// [MessageBoxColorScheme].
 //
 // https://wiki.libsdl.org/SDL3/SDL_MessageBoxColorType
 type MessageBoxColorType uint32
@@ -105,7 +105,7 @@ const (
 	MessageboxColorButtonBorder
 	MessageboxColorButtonBackground
 	MessageboxColorButtonSelected
-	MessageboxColorCount = iota // Size of the colors array of SDL_MessageBoxColorScheme.
+	MessageboxColorCount = iota // Size of the colors array of [MessageBoxColorScheme].
 )
 
 // A set of colors to use for message box dialogs
@@ -114,7 +114,7 @@ const (
 //
 // https://wiki.libsdl.org/SDL3/SDL_MessageBoxColorScheme
 type MessageBoxColorScheme struct {
-	Colors [MessageboxColorCount]MessageBoxColor //
+	Colors [MessageboxColorCount]MessageBoxColor
 }
 
 // MessageBox structure containing title, text, window, etc.
@@ -123,44 +123,40 @@ type MessageBoxColorScheme struct {
 //
 // https://wiki.libsdl.org/SDL3/SDL_MessageBoxData
 type MessageBoxData struct {
-	Flags       MessageBoxFlags        //
-	Window      *Window                // Parent window, can be NULL
+	Flags       MessageBoxFlags
+	Window      *Window                // Parent window, can be nil
 	Title       string                 // UTF-8 title
 	Message     string                 // UTF-8 message text
 	Buttons     []MessageBoxButtonData //
-	ColorScheme MessageBoxColorScheme  // SDL_MessageBoxColorScheme, can be NULL to use system settings
+	ColorScheme MessageBoxColorScheme  // [MessageBoxColorScheme], can be NULL to use system settings
 }
 
 // Create a modal message box.
 //
 // If your needs aren't complex, it might be easier to use
-// SDL_ShowSimpleMessageBox.
+// [ShowSimpleMessageBox].
 //
 // This function should be called on the thread that created the parent
 // window, or on the main thread if the messagebox has no parent. It will
 // block execution of that thread until the user clicks a button or closes the
 // messagebox.
 //
-// This function may be called at any time, even before SDL_Init(). This makes
+// This function may be called at any time, even before [Init]. This makes
 // it useful for reporting errors like a failure to create a renderer or
 // OpenGL context.
 //
 // On X11, SDL rolls its own dialog box with X11 primitives instead of a
 // formal toolkit like GTK+ or Qt.
 //
-// Note that if SDL_Init() would fail because there isn't any available video
+// Note that if [Init] would fail because there isn't any available video
 // target, this function is likely to fail for the same reasons. If this is a
 // concern, check the return value from this function and fall back to writing
 // to stderr if you can.
 //
-// messageboxdata: the SDL_MessageBoxData structure with title, text and
+// messageboxdata: the [MessageBoxData] structure with title, text and
 // other options.
 //
-// buttonid: the pointer to which user id of hit button should be
-// copied.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns the selected ButtonID on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -205,41 +201,40 @@ func ShowMessageBox(messageboxdata *MessageBoxData) (int, error) {
 // Display a simple modal message box.
 //
 // If your needs aren't complex, this function is preferred over
-// SDL_ShowMessageBox.
+// [ShowMessageBox].
 //
-// `flags` may be any of the following:
+// flags may be any of the following:
 //
-// - `SDL_MESSAGEBOX_ERROR`: error dialog
-// - `SDL_MESSAGEBOX_WARNING`: warning dialog
-// - `SDL_MESSAGEBOX_INFORMATION`: informational dialog
+//   - [MessageboxError]: error dialog
+//   - [MessageboxWarning]: warning dialog
+//   - [MessageboxInformation]: informational dialog
 //
 // This function should be called on the thread that created the parent
 // window, or on the main thread if the messagebox has no parent. It will
 // block execution of that thread until the user clicks a button or closes the
 // messagebox.
 //
-// This function may be called at any time, even before SDL_Init(). This makes
+// This function may be called at any time, even before [Init]. This makes
 // it useful for reporting errors like a failure to create a renderer or
 // OpenGL context.
 //
 // On X11, SDL rolls its own dialog box with X11 primitives instead of a
 // formal toolkit like GTK+ or Qt.
 //
-// Note that if SDL_Init() would fail because there isn't any available video
+// Note that if [Init] would fail because there isn't any available video
 // target, this function is likely to fail for the same reasons. If this is a
 // concern, check the return value from this function and fall back to writing
 // to stderr if you can.
 //
-// flags: an SDL_MessageBoxFlags value.
+// flags: a [MessageBoxFlags] value.
 //
 // title: UTF-8 title text.
 //
 // message: UTF-8 message text.
 //
-// window: the parent window, or NULL for no parent.
+// window: the parent window, or nil for no parent.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //

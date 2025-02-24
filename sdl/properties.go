@@ -68,24 +68,24 @@ import (
 // A property is a variable that can be created and retrieved by name at
 // runtime.
 //
-// All properties are part of a property group (SDL_PropertiesID). A property
-// group can be created with the SDL_CreateProperties function and destroyed
-// with the SDL_DestroyProperties function.
+// All properties are part of a property group ([PropertiesID]). A property
+// group can be created with the [CreateProperties] function and destroyed
+// with the [PropertiesID.Destroy] function.
 //
 // Properties can be added to and retrieved from a property group through the
 // following functions:
 //
-// - SDL_SetPointerProperty and SDL_GetPointerProperty operate on `void*`
-// pointer types.
-// - SDL_SetStringProperty and SDL_GetStringProperty operate on string types.
-// - SDL_SetNumberProperty and SDL_GetNumberProperty operate on signed 64-bit
-// integer types.
-// - SDL_SetFloatProperty and SDL_GetFloatProperty operate on floating point
-// types.
-// - SDL_SetBooleanProperty and SDL_GetBooleanProperty operate on boolean
-// types.
+//   - [PropertiesID.SetPointer] and [PropertiesID.Pointer] operate on `void*`
+//     pointer types.
+//   - [PropertiesID.SetString] and [PropertiesID.String] operate on string types.
+//   - [PropertiesID.SetNumber] and [PropertiesID.Number] operate on signed 64-bit
+//     integer types.
+//   - [PropertiesID.SetFloat] and [PropertiesID.Float] operate on floating point
+//     types.
+//   - [PropertiesID.SetBoolean] and [PropertiesID.Boolean] operate on boolean
+//     types.
 //
-// Properties can be removed from a group by using SDL_ClearProperty.
+// Properties can be removed from a group by using [PropertiesID.Clear].
 
 // SDL properties ID
 //
@@ -112,8 +112,7 @@ const (
 
 // Get the global SDL properties.
 //
-// Returns a valid property ID on success or 0 on failure; call
-// SDL_GetError() for more information.
+// Returns a valid property ID or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -128,10 +127,9 @@ func GetGlobalProperties() (PropertiesID, error) {
 
 // Create a group of properties.
 //
-// All properties are automatically destroyed when SDL_Quit() is called.
+// All properties are automatically destroyed when [Quit] is called.
 //
-// Returns an ID for a new group of properties, or 0 on failure; call
-// SDL_GetError() for more information.
+// Returns an ID for a new group of properties or an error.
 //
 // It is safe to call this function from any thread.
 //
@@ -150,15 +148,14 @@ func CreateProperties() (PropertiesID, error) {
 //
 // Copy all the properties from one group of properties to another, with the
 // exception of properties requiring cleanup (set using
-// SDL_SetPointerPropertyWithCleanup()), which will not be copied. Any
-// property that already exists on `dst` will be overwritten.
+// [PropertiesID.SetPointerWithCleanup]), which will not be copied. Any
+// property that already exists on dst will be overwritten.
 //
 // src: the properties to copy.
 //
 // dst: the destination properties.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread.
 //
@@ -185,8 +182,7 @@ func CopyProperties(src PropertiesID, dst PropertiesID) error {
 //
 // props: the properties to lock.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread.
 //
@@ -215,16 +211,14 @@ func (props PropertiesID) Unlock() {
 
 // A callback used to free resources when a property is deleted.
 //
-// This should release any resources associated with `value` that are no
+// This should release any resources associated with value that are no
 // longer needed.
 //
 // This callback is set per-property. Different properties in the same group
 // can have different cleanup callbacks.
 //
-// This callback will be called _during_ SDL_SetPointerPropertyWithCleanup if
+// This callback will be called _during_ [PropertiesID.SetPointerWithCleanup] if
 // the function fails for any reason.
-//
-// userdata: an app-defined pointer passed to the callback.
 //
 // value: the pointer assigned to the property to clean up.
 //
@@ -250,23 +244,19 @@ func cb_CleanupPropertyCallback(userdata uintptr, value uintptr) {
 // reason.
 //
 // For simply setting basic data types, like numbers, bools, or strings, use
-// SDL_SetNumberProperty, SDL_SetBooleanProperty, or SDL_SetStringProperty
-// instead, as those functions will handle cleanup on your behalf. This
-// function is only for more complex, custom data.
+// [PropertiesID.SetNumber], [PropertiesID.SetBoolean], or
+// [PropertiesID.SetString] instead, as those functions will handle cleanup on
+// your behalf. This function is only for more complex, custom data.
 //
 // props: the properties to modify.
 //
 // name: the name of the property to modify.
 //
-// value: the new value of the property, or NULL to delete the property.
+// value: the new value of the property, or 0 to delete the property.
 //
-// cleanup: the function to call when this property is deleted, or NULL
-// if no cleanup is necessary.
+// cleanup: the function to call when this property is deleted.
 //
-// userdata: a pointer that is passed to the cleanup function.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread.
 //
@@ -291,10 +281,9 @@ func propHandleCleanup(value uintptr) {
 //
 // name: the name of the property to modify.
 //
-// value: the new value of the property, or NULL to delete the property.
+// value: the new value of the property, or nil to delete the property.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread.
 //
@@ -317,10 +306,9 @@ func (props PropertiesID) SetPointer(name string, value unsafe.Pointer) error {
 //
 // name: the name of the property to modify.
 //
-// value: the new value of the property, or NULL to delete the property.
+// value: the new value of the property, or nil to delete the property.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread.
 //
@@ -342,8 +330,7 @@ func (props PropertiesID) SetString(name, value string) error {
 //
 // value: the new value of the property.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread.
 //
@@ -365,8 +352,7 @@ func (props PropertiesID) SetNumber(name string, value int64) error {
 //
 // value: the new value of the property.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread.
 //
@@ -388,8 +374,7 @@ func (props PropertiesID) SetFloat(name string, value float32) error {
 //
 // value: the new value of the property.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread.
 //
@@ -426,7 +411,7 @@ func (props PropertiesID) Has(name string) bool {
 //
 // name: the name of the property to query.
 //
-// Returns the type of the property, or SDL_PROPERTY_TYPE_INVALID if it is
+// Returns the type of the property, or [PropertyTypeInvalid] if it is
 // not set.
 //
 // It is safe to call this function from any thread.
@@ -449,17 +434,17 @@ func (props PropertiesID) Type(name string) PropertyType {
 //
 // name: the name of the property to query.
 //
-// default_value: the default value of the property.
+// defaultValue: the default value of the property.
 //
-// Returns the value of the property, or `default_value` if it is not set or
+// Returns the value of the property, or defaultValue if it is not set or
 // not a pointer property.
 //
 // It is safe to call this function from any thread, although
 // the data returned is not protected and could potentially be
-// freed if you call SDL_SetPointerProperty() or
-// SDL_ClearProperty() on these properties from another thread.
-// If you need to avoid this, use SDL_LockProperties() and
-// SDL_UnlockProperties().
+// freed if you call [PropertiesID.SetPointer] or
+// [PropertiesID.Clear] on these properties from another thread.
+// If you need to avoid this, use [PropertiesID.Lock] and
+// [PropertiesID.Unlock].
 //
 // This function is available since SDL 3.2.0.
 //
@@ -474,17 +459,17 @@ func (props PropertiesID) Pointer(name string, defaultValue unsafe.Pointer) unsa
 //
 // name: the name of the property to query.
 //
-// default_value: the default value of the property.
+// defaultValue: the default value of the property.
 //
-// Returns the value of the property, or `default_value` if it is not set or
+// Returns the value of the property, or defaultValue if it is not set or
 // not a string property.
 //
 // It is safe to call this function from any thread, although
 // the data returned is not protected and could potentially be
-// freed if you call SDL_SetStringProperty() or
-// SDL_ClearProperty() on these properties from another thread.
-// If you need to avoid this, use SDL_LockProperties() and
-// SDL_UnlockProperties().
+// freed if you call [PropertiesID.SetString] or
+// [PropertiesID.Clear] on these properties from another thread.
+// If you need to avoid this, use [PropertiesID.Lock] and
+// [PropertiesID.Unlock].
 //
 // This function is available since SDL 3.2.0.
 //
@@ -495,16 +480,16 @@ func (props PropertiesID) String(name string, defaultValue string) string {
 
 // Get a number property from a group of properties.
 //
-// You can use SDL_GetPropertyType() to query whether the property exists and
+// You can use [PropertiesID.Type] to query whether the property exists and
 // is a number property.
 //
 // props: the properties to query.
 //
 // name: the name of the property to query.
 //
-// default_value: the default value of the property.
+// defaultValue: the default value of the property.
 //
-// Returns the value of the property, or `default_value` if it is not set or
+// Returns the value of the property, or defaultValue if it is not set or
 // not a number property.
 //
 // It is safe to call this function from any thread.
@@ -518,16 +503,16 @@ func (props PropertiesID) Number(name string, defaultValue int64) int64 {
 
 // Get a floating point property from a group of properties.
 //
-// You can use SDL_GetPropertyType() to query whether the property exists and
+// You can use [PropertiesID.Type] to query whether the property exists and
 // is a floating point property.
 //
 // props: the properties to query.
 //
 // name: the name of the property to query.
 //
-// default_value: the default value of the property.
+// defaultValue: the default value of the property.
 //
-// Returns the value of the property, or `default_value` if it is not set or
+// Returns the value of the property, or defaultValue if it is not set or
 // not a float property.
 //
 // It is safe to call this function from any thread.
@@ -541,16 +526,16 @@ func (props PropertiesID) Float(name string, defaultValue float32) float32 {
 
 // Get a boolean property from a group of properties.
 //
-// You can use SDL_GetPropertyType() to query whether the property exists and
+// You can use [PropertiesID.Type] to query whether the property exists and
 // is a boolean property.
 //
 // props: the properties to query.
 //
 // name: the name of the property to query.
 //
-// default_value: the default value of the property.
+// defaultValue: the default value of the property.
 //
-// Returns the value of the property, or `default_value` if it is not set or
+// Returns the value of the property, or defaultValue if it is not set or
 // not a boolean property.
 //
 // It is safe to call this function from any thread.
@@ -568,8 +553,7 @@ func (props PropertiesID) Boolean(name string, defaultValue bool) bool {
 //
 // name: the name of the property to clear.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread.
 //
@@ -585,16 +569,14 @@ func (props PropertiesID) Clear(name string) error {
 
 // A callback used to enumerate all the properties in a group of properties.
 //
-// This callback is called from SDL_EnumerateProperties(), and is called once
+// This callback is called from [PropertiesID.Enumerate], and is called once
 // per property in the set.
 //
-// userdata: an app-defined pointer passed to the callback.
-//
-// props: the SDL_PropertiesID that is being enumerated.
+// props: the [PropertiesID] that is being enumerated.
 //
 // name: the next property name in the enumeration.
 //
-// SDL_EnumerateProperties holds a lock on `props` during this
+// [PropertiesID.Enumerate] holds a lock on props during this
 // callback.
 //
 // This datatype is available since SDL 3.2.0.
@@ -617,10 +599,7 @@ func cb_EnumeratePropertiesCallback(userdata uintptr, props C.SDL_PropertiesID, 
 //
 // callback: the function to call for each property.
 //
-// userdata: a pointer that is passed to `callback`.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread.
 //

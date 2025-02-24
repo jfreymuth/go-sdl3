@@ -31,7 +31,7 @@ import "C"
 //
 // SDL power management routines.
 //
-// There is a single function in this category: SDL_GetPowerInfo().
+// There is a single function in this category: [GetPowerInfo].
 //
 // This function is useful for games on the go. This allows an app to know if
 // it's running on a draining battery, which can be useful if the app wants to
@@ -42,7 +42,7 @@ import "C"
 
 // The basic state for the system's power supply.
 //
-// These are results returned by SDL_GetPowerInfo().
+// These are results returned by [GetPowerInfo].
 //
 // This enum is available since SDL 3.2.0.
 //
@@ -74,17 +74,13 @@ const (
 // It's possible a platform can only report battery percentage or time left
 // but not both.
 //
-// seconds: a pointer filled in with the seconds of battery life left,
-// or NULL to ignore. This will be filled in with -1 if we
+// seconds: the seconds of battery life left. This will be -1 if we
 // can't determine a value or there is no battery.
 //
-// percent: a pointer filled in with the percentage of battery life
-// left, between 0 and 100, or NULL to ignore. This will be
-// filled in with -1 we can't determine a value or there is no
-// battery.
+// percent: the percentage of battery life left, between 0 and 100. This will be
+// -1 we can't determine a value or there is no battery.
 //
-// Returns the current battery state or `SDL_POWERSTATE_ERROR` on failure;
-// call SDL_GetError() for more information.
+// Returns the current battery state or an error.
 //
 // This function is available since SDL 3.2.0.
 //

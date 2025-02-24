@@ -75,32 +75,32 @@ import "unsafe"
 // to manage mouse input and the displayed cursor.
 //
 // Most interactions with the mouse will come through the event subsystem.
-// Moving a mouse generates an SDL_EVENT_MOUSE_MOTION event, pushing a button
-// generates SDL_EVENT_MOUSE_BUTTON_DOWN, etc, but one can also query the
-// current state of the mouse at any time with SDL_GetMouseState().
+// Moving a mouse generates an [EventMouseMotion] event, pushing a button
+// generates [EventMouseButtonDown], etc, but one can also query the
+// current state of the mouse at any time with [GetMouseState].
 //
 // For certain games, it's useful to disassociate the mouse cursor from mouse
 // input. An FPS, for example, would not want the player's motion to stop as
 // the mouse hits the edge of the window. For these scenarios, use
-// SDL_SetWindowRelativeMouseMode(), which hides the cursor, grabs mouse input
+// [Window.SetRelativeMouseMode], which hides the cursor, grabs mouse input
 // to the window, and reads mouse input no matter how far it moves.
 //
 // Games that want the system to track the mouse but want to draw their own
-// cursor can use SDL_HideCursor() and SDL_ShowCursor(). It might be more
+// cursor can use [HideCursor] and [ShowCursor]. It might be more
 // efficient to let the system manage the cursor, if possible, using
-// SDL_SetCursor() with a custom image made through SDL_CreateColorCursor(),
-// or perhaps just a specific system cursor from SDL_CreateSystemCursor().
+// [SetCursor] with a custom image made through [CreateColorCursor],
+// or perhaps just a specific system cursor from [CreateSystemCursor].
 //
 // SDL can, on many platforms, differentiate between multiple connected mice,
 // allowing for interesting input scenarios and multiplayer games. They can be
-// enumerated with SDL_GetMice(), and SDL will send SDL_EVENT_MOUSE_ADDED and
-// SDL_EVENT_MOUSE_REMOVED events as they are connected and unplugged.
+// enumerated with [GetMice], and SDL will send [EventMouseAdded] and
+// [EventMouseRemoved] events as they are connected and unplugged.
 //
 // Since many apps only care about basic mouse input, SDL offers a virtual
 // mouse device for touch and pen input, which often can make a desktop
 // application work on a touchscreen phone without any code changes. Apps that
 // care about touch/pen separately from mouse input should filter out events
-// with a `which` field of SDL_TOUCH_MOUSEID/SDL_PEN_MOUSEID.
+// with a which field of [TouchMouseID]/[PenMouseID].
 
 // This is a unique ID for a mouse for the time it is connected to the system,
 // and is never reused for the lifetime of the application.
@@ -123,7 +123,7 @@ type MouseID uint32
 // https://wiki.libsdl.org/SDL3/SDL_Cursor
 type Cursor C.struct_SDL_Cursor
 
-// Cursor types for SDL_CreateSystemCursor().
+// Cursor types for [CreateSystemCursor].
 //
 // This enum is available since SDL 3.2.0.
 //
@@ -135,7 +135,7 @@ const (
 	SystemCursorText                           // Text selection. Usually an I-beam.
 	SystemCursorWait                           // Wait. Usually an hourglass or watch or spinning ball.
 	SystemCursorCrosshair                      // Crosshair.
-	SystemCursorProgress                       // Program is busy but still interactive. Usually it's WAIT with an arrow.
+	SystemCursorProgress                       // Program is busy but still interactive. Usually it's Wait with an arrow.
 	SystemCursorNWSEResize                     // Double arrow pointing northwest and southeast.
 	SystemCursorNESWResize                     // Double arrow pointing northeast and southwest.
 	SystemCursorEWResize                       // Double arrow pointing west and east.
@@ -143,14 +143,14 @@ const (
 	SystemCursorMove                           // Four pointed arrow pointing north, south, east, and west.
 	SystemCursorNotAllowed                     // Not permitted. Usually a slashed circle or crossbones.
 	SystemCursorPointer                        // Pointer that indicates a link. Usually a pointing hand.
-	SystemCursorNWResize                       // Window resize top-left. This may be a single arrow or a double arrow like NWSE_RESIZE.
-	SystemCursorNResize                        // Window resize top. May be NS_RESIZE.
-	SystemCursorNEResize                       // Window resize top-right. May be NESW_RESIZE.
-	SystemCursorEResize                        // Window resize right. May be EW_RESIZE.
-	SystemCursorSEResize                       // Window resize bottom-right. May be NWSE_RESIZE.
-	SystemCursorSResize                        // Window resize bottom. May be NS_RESIZE.
-	SystemCursorSWResize                       // Window resize bottom-left. May be NESW_RESIZE.
-	SystemCursorWResize                        // Window resize left. May be EW_RESIZE.
+	SystemCursorNWResize                       // Window resize top-left. This may be a single arrow or a double arrow like NWSEResize.
+	SystemCursorNResize                        // Window resize top. May be NSResize.
+	SystemCursorNEResize                       // Window resize top-right. May be NESWResize.
+	SystemCursorEResize                        // Window resize right. May be EWResize.
+	SystemCursorSEResize                       // Window resize bottom-right. May be NWSEResize.
+	SystemCursorSResize                        // Window resize bottom. May be NSResize.
+	SystemCursorSWResize                       // Window resize bottom-left. May be NESWResize.
+	SystemCursorWResize                        // Window resize left. May be EWResize.
 	SystemCursorCount      = iota
 )
 
@@ -166,7 +166,7 @@ const (
 	MousewheelFlipped                            // The scroll direction is flipped / natural
 )
 
-// A bitmask of pressed mouse buttons, as reported by SDL_GetMouseState, etc.
+// A bitmask of pressed mouse buttons, as reported by [GetMouseState], etc.
 //
 // - Button 1: Left mouse button
 // - Button 2: Middle mouse button
@@ -179,11 +179,19 @@ const (
 // https://wiki.libsdl.org/SDL3/SDL_MouseButtonFlags
 type MouseButtonFlags uint32
 
-const ButtonLeft = 1
-const ButtonMiddle = 2
-const ButtonRight = 3
-const ButtonX1 = 4
-const ButtonX2 = 5
+// MouseButtonMask converts a mouse button (e.g. [ButtonLeft]) to a bitmask
+// (e.g. [ButtonLeftMask])
+func MouseButtonMask(b int) MouseButtonFlags {
+	return 1 << (b - 1)
+}
+
+const (
+	ButtonLeft   = 1
+	ButtonMiddle = 2
+	ButtonRight  = 3
+	ButtonX1     = 4
+	ButtonX2     = 5
+)
 
 const (
 	ButtonLeftMask   MouseButtonFlags = 1 << (ButtonLeft - 1)
@@ -216,9 +224,7 @@ func HasMouse() bool {
 // count: a pointer filled in with the number of mice returned, may be
 // NULL.
 //
-// Returns a 0 terminated array of mouse instance IDs or NULL on failure;
-// call SDL_GetError() for more information. This should be freed
-// with SDL_free() when it is no longer needed.
+// Returns a slice of mouse instance IDs or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -245,8 +251,7 @@ func GetMice() ([]MouseID, error) {
 //
 // id: the mouse instance ID.
 //
-// Returns the name of the selected mouse, or NULL on failure; call
-// SDL_GetError() for more information.
+// Returns the name of the selected mouse or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -281,23 +286,18 @@ func GetMouseFocus() *Window {
 // from the last pump of the event queue.
 //
 // To query the platform for immediate asynchronous state, use
-// SDL_GetGlobalMouseState.
-//
-// Passing non-NULL pointers to `x` or `y` will write the destination with
-// respective x or y coordinates relative to the focused window.
+// [GetGlobalMouseState].
 //
 // In Relative Mode, the SDL-cursor's position usually contradicts the
 // platform-cursor's position as manually calculated from
-// SDL_GetGlobalMouseState() and SDL_GetWindowPosition.
+// [GetGlobalMouseState] and [GetWindowPosition].
 //
-// x: a pointer to receive the SDL-cursor's x-position from the focused
-// window's top left corner, can be NULL if unused.
+// x: the SDL-cursor's x-position from the focused window's top left corner.
 //
-// y: a pointer to receive the SDL-cursor's y-position from the focused
-// window's top left corner, can be NULL if unused.
+// y: the SDL-cursor's y-position from the focused window's top left corner.
 //
 // Returns a 32-bit bitmask of the button state that can be bitwise-compared
-// against the SDL_BUTTON_MASK(X) macro.
+// against the button mask constants or the result of [MouseButtonMask].
 //
 // This function should only be called on the main thread.
 //
@@ -314,28 +314,23 @@ func GetMouseState() (x, y float32, buttons MouseButtonFlags) {
 //
 // This function immediately queries the platform for the most recent
 // asynchronous state, more costly than retrieving SDL's cached state in
-// SDL_GetMouseState().
-//
-// Passing non-NULL pointers to `x` or `y` will write the destination with
-// respective x or y coordinates relative to the desktop.
+// [GetMouseState]().
 //
 // In Relative Mode, the platform-cursor's position usually contradicts the
-// SDL-cursor's position as manually calculated from SDL_GetMouseState() and
-// SDL_GetWindowPosition.
+// SDL-cursor's position as manually calculated from [GetMouseState] and
+// [GetWindowPosition].
 //
 // This function can be useful if you need to track the mouse outside of a
-// specific window and SDL_CaptureMouse() doesn't fit your needs. For example,
+// specific window and [CaptureMouse] doesn't fit your needs. For example,
 // it could be useful if you need to track the mouse while dragging a window,
 // where coordinates relative to a window might not be in sync at all times.
 //
-// x: a pointer to receive the platform-cursor's x-position from the
-// desktop's top left corner, can be NULL if unused.
+// x: the platform-cursor's x-position from the desktop's top left corner.
 //
-// y: a pointer to receive the platform-cursor's y-position from the
-// desktop's top left corner, can be NULL if unused.
+// y: the platform-cursor's y-position from the desktop's top left corner.
 //
 // Returns a 32-bit bitmask of the button state that can be bitwise-compared
-// against the SDL_BUTTON_MASK(X) macro.
+// against the button mask constants or the result of [MouseButtonMask].
 //
 // This function should only be called on the main thread.
 //
@@ -354,25 +349,19 @@ func GetGlobalMouseState() (x, y float32, buttons MouseButtonFlags) {
 // from the last pump of the event queue.
 //
 // To query the platform for immediate asynchronous state, use
-// SDL_GetGlobalMouseState.
-//
-// Passing non-NULL pointers to `x` or `y` will write the destination with
-// respective x or y deltas accumulated since the last call to this function
-// (or since event initialization).
+// [GetGlobalMouseState].
 //
 // This function is useful for reducing overhead by processing relative mouse
 // inputs in one go per-frame instead of individually per-event, at the
 // expense of losing the order between events within the frame (e.g. quickly
 // pressing and releasing a button within the same frame).
 //
-// x: a pointer to receive the x mouse delta accumulated since last
-// call, can be NULL if unused.
+// x: the x mouse delta accumulated since last call.
 //
-// y: a pointer to receive the y mouse delta accumulated since last
-// call, can be NULL if unused.
+// y: the y mouse delta accumulated since last call.
 //
 // Returns a 32-bit bitmask of the button state that can be bitwise-compared
-// against the SDL_BUTTON_MASK(X) macro.
+// against the button mask constants or the result of [MouseButtonMask].
 //
 // This function should only be called on the main thread.
 //
@@ -388,12 +377,12 @@ func GetRelativeMouseState() (x, y float32, buttons MouseButtonFlags) {
 //
 // This function generates a mouse motion event if relative mode is not
 // enabled. If relative mode is enabled, you can force mouse events for the
-// warp by setting the SDL_HINT_MOUSE_RELATIVE_WARP_MOTION hint.
+// warp by setting the [HintMouseRelativeWarpMotion] hint.
 //
 // Note that this function will appear to succeed, but not actually move the
 // mouse when used over Microsoft Remote Desktop.
 //
-// window: the window to move the mouse into, or NULL for the current
+// window: the window to move the mouse into, or nil for the current
 // mouse focus.
 //
 // x: the x coordinate within the window.
@@ -405,7 +394,7 @@ func GetRelativeMouseState() (x, y float32, buttons MouseButtonFlags) {
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_WarpMouseInWindow
-func WarpMouseInWindow(window *Window, x float32, y float32) {
+func (window *Window) WarpMouse(x float32, y float32) {
 	C.SDL_WarpMouseInWindow((*C.SDL_Window)(window), (C.float)(x), (C.float)(y))
 }
 
@@ -423,16 +412,18 @@ func WarpMouseInWindow(window *Window, x float32, y float32) {
 //
 // y: the y coordinate.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_WarpMouseGlobal
-func WarpMouseGlobal(x float32, y float32) bool {
-	return (bool)(C.SDL_WarpMouseGlobal((C.float)(x), (C.float)(y)))
+func WarpMouseGlobal(x float32, y float32) error {
+	if !C.SDL_WarpMouseGlobal((C.float)(x), (C.float)(y)) {
+		return getError()
+	}
+	return nil
 }
 
 // Set relative mouse mode for a window.
@@ -443,9 +434,9 @@ func WarpMouseGlobal(x float32, y float32) bool {
 // the window.
 //
 // If you'd like to keep the mouse position fixed while in relative mode you
-// can use SDL_SetWindowMouseRect(). If you'd like the cursor to be at a
+// can use [Window.SetMouseRect]. If you'd like the cursor to be at a
 // specific location when relative mode ends, you should use
-// SDL_WarpMouseInWindow() before disabling relative mode.
+// [Window.WarpMouse] before disabling relative mode.
 //
 // This function will flush any pending mouse motion for this window.
 //
@@ -453,8 +444,7 @@ func WarpMouseGlobal(x float32, y float32) bool {
 //
 // enabled: true to enable relative mode, false to disable.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -497,7 +487,7 @@ func (window *Window) RelativeMouseMode() bool {
 // mouse while the user is dragging something, until the user releases a mouse
 // button. It is not recommended that you capture the mouse for long periods
 // of time, such as the entire time your app is running. For that, you should
-// probably use SDL_SetWindowRelativeMouseMode() or SDL_SetWindowMouseGrab(),
+// probably use [Window.SetRelativeMouseMode] or [Window.SetMouseGrab],
 // depending on your goals.
 //
 // While captured, mouse events still report coordinates relative to the
@@ -507,21 +497,20 @@ func (window *Window) RelativeMouseMode() bool {
 // capture will be disabled automatically.
 //
 // While capturing is enabled, the current window will have the
-// `SDL_WINDOW_MOUSE_CAPTURE` flag set.
+// [WindowMouseCapture] flag set.
 //
 // Please note that SDL will attempt to "auto capture" the mouse while the
 // user is pressing a button; this is to try and make mouse behavior more
 // consistent between platforms, and deal with the common case of a user
 // dragging the mouse outside of the window. This means that if you are
-// calling SDL_CaptureMouse() only to deal with this situation, you do not
+// calling [CaptureMouse] only to deal with this situation, you do not
 // have to (although it is safe to do so). If this causes problems for your
 // app, you can disable auto capture by setting the
-// `SDL_HINT_MOUSE_AUTO_CAPTURE` hint to zero.
+// [HintMouseAutoCapture] hint to zero.
 //
 // enabled: true to enable capturing, false to disable.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -537,25 +526,25 @@ func CaptureMouse(enabled bool) error {
 
 // Create a cursor using the specified bitmap data and mask (in MSB format).
 //
-// `mask` has to be in MSB (Most Significant Bit) format.
+// mask has to be in MSB (Most Significant Bit) format.
 //
-// The cursor width (`w`) must be a multiple of 8 bits.
+// The cursor width (w) must be a multiple of 8 bits.
 //
 // The cursor is created in black and white according to the following:
 //
-// - data=0, mask=1: white
-// - data=1, mask=1: black
-// - data=0, mask=0: transparent
-// - data=1, mask=0: inverted color if possible, black if not.
+//   - data=0, mask=1: white
+//   - data=1, mask=1: black
+//   - data=0, mask=0: transparent
+//   - data=1, mask=0: inverted color if possible, black if not.
 //
-// Cursors created with this function must be freed with SDL_DestroyCursor().
+// Cursors created with this function must be freed with [Cursor.Destroy].
 //
-// If you want to have a color cursor, or create your cursor from an
-// SDL_Surface, you should use SDL_CreateColorCursor(). Alternately, you can
+// If you want to have a color cursor, or create your cursor from a
+// [Surface], you should use [CreateColorCursor]. Alternately, you can
 // hide the cursor and draw your own as part of your game's rendering, but it
 // will be bound to the framerate.
 //
-// Also, SDL_CreateSystemCursor() is available, which provides several
+// Also, [CreateSystemCursor] is available, which provides several
 // readily-available system cursors to pick from.
 //
 // data: the color value for each pixel of the cursor.
@@ -566,14 +555,13 @@ func CaptureMouse(enabled bool) error {
 //
 // h: the height of the cursor.
 //
-// hot_x: the x-axis offset from the left of the cursor image to the
-// mouse x position, in the range of 0 to `w` - 1.
+// hotX: the x-axis offset from the left of the cursor image to the
+// mouse x position, in the range of 0 to w - 1.
 //
-// hot_y: the y-axis offset from the top of the cursor image to the
-// mouse y position, in the range of 0 to `h` - 1.
+// hotY: the y-axis offset from the top of the cursor image to the
+// mouse y position, in the range of 0 to h - 1.
 //
-// Returns a new cursor with the specified parameters on success or NULL on
-// failure; call SDL_GetError() for more information.
+// Returns a new cursor with the specified parameters or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -600,14 +588,13 @@ func CreateCursor(data []byte, mask []byte, w int, h int, hotX int, hotY int) (*
 // appropriate size and be used instead, if available. Otherwise, the closest
 // smaller image will be upscaled and be used instead.
 //
-// surface: an SDL_Surface structure representing the cursor image.
+// surface: a [Surface] structure representing the cursor image.
 //
-// hot_x: the x position of the cursor hot spot.
+// hotX: the x position of the cursor hot spot.
 //
-// hot_y: the y position of the cursor hot spot.
+// hotY: the y position of the cursor hot spot.
 //
-// Returns the new cursor on success or NULL on failure; call SDL_GetError()
-// for more information.
+// Returns the new cursor or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -624,10 +611,9 @@ func CreateColorCursor(surface *Surface, hotX int, hotY int) (*Cursor, error) {
 
 // Create a system cursor.
 //
-// id: an SDL_SystemCursor enum value.
+// id: a [SystemCursor] enum value.
 //
-// Returns a cursor on success or NULL on failure; call SDL_GetError() for
-// more information.
+// Returns a cursor or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -646,13 +632,12 @@ func CreateSystemCursor(id SystemCursor) (*Cursor, error) {
 //
 // This function sets the currently active cursor to the specified one. If the
 // cursor is currently visible, the change will be immediately represented on
-// the display. SDL_SetCursor(NULL) can be used to force cursor redraw, if
+// the display. SetCursor(nil) can be used to force cursor redraw, if
 // this is desired for any reason.
 //
 // cursor: a cursor to make active.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -669,9 +654,9 @@ func SetCursor(cursor *Cursor) error {
 // Get the active cursor.
 //
 // This function returns a pointer to the current cursor which is owned by the
-// library. It is not necessary to free the cursor with SDL_DestroyCursor().
+// library. It is not necessary to free the cursor with [Cursor.Destroy].
 //
-// Returns the active cursor or NULL if there is no mouse.
+// Returns the active cursor or nil if there is no mouse.
 //
 // This function should only be called on the main thread.
 //
@@ -684,11 +669,10 @@ func GetCursor() *Cursor {
 
 // Get the default cursor.
 //
-// You do not have to call SDL_DestroyCursor() on the return value, but it is
+// You do not have to call [Cursor.Destroy] on the return value, but it is
 // safe to do so.
 //
-// Returns the default cursor on success or NULL on failuree; call
-// SDL_GetError() for more information.
+// Returns the default cursor or an error.
 //
 // This function should only be called on the main thread.
 //
@@ -705,8 +689,8 @@ func GetDefaultCursor() (*Cursor, error) {
 
 // Free a previously-created cursor.
 //
-// Use this function to free cursor resources created with SDL_CreateCursor(),
-// SDL_CreateColorCursor() or SDL_CreateSystemCursor().
+// Use this function to free cursor resources created with [CreateCursor],
+// [CreateColorCursor] or [CreateSystemCursor].
 //
 // cursor: the cursor to free.
 //
@@ -721,8 +705,7 @@ func (cursor *Cursor) Destroy() {
 
 // Show the cursor.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -738,8 +721,7 @@ func ShowCursor() error {
 
 // Hide the cursor.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function should only be called on the main thread.
 //
@@ -755,7 +737,7 @@ func HideCursor() error {
 
 // Return whether the cursor is currently being shown.
 //
-// Returns `true` if the cursor is being shown, or `false` if the cursor is
+// Returns true if the cursor is being shown, or false if the cursor is
 // hidden.
 //
 // This function should only be called on the main thread.

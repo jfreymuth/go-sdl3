@@ -36,11 +36,11 @@ import "C"
 //
 // Here are the names returned for some (but not all) supported platforms:
 //
-// - "Windows"
-// - "macOS"
-// - "Linux"
-// - "iOS"
-// - "Android"
+//   - "Windows"
+//   - "macOS"
+//   - "Linux"
+//   - "iOS"
+//   - "Android"
 //
 // Returns the name of the platform. If the correct platform name is not
 // available, returns a string beginning with the text "Unknown".

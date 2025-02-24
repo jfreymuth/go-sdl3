@@ -325,6 +325,7 @@ const (
 	ScancodeMediaStop          Scancode = 269 // Stop
 	ScancodeMediaEject         Scancode = 270 // Eject
 	ScancodeMediaPlayPause     Scancode = 271 // Play / Pause
+	ScancodeMediaSelect        Scancode = 272 // Media Select
 	ScancodeACNew              Scancode = 273 // AC New
 	ScancodeACOpen             Scancode = 274 // AC Open
 	ScancodeACClose            Scancode = 275 // AC Close

@@ -33,8 +33,8 @@ import "C"
 // handling, e.g., for input and drawing tablets or suitably equipped mobile /
 // tablet devices.
 //
-// To get started with pens, simply handle SDL_EVENT_PEN_* events. When a pen
-// starts providing input, SDL will assign it a unique SDL_PenID, which will
+// To get started with pens, simply handle EventPen* events. When a pen
+// starts providing input, SDL will assign it a unique [PenID], which will
 // remain for the life of the process, as long as the pen stays connected.
 //
 // Pens may provide more than simple touch input; they might have other axes,
@@ -53,17 +53,17 @@ import "C"
 // https://wiki.libsdl.org/SDL3/SDL_PenID
 type PenID uint32
 
-// The SDL_MouseID for mouse events simulated with pen input.
+// The [MouseID] for mouse events simulated with pen input.
 //
 // This macro is available since SDL 3.2.0.
 const PenMouseID MouseID = 0xFFFFFFFE
 
-// The SDL_TouchID for touch events simulated with pen input.
+// The [TouchID] for touch events simulated with pen input.
 //
 // This macro is available since SDL 3.2.0.
 const PenTouchID TouchID = 0xFFFFFFFE
 
-// Pen input flags, as reported by various pen events' `pen_state` field.
+// Pen input flags, as reported by various pen events' PenState field.
 //
 // This datatype is available since SDL 3.2.0.
 //
@@ -71,26 +71,26 @@ const PenTouchID TouchID = 0xFFFFFFFE
 type PenInputFlags uint32
 
 const (
-	PenInputDown      PenInputFlags = (1 << 0)  /**< pen is pressed down */
-	PenInputButton1   PenInputFlags = (1 << 1)  /**< button 1 is pressed */
-	PenInputButton2   PenInputFlags = (1 << 2)  /**< button 2 is pressed */
-	PenInputButton3   PenInputFlags = (1 << 3)  /**< button 3 is pressed */
-	PenInputButton4   PenInputFlags = (1 << 4)  /**< button 4 is pressed */
-	PenInputButton5   PenInputFlags = (1 << 5)  /**< button 5 is pressed */
-	PenInputEraserTip PenInputFlags = (1 << 30) /**< eraser tip is used */
+	PenInputDown      PenInputFlags = (1 << 0)  // pen is pressed down
+	PenInputButton1   PenInputFlags = (1 << 1)  // button 1 is pressed
+	PenInputButton2   PenInputFlags = (1 << 2)  // button 2 is pressed
+	PenInputButton3   PenInputFlags = (1 << 3)  // button 3 is pressed
+	PenInputButton4   PenInputFlags = (1 << 4)  // button 4 is pressed
+	PenInputButton5   PenInputFlags = (1 << 5)  // button 5 is pressed
+	PenInputEraserTip PenInputFlags = (1 << 30) // eraser tip is used
 )
 
 // Pen axis indices.
 //
-// These are the valid values for the `axis` field in SDL_PenAxisEvent. All
+// These are the valid values for the Axis field in [PenAxisEvent]. All
 // axes are either normalised to 0..1 or report a (positive or negative) angle
 // in degrees, with 0.0 representing the centre. Not all pens/backends support
 // all axes: unsupported axes are always zero.
 //
 // To convert angles for tilt and rotation into vector representation, use
-// SDL_sinf on the XTILT, YTILT, or ROTATION component, for example:
+// [math.Sin] on the XTilt, YTilt, or Rotation component, for example:
 //
-// `SDL_sinf(xtilt * SDL_PI_F / 180.0)`.
+//	math.Sin(float64(xtilt) * math.Pi / 180)
 //
 // This enum is available since SDL 3.2.0.
 //

@@ -96,9 +96,9 @@ type FRect struct {
 	H float32
 }
 
-// Convert an SDL_Rect to SDL_FRect
+// Convert a [Rect] to [FRect]
 //
-// rect: a pointer to an SDL_Rect.
+// rect: a pointer to a [Rect].
 //
 // frect: a pointer filled in with the floating point representation of
 // `rect`.
@@ -114,21 +114,15 @@ func (r Rect) ToFRect() FRect {
 
 // Determine whether a point resides inside a rectangle.
 //
-// A point is considered part of a rectangle if both `p` and `r` are not NULL,
-// and `p`'s x and y coordinates are >= to the rectangle's top left corner,
-// and < the rectangle's x+w and y+h. So a 1x1 rectangle considers point (0,0)
-// as "inside" and (0,1) as not.
-//
-// Note that this is a forced-inline function in a header, and not a public
-// API function available in the SDL library (which is to say, the code is
-// embedded in the calling program and the linker and dynamic loader will not
-// be able to find this function inside SDL itself).
+// A point is considered part of a rectangle if p's x and y coordinates are >=
+// to the rectangle's top left corner, and < the rectangle's x+w and y+h.
+// So a 1x1 rectangle considers point (0,0) as "inside" and (0,1) as not.
 //
 // p: the point to test.
 //
 // r: the rectangle to test.
 //
-// Returns true if `p` is contained by `r`, false otherwise.
+// Returns true if p is contained by r, false otherwise.
 //
 // It is safe to call this function from any thread.
 //
@@ -141,13 +135,8 @@ func (p Point) In(r Rect) bool {
 
 // Determine whether a rectangle has no area.
 //
-// A rectangle is considered "empty" for this function if `r` is NULL, or if
-// `r`'s width and/or height are <= 0.
-//
-// Note that this is a forced-inline function in a header, and not a public
-// API function available in the SDL library (which is to say, the code is
-// embedded in the calling program and the linker and dynamic loader will not
-// be able to find this function inside SDL itself).
+// A rectangle is considered "empty" for this function if r is nil, or if
+// r's width and/or height are <= 0.
 //
 // r: the rectangle to test.
 //
@@ -158,17 +147,15 @@ func (p Point) In(r Rect) bool {
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_RectEmpty
-func (r Rect) Empty() bool {
-	return r.W <= 0 || r.H <= 0
+func (r *Rect) Empty() bool {
+	return r == nil || r.W <= 0 || r.H <= 0
 }
 
 // Determine whether two rectangles intersect.
 //
-// If either pointer is NULL the function will return false.
+// a: a [Rect] structure representing the first rectangle.
 //
-// A: an SDL_Rect structure representing the first rectangle.
-//
-// B: an SDL_Rect structure representing the second rectangle.
+// b: a [Rect] structure representing the second rectangle.
 //
 // Returns true if there is an intersection, false otherwise.
 //
@@ -185,14 +172,11 @@ func (a Rect) HasIntersection(b Rect) bool {
 
 // Calculate the intersection of two rectangles.
 //
-// If `result` is NULL then this function will return false.
+// a: a [Rect] structure representing the first rectangle.
 //
-// A: an SDL_Rect structure representing the first rectangle.
+// b: a [Rect] structure representing the second rectangle.
 //
-// B: an SDL_Rect structure representing the second rectangle.
-//
-// result: an SDL_Rect structure filled in with the intersection of
-// rectangles `A` and `B`.
+// result: the intersection of rectangles A and B.
 //
 // Returns true if there is an intersection, false otherwise.
 //
@@ -209,41 +193,33 @@ func (a Rect) Intersection(b Rect) (Rect, bool) {
 
 // Calculate the union of two rectangles.
 //
-// A: an SDL_Rect structure representing the first rectangle.
+// a: a [Rect] structure representing the first rectangle.
 //
-// B: an SDL_Rect structure representing the second rectangle.
+// b: a [Rect] structure representing the second rectangle.
 //
-// result: an SDL_Rect structure filled in with the union of rectangles
-// `A` and `B`.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns the union of rectangles A and B.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetRectUnion
-func (a Rect) Union(b Rect) (Rect, bool) {
+func (a Rect) Union(b Rect) Rect {
 	var result C.SDL_Rect
-	intersects := C.SDL_GetRectUnion(
+	C.SDL_GetRectUnion(
 		&C.SDL_Rect{C.int(a.X), C.int(a.Y), C.int(a.W), C.int(a.H)},
 		&C.SDL_Rect{C.int(b.X), C.int(b.Y), C.int(b.W), C.int(b.H)}, &result)
-	return Rect{int(result.x), int(result.y), int(result.w), int(result.h)}, bool(intersects)
+	return Rect{int(result.x), int(result.y), int(result.w), int(result.h)}
 }
 
 // Calculate a minimal rectangle enclosing a set of points.
 //
-// If `clip` is not NULL then only points inside of the clipping rectangle are
+// If clip is not nil then only points inside of the clipping rectangle are
 // considered.
 //
-// points: an array of SDL_Point structures representing points to be
-// enclosed.
+// points: an array of Points representing points to be enclosed.
 //
-// count: the number of structures in the `points` array.
+// clip: a [Rect] used for clipping or nil to enclose all points.
 //
-// clip: an SDL_Rect used for clipping or NULL to enclose all points.
-//
-// result: an SDL_Rect structure filled in with the minimal enclosing
-// rectangle.
+// result: the minimal enclosing rectangle.
 //
 // Returns true if any points were enclosed or false if all the points were
 // outside of the clipping rectangle.
@@ -271,24 +247,24 @@ func GetRectEnclosingPoints(points []Point, clip *Rect) (Rect, bool) {
 // contained entirely within the rectangle or that does not intersect will
 // remain unchanged. A line segment that crosses the rectangle at either or
 // both ends will be clipped to the boundary of the rectangle and the new
-// coordinates saved in `X1`, `Y1`, `X2`, and/or `Y2` as necessary.
+// coordinates saved in x1, y1, x2, and/or y1 as necessary.
 //
-// rect: an SDL_Rect structure representing the rectangle to intersect.
+// rect: a [Rect] structure representing the rectangle to intersect.
 //
-// X1: a pointer to the starting X-coordinate of the line.
+// x1: a pointer to the starting X-coordinate of the line.
 //
-// Y1: a pointer to the starting Y-coordinate of the line.
+// y1: a pointer to the starting Y-coordinate of the line.
 //
-// X2: a pointer to the ending X-coordinate of the line.
+// x2: a pointer to the ending X-coordinate of the line.
 //
-// Y2: a pointer to the ending Y-coordinate of the line.
+// y2: a pointer to the ending Y-coordinate of the line.
 //
 // Returns true if there is an intersection, false otherwise.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetRectAndLineIntersection
-func (r *Rect) GetLineIntersection(x1 *int, y1 *int, x2 *int, y2 *int) bool {
+func (r Rect) GetLineIntersection(x1 *int, y1 *int, x2 *int, y2 *int) bool {
 	var cx1, cy1, cx2, cy2 C.int
 	ok := C.SDL_GetRectAndLineIntersection(&C.SDL_Rect{C.int(r.X), C.int(r.Y), C.int(r.W), C.int(r.H)}, &cx1, &cy1, &cx2, &cy2)
 	*x1 = int(cx1)
@@ -300,21 +276,15 @@ func (r *Rect) GetLineIntersection(x1 *int, y1 *int, x2 *int, y2 *int) bool {
 
 // Determine whether a point resides inside a floating point rectangle.
 //
-// A point is considered part of a rectangle if both `p` and `r` are not NULL,
-// and `p`'s x and y coordinates are >= to the rectangle's top left corner,
-// and <= the rectangle's x+w and y+h. So a 1x1 rectangle considers point
-// (0,0) and (0,1) as "inside" and (0,2) as not.
-//
-// Note that this is a forced-inline function in a header, and not a public
-// API function available in the SDL library (which is to say, the code is
-// embedded in the calling program and the linker and dynamic loader will not
-// be able to find this function inside SDL itself).
+// A point is considered part of a rectangle if p's x and y coordinates are >=
+// to the rectangle's top left corner, and <= the rectangle's x+w and y+h. So a
+// 1x1 rectangle considers point (0,0) and (0,1) as "inside" and (0,2) as not.
 //
 // p: the point to test.
 //
 // r: the rectangle to test.
 //
-// Returns true if `p` is contained by `r`, false otherwise.
+// Returns true if p is contained by r, false otherwise.
 //
 // It is safe to call this function from any thread.
 //
@@ -327,13 +297,8 @@ func (p FPoint) In(r FRect) bool {
 
 // Determine whether a floating point rectangle can contain any point.
 //
-// A rectangle is considered "empty" for this function if `r` is NULL, or if
-// `r`'s width and/or height are < 0.0f.
-//
-// Note that this is a forced-inline function in a header, and not a public
-// API function available in the SDL library (which is to say, the code is
-// embedded in the calling program and the linker and dynamic loader will not
-// be able to find this function inside SDL itself).
+// A rectangle is considered "empty" for this function if r is nil, or if
+// r's width and/or height are < 0.0f.
 //
 // r: the rectangle to test.
 //
@@ -344,22 +309,17 @@ func (p FPoint) In(r FRect) bool {
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_RectEmptyFloat
-func (r FRect) Empty() bool {
-	return r.W < 0 || r.H < 0
+func (r *FRect) Empty() bool {
+	return r == nil || r.W < 0 || r.H < 0
 }
 
 // Determine whether two floating point rectangles are equal, within some
 // given epsilon.
 //
-// Rectangles are considered equal if both are not NULL and each of their x,
-// y, width and height are within `epsilon` of each other. If you don't know
-// what value to use for `epsilon`, you should call the SDL_RectsEqualFloat
+// Rectangles are considered equal if each of their x,
+// y, width and height are within epsilon of each other. If you don't know
+// what value to use for epsilon, you should call the [FRect.Equal]
 // function instead.
-//
-// Note that this is a forced-inline function in a header, and not a public
-// API function available in the SDL library (which is to say, the code is
-// embedded in the calling program and the linker and dynamic loader will not
-// be able to find this function inside SDL itself).
 //
 // a: the first rectangle to test.
 //
@@ -385,16 +345,11 @@ func (a FRect) EqualEpsilon(b FRect, epsilon float32) bool {
 // Determine whether two floating point rectangles are equal, within a default
 // epsilon.
 //
-// Rectangles are considered equal if both are not NULL and each of their x,
+// Rectangles are considered equal if each of their x,
 // y, width and height are within SDL_FLT_EPSILON of each other. This is often
 // a reasonable way to compare two floating point rectangles and deal with the
 // slight precision variations in floating point calculations that tend to pop
 // up.
-//
-// Note that this is a forced-inline function in a header, and not a public
-// API function available in the SDL library (which is to say, the code is
-// embedded in the calling program and the linker and dynamic loader will not
-// be able to find this function inside SDL itself).
 //
 // a: the first rectangle to test.
 //
@@ -413,11 +368,9 @@ func (a FRect) Equal(b FRect, epsilon float32) bool {
 
 // Determine whether two rectangles intersect with float precision.
 //
-// If either pointer is NULL the function will return false.
+// a: an [FRect] structure representing the first rectangle.
 //
-// A: an SDL_FRect structure representing the first rectangle.
-//
-// B: an SDL_FRect structure representing the second rectangle.
+// b: an [FRect] structure representing the second rectangle.
 //
 // Returns true if there is an intersection, false otherwise.
 //
@@ -432,14 +385,11 @@ func (a FRect) HasIntersection(b FRect) bool {
 
 // Calculate the intersection of two rectangles with float precision.
 //
-// If `result` is NULL then this function will return false.
+// a: an [FRect] structure representing the first rectangle.
 //
-// A: an SDL_FRect structure representing the first rectangle.
+// b: an [FRect] structure representing the second rectangle.
 //
-// B: an SDL_FRect structure representing the second rectangle.
-//
-// result: an SDL_FRect structure filled in with the intersection of
-// rectangles `A` and `B`.
+// result: the intersection of rectangles A and B.
 //
 // Returns true if there is an intersection, false otherwise.
 //
@@ -456,41 +406,35 @@ func (a FRect) Intersection(b FRect) (FRect, bool) {
 
 // Calculate the union of two rectangles with float precision.
 //
-// A: an SDL_FRect structure representing the first rectangle.
+// a: an [FRect] structure representing the first rectangle.
 //
-// B: an SDL_FRect structure representing the second rectangle.
+// b: an [FRect] structure representing the second rectangle.
 //
-// result: an SDL_FRect structure filled in with the union of rectangles
-// `A` and `B`.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns the union of rectangles A and B.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetRectUnionFloat
-func (a FRect) Union(b FRect) (FRect, bool) {
+func (a FRect) Union(b FRect) FRect {
 	var result C.SDL_FRect
-	intersects := C.SDL_GetRectUnionFloat(
+	C.SDL_GetRectUnionFloat(
 		&C.SDL_FRect{C.float(a.X), C.float(a.Y), C.float(a.W), C.float(a.H)},
 		&C.SDL_FRect{C.float(b.X), C.float(b.Y), C.float(b.W), C.float(b.H)}, &result)
-	return FRect{float32(result.x), float32(result.y), float32(result.w), float32(result.h)}, bool(intersects)
+	return FRect{float32(result.x), float32(result.y), float32(result.w), float32(result.h)}
 }
 
 // Calculate a minimal rectangle enclosing a set of points with float
 // precision.
 //
-// If `clip` is not NULL then only points inside of the clipping rectangle are
+// If clip is not nil then only points inside of the clipping rectangle are
 // considered.
 //
-// points: an array of SDL_FPoint structures representing points to be
+// points: an array of [FPoint] structures representing points to be
 // enclosed.
 //
-// count: the number of structures in the `points` array.
+// clip: an [FRect] used for clipping or nil to enclose all points.
 //
-// clip: an SDL_FRect used for clipping or NULL to enclose all points.
-//
-// result: an SDL_FRect structure filled in with the minimal enclosing
+// result: an [FRect] structure filled in with the minimal enclosing
 // rectangle.
 //
 // Returns true if any points were enclosed or false if all the points were
@@ -520,17 +464,17 @@ func GetRectEnclosingPointsFloat(points []FPoint, clip *FRect) (FRect, bool) {
 // contained entirely within the rectangle or that does not intersect will
 // remain unchanged. A line segment that crosses the rectangle at either or
 // both ends will be clipped to the boundary of the rectangle and the new
-// coordinates saved in `X1`, `Y1`, `X2`, and/or `Y2` as necessary.
+// coordinates saved in x1, y1, x2, and/or y2 as necessary.
 //
-// rect: an SDL_FRect structure representing the rectangle to intersect.
+// rect: an [FRect] structure representing the rectangle to intersect.
 //
-// X1: a pointer to the starting X-coordinate of the line.
+// x1: a pointer to the starting X-coordinate of the line.
 //
-// Y1: a pointer to the starting Y-coordinate of the line.
+// y1: a pointer to the starting Y-coordinate of the line.
 //
-// X2: a pointer to the ending X-coordinate of the line.
+// x2: a pointer to the ending X-coordinate of the line.
 //
-// Y2: a pointer to the ending Y-coordinate of the line.
+// y2: a pointer to the ending Y-coordinate of the line.
 //
 // Returns true if there is an intersection, false otherwise.
 //
