@@ -202,8 +202,8 @@ func (tray *Tray) SetTooltip(tooltip string) {
 //
 // This should be called at most once per tray icon.
 //
-// This function does the same thing as SDL_CreateTraySubmenu(), except that
-// it takes a SDL_Tray instead of a SDL_TrayEntry.
+// This function does the same thing as [TrayEntry.CreateSubmenu], except that
+// it takes a [Tray] instead of a [TrayEntry].
 //
 // A menu does not need to be destroyed; it will be destroyed with the tray.
 //
@@ -225,8 +225,8 @@ func (tray *Tray) CreateMenu() *TrayMenu {
 //
 // This should be called at most once per tray entry.
 //
-// This function does the same thing as SDL_CreateTrayMenu, except that it
-// takes a SDL_TrayEntry instead of a SDL_Tray.
+// This function does the same thing as [Tray.CreateMenu], except that it
+// takes a [TrayEntry] instead of a [Tray].
 //
 // A menu does not need to be destroyed; it will be destroyed with the tray.
 //
@@ -246,11 +246,11 @@ func (entry *TrayEntry) CreateSubmenu() *TrayMenu {
 
 // Gets a previously created tray menu.
 //
-// You should have called SDL_CreateTrayMenu() on the tray object. This
+// You should have called [Tray.CreateMenu]() on the tray object. This
 // function allows you to fetch it again later.
 //
-// This function does the same thing as SDL_GetTraySubmenu(), except that it
-// takes a SDL_Tray instead of a SDL_TrayEntry.
+// This function does the same thing as [TrayEntry.Submenu], except that it
+// takes a [Tray] instead of a [TrayEntry].
 //
 // A menu does not need to be destroyed; it will be destroyed with the tray.
 //
@@ -270,11 +270,11 @@ func (tray *Tray) Menu() *TrayMenu {
 
 // Gets a previously created tray entry submenu.
 //
-// You should have called SDL_CreateTraySubmenu() on the entry object. This
+// You should have called [TrayEntry.CreateSubmenu] on the entry object. This
 // function allows you to fetch it again later.
 //
-// This function does the same thing as SDL_GetTrayMenu(), except that it
-// takes a SDL_TrayEntry instead of a SDL_Tray.
+// This function does the same thing as [Tray.Menu], except that it
+// takes a [TrayEntry] instead of a [Tray].
 //
 // A menu does not need to be destroyed; it will be destroyed with the tray.
 //
@@ -296,13 +296,6 @@ func (entry *TrayEntry) Submenu() *TrayMenu {
 //
 // menu: The menu to get entries from.
 //
-// count: An optional pointer to obtain the number of entries in the
-// menu.
-//
-// Returns a NULL-terminated list of entries within the given menu. The
-// pointer becomes invalid when any function that inserts or deletes
-// entries in the menu is called.
-//
 // This function should be called on the thread that created the
 // tray.
 //
@@ -312,7 +305,7 @@ func (entry *TrayEntry) Submenu() *TrayMenu {
 func (menu *TrayMenu) Entries() []*TrayEntry {
 	var count C.int
 	e := (**TrayEntry)(unsafe.Pointer(C.SDL_GetTrayEntries((*C.SDL_TrayMenu)(menu), &count)))
-	return unsafe.Slice(e, count)
+	return append([]*TrayEntry{}, unsafe.Slice(e, count)...)
 }
 
 // Removes a tray entry.
@@ -331,7 +324,7 @@ func (entry *TrayEntry) Remove() {
 
 // Insert a tray entry at a given position.
 //
-// If label is NULL, the entry will be a separator. Many functions won't work
+// If label is empty, the entry will be a separator. Many functions won't work
 // for an entry that is a separator.
 //
 // An entry does not need to be destroyed; it will be destroyed with the tray.
@@ -342,11 +335,11 @@ func (entry *TrayEntry) Remove() {
 // this place will be moved. If pos is -1, the entry is appended.
 //
 // label: the text to be displayed on the entry, in UTF-8 encoding, or
-// NULL for a separator.
+// an empty string for a separator.
 //
 // flags: a combination of flags, some of which are mandatory.
 //
-// Returns the newly created entry, or NULL if pos is out of bounds.
+// Returns the newly created entry, or nil if pos is out of bounds.
 //
 // This function should be called on the thread that created the
 // tray.
@@ -361,8 +354,8 @@ func (menu *TrayMenu) InsertEntryAt(pos int, label string, flags TrayEntryFlags)
 // Sets the label of an entry.
 //
 // An entry cannot change between a separator and an ordinary entry; that is,
-// it is not possible to set a non-NULL label on an entry that has a NULL
-// label (separators), or to set a NULL label to an entry that has a non-NULL
+// it is not possible to set a non-empty label on an entry that has an empty
+// label (separators), or to set an empty label to an entry that has a non-empty
 // label. The function will silently fail if that happens.
 //
 // entry: the entry to be updated.
@@ -381,7 +374,7 @@ func (entry *TrayEntry) SetLabel(label string) {
 
 // Gets the label of an entry.
 //
-// If the returned value is NULL, the entry is a separator.
+// If the returned value is an empty string, the entry is a separator.
 //
 // entry: the entry to be read.
 //
@@ -399,7 +392,7 @@ func (entry *TrayEntry) Label() string {
 
 // Sets whether or not an entry is checked.
 //
-// The entry must have been created with the SDL_TRAYENTRY_CHECKBOX flag.
+// The entry must have been created with the [TrayentryCheckbox] flag.
 //
 // entry: the entry to be updated.
 //
@@ -417,7 +410,7 @@ func (entry *TrayEntry) SetChecked(checked bool) {
 
 // Gets whether or not an entry is checked.
 //
-// The entry must have been created with the SDL_TRAYENTRY_CHECKBOX flag.
+// The entry must have been created with the [TrayentryCheckbox] flag.
 //
 // entry: the entry to be read.
 //
@@ -470,9 +463,6 @@ func (entry *TrayEntry) Enabled() bool {
 // entry: the entry to be updated.
 //
 // callback: a callback to be invoked when the entry is selected.
-//
-// userdata: an optional pointer to pass extra data to the callback when
-// it will be invoked.
 //
 // This function should be called on the thread that created the
 // tray.
@@ -533,12 +523,12 @@ func (entry *TrayEntry) Parent() *TrayMenu {
 // Gets the entry for which the menu is a submenu, if the current menu is a
 // submenu.
 //
-// Either this function or SDL_GetTrayMenuParentTray() will return non-NULL
+// Either this function or [TrayMenu.ParentTray] will return non-nil
 // for any given menu.
 //
 // menu: the menu for which to get the parent entry.
 //
-// Returns the parent entry, or NULL if this menu is not a submenu.
+// Returns the parent entry, or nil if this menu is not a submenu.
 //
 // This function should be called on the thread that created the
 // tray.
@@ -553,12 +543,12 @@ func (menu *TrayMenu) ParentEntry() *TrayEntry {
 // Gets the tray for which this menu is the first-level menu, if the current
 // menu isn't a submenu.
 //
-// Either this function or SDL_GetTrayMenuParentEntry() will return non-NULL
+// Either this function or [TrayMenu.ParentEntry] will return non-nil
 // for any given menu.
 //
 // menu: the menu for which to get the parent enttrayry.
 //
-// Returns the parent tray, or NULL if this menu is a submenu.
+// Returns the parent tray, or nil if this menu is a submenu.
 //
 // This function should be called on the thread that created the
 // tray.

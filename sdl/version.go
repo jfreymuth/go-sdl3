@@ -39,21 +39,21 @@ import "C"
 // If this were SDL version 3.2.1, this value would be 3.
 //
 // This macro is available since SDL 3.2.0.
-const MajorVersion = 3
+const MajorVersion = C.SDL_MAJOR_VERSION
 
 // The current minor version of the SDL headers.
 //
 // If this were SDL version 3.2.1, this value would be 2.
 //
 // This macro is available since SDL 3.2.0.
-const MinorVersion = 2
+const MinorVersion = C.SDL_MINOR_VERSION
 
 // The current micro (or patchlevel) version of the SDL headers.
 //
 // If this were SDL version 3.2.1, this value would be 1.
 //
 // This macro is available since SDL 3.2.0.
-const MicroVersion = 0
+const MicroVersion = C.SDL_MICRO_VERSION
 
 // This macro turns the version numbers into a numeric value.
 //
@@ -114,7 +114,7 @@ func VersionnumMicro(version int) int {
 // This is the version number macro for the current SDL version.
 //
 // This macro is available since SDL 3.2.0.
-const Version = 3002000
+const Version = C.SDL_VERSION
 
 // This macro will evaluate to true if compiled with SDL at least X.Y.Z.
 //
@@ -129,10 +129,10 @@ func VersionAtLeast(major, minor, micro int) bool {
 //
 // If you are linking to SDL dynamically, then it is possible that the current
 // version will be different than the version you compiled against. This
-// function returns the current version, while SDL_VERSION is the version you
+// function returns the current version, while [Version] is the version you
 // compiled with.
 //
-// This function may be called safely at any time, even before SDL_Init().
+// This function may be called safely at any time, even before [Init].
 //
 // Returns the version of the linked library.
 //

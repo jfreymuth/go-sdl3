@@ -40,7 +40,7 @@ import "C"
 // independent of language and keyboard mapping.
 //
 // Values of this type are used to represent keyboard keys, among other places
-// in the `scancode` field of the SDL_KeyboardEvent structure.
+// in the Scancode field of the [KeyboardEvent] structure.
 //
 // The values in this enumeration are based on the USB usage page standard:
 // https://usb.org/sites/default/files/hut1_5.pdf
@@ -110,7 +110,7 @@ const (
 	// ISO USB keyboards actually use this code instead of 49 for the same key,
 	// but all OSes I've seen treat the two codes identically. So, as an
 	// implementor, unless your keyboard generates both of those codes and your
-	// OS treats them differently, you should generate SDL_SCANCODE_BACKSLASH
+	// OS treats them differently, you should generate [ScancodeBackslash]
 	// instead of this code. As a user, you should not rely on this code because
 	// SDL will never generate it with most (all?) keyboards.
 	ScancodeNonushash Scancode = 50
@@ -118,7 +118,7 @@ const (
 	ScancodeSemicolon  Scancode = 51
 	ScancodeApostrophe Scancode = 52
 
-	//Located in the top left corner (on both ANSI and ISO keyboards). Produces
+	// Located in the top left corner (on both ANSI and ISO keyboards). Produces
 	// GRAVE ACCENT and TILDE in a US Windows layout and in US and UK Mac
 	// layouts on ANSI keyboards, GRAVE ACCENT and NOT SIGN in a UK Windows
 	// layout, SECTION SIGN and PLUS-MINUS SIGN in US and UK Mac layouts on ISO
@@ -189,7 +189,7 @@ const (
 
 	ScancodeApplication Scancode = 101 // windows contextual menu, compose
 
-	//The USB document says this is a status flag, not a physical key - but some
+	// The USB document says this is a status flag, not a physical key - but some
 	// Mac keyboards do have a power key.
 	ScancodePower Scancode = 102
 
@@ -308,7 +308,7 @@ const (
 	ScancodeRightGui           Scancode = 231 // windows, command (apple), meta
 
 	// I'm not sure if this is really not covered by any of the above, but since
-	// there's a special SDL_KMOD_MODE for it I'm adding it here
+	// there's a special [ModMode] for it I'm adding it here
 	ScancodeMode Scancode = 257
 
 	ScancodeSleep              Scancode = 258 // Sleep

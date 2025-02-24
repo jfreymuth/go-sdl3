@@ -41,8 +41,8 @@ import "C"
 // This is not to be confused with _calendar time_ management, which is
 // provided by [CategoryTime](CategoryTime).
 //
-// This category covers measuring time elapsed (SDL_GetTicks(),
-// SDL_GetPerformanceCounter()), putting a thread to sleep for a certain
+// This category covers measuring time elapsed ([GetTicks],
+// [GetPerformanceCounter]), putting a thread to sleep for a certain
 // amount of time (SDL_Delay(), SDL_DelayNS(), SDL_DelayPrecise()), and firing
 // a callback function after a certain amount of time has elasped
 // (SDL_AddTimer(), etc).
@@ -84,7 +84,7 @@ func GetTicksNS() uint64 {
 //
 // The counter values are only meaningful relative to each other. Differences
 // between values can be converted to times by using
-// SDL_GetPerformanceFrequency().
+// [GetPerformanceFrequency].
 //
 // Returns the current counter value.
 //

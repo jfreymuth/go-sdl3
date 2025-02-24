@@ -40,14 +40,14 @@ import "unsafe"
 // multiple touch devices and track multiple fingers on those devices.
 //
 // Touches are mostly dealt with through the event system, in the
-// SDL_EVENT_FINGER_DOWN, SDL_EVENT_FINGER_MOTION, and SDL_EVENT_FINGER_UP
+// [EventFingerDown], [EventFingerMotion], and [EventFingerUp]
 // events, but there are also functions to query for hardware details, etc.
 //
 // The touch system, by default, will also send virtual mouse events; this can
 // be useful for making a some desktop apps work on a phone without
 // significant changes. For apps that care about mouse and touch input
-// separately, they should ignore mouse events that have a `which` field of
-// SDL_TOUCH_MOUSEID.
+// separately, they should ignore mouse events that have a Which field of
+// [TouchMouseID].
 
 // A unique ID for a touch device.
 //
@@ -104,12 +104,12 @@ type Finger struct {
 	Pressure float32  // the quantity of pressure applied, normalized (0...1)
 }
 
-// The SDL_MouseID for mouse events simulated with touch input.
+// The [MouseID] for mouse events simulated with touch input.
 //
 // This macro is available since SDL 3.2.0.
 const TouchMouseID MouseID = 0xFFFFFFFF
 
-// The SDL_TouchID for touch events simulated with mouse input.
+// The [TouchID] for touch events simulated with mouse input.
 //
 // This macro is available since SDL 3.2.0.
 const MouseTouchID TouchID = 0xFFFFFFFF
@@ -120,12 +120,7 @@ const MouseTouchID TouchID = 0xFFFFFFFF
 // Therefore the returned list might be empty, although devices are available.
 // After using all devices at least once the number will be correct.
 //
-// count: a pointer filled in with the number of devices returned, may
-// be NULL.
-//
-// Returns a 0 terminated array of touch device IDs or NULL on failure; call
-// SDL_GetError() for more information. This should be freed with
-// SDL_free() when it is no longer needed.
+// Returns a slice of touch device IDs or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -148,8 +143,7 @@ func GetTouchDevices() ([]TouchID, error) {
 //
 // touchID: the touch device instance ID.
 //
-// Returns touch device name, or NULL on failure; call SDL_GetError() for
-// more information.
+// Returns touch device name or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -179,13 +173,7 @@ func GetTouchDeviceType(touchID TouchID) TouchDeviceType {
 //
 // touchID: the ID of a touch device.
 //
-// count: a pointer filled in with the number of fingers returned, can
-// be NULL.
-//
-// Returns a NULL terminated array of SDL_Finger pointers or NULL on failure;
-// call SDL_GetError() for more information. This is a single
-// allocation that should be freed with SDL_free() when it is no
-// longer needed.
+// Returns a slice of [Finger] structs or an error.
 //
 // This function is available since SDL 3.2.0.
 //

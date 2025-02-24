@@ -59,8 +59,8 @@ import "unsafe"
 //
 // These APIs grant access to gyros and accelerometers on various platforms.
 //
-// In order to use these functions, SDL_Init() must have been called with the
-// SDL_INIT_SENSOR flag. This causes SDL to scan the system for sensors, and
+// In order to use these functions, [Init] must have been called with the
+// [InitSensor] flag. This causes SDL to scan the system for sensors, and
 // load appropriate drivers.
 
 // The opaque structure used to identify an opened SDL sensor.
@@ -84,7 +84,7 @@ type SensorID uint32
 //
 // The accelerometer returns the current acceleration in SI meters per second
 // squared. This measurement includes the force of gravity, so a device at
-// rest will have an value of SDL_STANDARD_GRAVITY away from the center of the
+// rest will have an value of StandardGravity away from the center of the
 // earth, which is a positive Y value.
 //
 // This macro is available since SDL 3.2.0.
@@ -102,19 +102,19 @@ const StandardGravity = 9.80665
 //
 // The accelerometer returns the current acceleration in SI meters per second
 // squared. This measurement includes the force of gravity, so a device at
-// rest will have an value of SDL_STANDARD_GRAVITY away from the center of the
+// rest will have an value of [StandardGravity] away from the center of the
 // earth, which is a positive Y value.
 //
-// - `values[0]`: Acceleration on the x axis
-// - `values[1]`: Acceleration on the y axis
-// - `values[2]`: Acceleration on the z axis
+//   - values[0]: Acceleration on the x axis
+//   - values[1]: Acceleration on the y axis
+//   - values[2]: Acceleration on the z axis
 //
 // For phones and tablets held in natural orientation and game controllers
 // held in front of you, the axes are defined as follows:
 //
-// - -X ... +X : left ... right
-// - -Y ... +Y : bottom ... top
-// - -Z ... +Z : farther ... closer
+//   - -X ... +X : left ... right
+//   - -Y ... +Y : bottom ... top
+//   - -Z ... +Z : farther ... closer
 //
 // The accelerometer axis data is not changed when the device is rotated.
 //
@@ -126,16 +126,16 @@ const StandardGravity = 9.80665
 // positive rotation on that axis when it appeared to be rotating
 // counter-clockwise.
 //
-// - `values[0]`: Angular speed around the x axis (pitch)
-// - `values[1]`: Angular speed around the y axis (yaw)
-// - `values[2]`: Angular speed around the z axis (roll)
+//   - values[0]: Angular speed around the x axis (pitch)
+//   - values[1]: Angular speed around the y axis (yaw)
+//   - values[2]: Angular speed around the z axis (roll)
 //
 // For phones and tablets held in natural orientation and game controllers
 // held in front of you, the axes are defined as follows:
 //
-// - -X ... +X : left ... right
-// - -Y ... +Y : bottom ... top
-// - -Z ... +Z : farther ... closer
+//   - -X ... +X : left ... right
+//   - -Y ... +Y : bottom ... top
+//   - -Z ... +Z : farther ... closer
 //
 // The gyroscope axis data is not changed when the device is rotated.
 //
@@ -152,16 +152,13 @@ const (
 	SensorGyroL                     // Gyroscope for left Joy-Con controller
 	SensorAccelR                    // Accelerometer for right Joy-Con controller
 	SensorGyroR                     // Gyroscope for right Joy-Con controller
+
+	SensorInvalid SensorType = 0xFFFFFFFF
 )
 
 // Get a list of currently connected sensors.
 //
-// count: a pointer filled in with the number of sensors returned, may
-// be NULL.
-//
-// Returns a 0 terminated array of sensor instance IDs or NULL on failure;
-// call SDL_GetError() for more information. This should be freed
-// with SDL_free() when it is no longer needed.
+// Returns a slice of sensor instance IDs or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -186,7 +183,7 @@ func GetSensors() ([]SensorID, error) {
 //
 // id: the sensor instance ID.
 //
-// Returns the sensor name, or NULL if `id` is not valid.
+// Returns the sensor name, or an empty string if id is not valid.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -201,7 +198,7 @@ func (id SensorID) Name() string {
 //
 // id: the sensor instance ID.
 //
-// Returns the SDL_SensorType, or `SDL_SENSOR_INVALID` if `id` is
+// Returns the [SensorType], or [SensorInvalid] if id is
 // not valid.
 //
 // This function is available since SDL 3.2.0.
@@ -217,7 +214,7 @@ func (id SensorID) Type() SensorType {
 //
 // id: the sensor instance ID.
 //
-// Returns the sensor platform dependent type, or -1 if `id` is not
+// Returns the sensor platform dependent type, or -1 if id is not
 // valid.
 //
 // This function is available since SDL 3.2.0.
@@ -231,8 +228,7 @@ func (id SensorID) NonPortableType() int {
 //
 // id: the sensor instance ID.
 //
-// Returns an SDL_Sensor object or NULL on failure; call SDL_GetError() for
-// more information.
+// Returns a [Sensor] object or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -245,12 +241,11 @@ func OpenSensor(id SensorID) (*Sensor, error) {
 	return s, nil
 }
 
-// Return the SDL_Sensor associated with an instance ID.
+// Return the [Sensor] associated with an instance ID.
 //
 // id: the sensor instance ID.
 //
-// Returns an SDL_Sensor object or NULL on failure; call SDL_GetError() for
-// more information.
+// Returns a [Sensor] object or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -265,10 +260,9 @@ func GetSensorFromID(id SensorID) (*Sensor, error) {
 
 // Get the properties associated with a sensor.
 //
-// sensor: the SDL_Sensor object.
+// sensor: the [Sensor] object.
 //
-// Returns a valid property ID on success or 0 on failure; call
-// SDL_GetError() for more information.
+// Returns a valid property ID or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -283,10 +277,9 @@ func (sensor *Sensor) Properties() (PropertiesID, error) {
 
 // Get the implementation dependent name of a sensor.
 //
-// sensor: the SDL_Sensor object.
+// sensor: the [Sensor] object.
 //
-// Returns the sensor name or NULL on failure; call SDL_GetError() for more
-// information.
+// Returns the sensor name or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -301,10 +294,9 @@ func (sensor *Sensor) Name() (string, error) {
 
 // Get the type of a sensor.
 //
-// sensor: the SDL_Sensor object to inspect.
+// sensor: the [Sensor] object to inspect.
 //
-// Returns the SDL_SensorType type, or `SDL_SENSOR_INVALID` if `sensor` is
-// NULL.
+// Returns the [SensorType] type, or [SensorInvalid] if sensor is nil.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -315,9 +307,9 @@ func (sensor *Sensor) Type() SensorType {
 
 // Get the platform dependent type of a sensor.
 //
-// sensor: the SDL_Sensor object to inspect.
+// sensor: the [Sensor] object to inspect.
 //
-// Returns the sensor platform dependent type, or -1 if `sensor` is NULL.
+// Returns the sensor platform dependent type, or -1 if sensor is nil.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -328,10 +320,9 @@ func (sensor *Sensor) NonPortableType() int {
 
 // Get the instance ID of a sensor.
 //
-// sensor: the SDL_Sensor object to inspect.
+// sensor: the [Sensor] object to inspect.
 //
-// Returns the sensor instance ID, or 0 on failure; call SDL_GetError() for
-// more information.
+// Returns the sensor instance ID or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -348,14 +339,11 @@ func (sensor *Sensor) ID() (SensorID, error) {
 //
 // The number of values and interpretation of the data is sensor dependent.
 //
-// sensor: the SDL_Sensor object to query.
+// sensor: the [Sensor] object to query.
 //
 // data: a pointer filled with the current sensor state.
 //
-// num_values: the number of values to write to data.
-//
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -367,9 +355,9 @@ func (sensor *Sensor) Read(data []float32) error {
 	return nil
 }
 
-// Close a sensor previously opened with SDL_OpenSensor().
+// Close a sensor previously opened with [OpenSensor].
 //
-// sensor: the SDL_Sensor object to close.
+// sensor: the [Sensor] object to close.
 //
 // This function is available since SDL 3.2.0.
 //
