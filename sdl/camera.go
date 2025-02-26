@@ -244,12 +244,9 @@ func GetCameras() ([]CameraID, error) {
 // conversion.
 //
 // This function isn't strictly required; if you call [OpenCamera] with a
-// NULL spec, SDL will choose a native format for you, and if you instead
+// nil spec, SDL will choose a native format for you, and if you instead
 // specify a desired format, it will transparently convert to the requested
 // format on your behalf.
-//
-// If `count` is not NULL, it will be filled with the number of elements in
-// the returned array.
 //
 // Note that it's legal for a camera to supply an empty list. This is what
 // will happen on Emscripten builds, since that platform won't tell _anything_

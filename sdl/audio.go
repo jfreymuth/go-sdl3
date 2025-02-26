@@ -709,8 +709,7 @@ func (devid AudioDeviceID) Name() string {
 //
 // spec: on return, will be filled with device details.
 //
-// sample_frames: pointer to store device buffer size, in sample frames.
-// Can be NULL.
+// sampleFrames: device buffer size, in sample frames.
 //
 // Returns the device details and the device buffer size, in sample frames,
 // or an error.
@@ -2102,7 +2101,7 @@ func (stream *AudioStream) Destroy() {
 //
 // The `spec` parameter represents the app's side of the audio stream. That
 // is, for recording audio, this will be the output format, and for playing
-// audio, this will be the input format. If spec is NULL, the system will
+// audio, this will be the input format. If spec is nil, the system will
 // choose the format, and the app can use [AudioStream.Format] to obtain
 // this information later.
 //

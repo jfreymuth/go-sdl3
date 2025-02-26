@@ -141,18 +141,18 @@ import "unsafe"
 // SDL surfaces are buffers of pixels in system RAM. These are useful for
 // passing around and manipulating images that are not stored in GPU memory.
 //
-// SDL_Surface makes serious efforts to manage images in various formats, and
+// [Surface] makes serious efforts to manage images in various formats, and
 // provides a reasonable toolbox for transforming the data, including copying
 // between surfaces, filling rectangles in the image data, etc.
 //
-// There is also a simple .bmp loader, SDL_LoadBMP(). SDL itself does not
+// There is also a simple .bmp loader, [LoadBMP]. SDL itself does not
 // provide loaders for various other file formats, but there are several
 // excellent external libraries that do, including its own satellite library,
 // SDL_image:
 //
 // https://github.com/libsdl-org/SDL_image
 
-// The flags on an SDL_Surface.
+// The flags on a [Surface].
 //
 // These are generally considered read-only.
 //
@@ -257,10 +257,9 @@ func (surface *Surface) Pixels() []byte {
 //
 // height: the height of the surface.
 //
-// format: the SDL_PixelFormat for the new surface's pixel format.
+// format: the [PixelFormat] for the new surface's pixel format.
 //
-// Returns the new SDL_Surface structure that is created or NULL on failure;
-// call SDL_GetError() for more information.
+// Returns the new [Surface] structure that is created or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -280,23 +279,22 @@ func CreateSurface(width int, height int, format PixelFormat) (*Surface, error) 
 // you must free the surface before you free the pixel data.
 //
 // Pitch is the offset in bytes from one row of pixels to the next, e.g.
-// `width*4` for `SDL_PIXELFORMAT_RGBA8888`.
+// width*4 for [PixelformatRGBA8888].
 //
-// You may pass NULL for pixels and 0 for pitch to create a surface that you
+// You may pass nil for pixels and 0 for pitch to create a surface that you
 // will fill in with valid values later.
 //
 // width: the width of the surface.
 //
 // height: the height of the surface.
 //
-// format: the SDL_PixelFormat for the new surface's pixel format.
+// format: the [PixelFormat] for the new surface's pixel format.
 //
 // pixels: a pointer to existing pixel data.
 //
 // pitch: the number of bytes between each row, including padding.
 //
-// Returns the new SDL_Surface structure that is created or NULL on failure;
-// call SDL_GetError() for more information.
+// Returns the new [Surface] structure that is created or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -311,9 +309,7 @@ func CreateSurfaceFrom(width int, height int, format PixelFormat, pixels []byte,
 
 // Free a surface.
 //
-// It is safe to pass NULL to this function.
-//
-// surface: the SDL_Surface to free.
+// surface: the [Surface] to free.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -329,25 +325,24 @@ func (surface *Surface) Destroy() {
 //
 // The following properties are understood by SDL:
 //
-// - `SDL_PROP_SURFACE_SDR_WHITE_POINT_FLOAT`: for HDR10 and floating point
-// surfaces, this defines the value of 100% diffuse white, with higher
-// values being displayed in the High Dynamic Range headroom. This defaults
-// to 203 for HDR10 surfaces and 1.0 for floating point surfaces.
-// - `SDL_PROP_SURFACE_HDR_HEADROOM_FLOAT`: for HDR10 and floating point
-// surfaces, this defines the maximum dynamic range used by the content, in
-// terms of the SDR white point. This defaults to 0.0, which disables tone
-// mapping.
-// - `SDL_PROP_SURFACE_TONEMAP_OPERATOR_STRING`: the tone mapping operator
-// used when compressing from a surface with high dynamic range to another
-// with lower dynamic range. Currently this supports "chrome", which uses
-// the same tone mapping that Chrome uses for HDR content, the form "*=N",
-// where N is a floating point scale factor applied in linear space, and
-// "none", which disables tone mapping. This defaults to "chrome".
+//   - [PropSurfaceSDRWhitePointFloat]: for HDR10 and floating point
+//     surfaces, this defines the value of 100% diffuse white, with higher
+//     values being displayed in the High Dynamic Range headroom. This defaults
+//     to 203 for HDR10 surfaces and 1.0 for floating point surfaces.
+//   - [PropSurfaceHDRHeadroomFloat]: for HDR10 and floating point
+//     surfaces, this defines the maximum dynamic range used by the content, in
+//     terms of the SDR white point. This defaults to 0.0, which disables tone
+//     mapping.
+//   - [PropSurfaceTonemapOperatorString]: the tone mapping operator
+//     used when compressing from a surface with high dynamic range to another
+//     with lower dynamic range. Currently this supports "chrome", which uses
+//     the same tone mapping that Chrome uses for HDR content, the form "*=N",
+//     where N is a floating point scale factor applied in linear space, and
+//     "none", which disables tone mapping. This defaults to "chrome".
 //
-// surface: the SDL_Surface structure to query.
+// surface: the [Surface] structure to query.
 //
-// Returns a valid property ID on success or 0 on failure; call
-// SDL_GetError() for more information.
+// Returns a valid property ID or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -360,8 +355,8 @@ func (surface *Surface) Properties() (PropertiesID, error) {
 	return props, nil
 }
 
-const PropSurfaceSdrWhitePointFloat = "SDL.surface.SDR_white_point"
-const PropSurfaceHdrHeadroomFloat = "SDL.surface.HDR_headroom"
+const PropSurfaceSDRWhitePointFloat = "SDL.surface.SDR_white_point"
+const PropSurfaceHDRHeadroomFloat = "SDL.surface.HDR_headroom"
 const PropSurfaceTonemapOperatorString = "SDL.surface.tonemap"
 
 // Set the colorspace used by a surface.
@@ -369,13 +364,11 @@ const PropSurfaceTonemapOperatorString = "SDL.surface.tonemap"
 // Setting the colorspace doesn't change the pixels, only how they are
 // interpreted in color operations.
 //
-// surface: the SDL_Surface structure to update.
+// surface: the [Surface] structure to update.
 //
-// colorspace: an SDL_Colorspace value describing the surface
-// colorspace.
+// colorspace: a [Colorspace] value describing the surface colorspace.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -389,14 +382,13 @@ func (surface *Surface) SetColorspace(colorspace Colorspace) error {
 
 // Get the colorspace used by a surface.
 //
-// The colorspace defaults to SDL_COLORSPACE_SRGB_LINEAR for floating point
-// formats, SDL_COLORSPACE_HDR10 for 10-bit formats, SDL_COLORSPACE_SRGB for
-// other RGB surfaces and SDL_COLORSPACE_BT709_FULL for YUV textures.
+// The colorspace defaults to [ColorspaceSRGBLinear] for floating point
+// formats, [ColorspaceHDR10] for 10-bit formats, [ColorspaceSRGB] for
+// other RGB surfaces and [ColorspaceBT709Full] for YUV textures.
 //
-// surface: the SDL_Surface structure to query.
+// surface: the [Surface] structure to query.
 //
-// Returns the colorspace used by the surface, or SDL_COLORSPACE_UNKNOWN if
-// the surface is NULL.
+// Returns the colorspace used by the surface.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -413,19 +405,17 @@ func (surface *Surface) Colorspace() Colorspace {
 // destroy the returned palette, it will be freed when the reference count
 // reaches 0, usually when the surface is destroyed.
 //
-// Bitmap surfaces (with format SDL_PIXELFORMAT_INDEX1LSB or
-// SDL_PIXELFORMAT_INDEX1MSB) will have the palette initialized with 0 as
+// Bitmap surfaces (with format [PixelformatIndex1LSB] or
+// [PixelformatIndex1MSB]) will have the palette initialized with 0 as
 // white and 1 as black. Other surfaces will get a palette initialized with
 // white in every entry.
 //
 // If this function is called for a surface that already has a palette, a new
 // palette will be created to replace it.
 //
-// surface: the SDL_Surface structure to update.
+// surface: the [Surface] structure to update.
 //
-// Returns a new SDL_Palette structure on success or NULL on failure (e.g. if
-// the surface didn't have an index format); call SDL_GetError() for
-// more information.
+// Returns a new [Palette] structure or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -442,12 +432,11 @@ func (surface *Surface) CreatePalette() (*Palette, error) {
 //
 // A single palette can be shared with many surfaces.
 //
-// surface: the SDL_Surface structure to update.
+// surface: the [Surface] structure to update.
 //
-// palette: the SDL_Palette structure to use.
+// palette: the [Palette] structure to use.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -461,10 +450,9 @@ func (surface *Surface) SetPalette(palette *Palette) error {
 
 // Get the palette used by a surface.
 //
-// surface: the SDL_Surface structure to query.
+// surface: the [Surface] structure to query.
 //
-// Returns a pointer to the palette used by the surface, or NULL if there is
-// no palette used.
+// Returns a pointer to the palette used by the surface or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -485,15 +473,14 @@ func GetSurfacePalette(surface *Surface) *Palette {
 // alternate versions will not be updated when the original surface changes.
 //
 // This function adds a reference to the alternate version, so you should call
-// SDL_DestroySurface() on the image after this call.
+// [Surface.Destroy] on the image after this call.
 //
-// surface: the SDL_Surface structure to update.
+// surface: the [Surface] structure to update.
 //
-// image: a pointer to an alternate SDL_Surface to associate with this
+// image: a pointer to an alternate [Surface] to associate with this
 // surface.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -507,7 +494,7 @@ func (surface *Surface) AddAlternateImage(image *Surface) error {
 
 // Return whether a surface has alternate versions available.
 //
-// surface: the SDL_Surface structure to query.
+// surface: the [Surface] structure to query.
 //
 // Returns true if alternate versions are available or false otherwise.
 //
@@ -527,14 +514,9 @@ func (surface *Surface) HasAlternateImages() bool {
 // They are still referenced by the surface being queried and will be cleaned
 // up normally.
 //
-// surface: the SDL_Surface structure to query.
+// surface: the [Surface] structure to query.
 //
-// count: a pointer filled in with the number of surface pointers
-// returned, may be NULL.
-//
-// Returns a NULL terminated array of SDL_Surface pointers or NULL on
-// failure; call SDL_GetError() for more information. This should be
-// freed with SDL_free() when it is no longer needed.
+// Returns a slice of [Surface] pointers or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -558,7 +540,7 @@ func (surface *Surface) GetImages() ([]*Surface, error) {
 // This function removes a reference from all the alternative versions,
 // destroying them if this is the last reference to them.
 //
-// surface: the SDL_Surface structure to update.
+// surface: the [Surface] structure to update.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -569,19 +551,18 @@ func (surface *Surface) RemoveAlternateImages() {
 
 // Set up a surface for directly accessing the pixels.
 //
-// Between calls to SDL_LockSurface() / SDL_UnlockSurface(), you can write to
-// and read from `surface->pixels`, using the pixel format stored in
-// `surface->format`. Once you are done accessing the surface, you should use
-// SDL_UnlockSurface() to release it.
+// Between calls to [Surface.Lock] / [Surface.Unlock], you can write to
+// and read from [Surface.Pixels], using the pixel format stored in
+// [Surface.Format]. Once you are done accessing the surface, you should use
+// [Surface.Unlock] to release it.
 //
-// Not all surfaces require locking. If `SDL_MUSTLOCK(surface)` evaluates to
-// 0, then you can read and write to the surface at any time, and the pixel
-// format of the surface will not change.
+// Not all surfaces require locking. If [Surface.MustLock] returns false, then
+// you can read and write to the surface at any time, and the pixel format of
+// the surface will not change.
 //
-// surface: the SDL_Surface structure to be locked.
+// surface: the [Surface] structure to be locked.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -595,7 +576,7 @@ func (surface *Surface) Lock() error {
 
 // Release a surface after directly accessing the pixels.
 //
-// surface: the SDL_Surface structure to be unlocked.
+// surface: the [Surface] structure to be unlocked.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -606,16 +587,15 @@ func (surface *Surface) Unlock() {
 
 // Load a BMP image from a seekable SDL data stream.
 //
-// The new surface should be freed with SDL_DestroySurface(). Not doing so
+// The new surface should be freed with [Surface.Destroy]. Not doing so
 // will result in a memory leak.
 //
 // src: the data stream for the surface.
 //
-// closeio: if true, calls SDL_CloseIO() on `src` before returning, even
+// closeio: if true, calls [IOStream.Close] on src before returning, even
 // in the case of an error.
 //
-// Returns a pointer to a new SDL_Surface structure or NULL on failure; call
-// SDL_GetError() for more information.
+// Returns a pointer to a new [Surface] structure or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -630,13 +610,12 @@ func LoadBMP_IO(src *IOStream, closeio bool) (*Surface, error) {
 
 // Load a BMP image from a file.
 //
-// The new surface should be freed with SDL_DestroySurface(). Not doing so
+// The new surface should be freed with [Sureface.Destroy]. Not doing so
 // will result in a memory leak.
 //
 // file: the BMP file to load.
 //
-// Returns a pointer to a new SDL_Surface structure or NULL on failure; call
-// SDL_GetError() for more information.
+// Returns a pointer to a new [Surface] structure or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -657,15 +636,14 @@ func LoadBMP(file string) (*Surface, error) {
 // surface before they are saved. YUV and paletted 1-bit and 4-bit formats are
 // not supported.
 //
-// surface: the SDL_Surface structure containing the image to be saved.
+// surface: the [Surface] structure containing the image to be saved.
 //
 // dst: a data stream to save to.
 //
-// closeio: if true, calls SDL_CloseIO() on `dst` before returning, even
+// closeio: if true, calls [IOStream.Close] on dst before returning, even
 // in the case of an error.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -685,12 +663,11 @@ func SaveBMP_IO(surface *Surface, dst *IOStream, closeio bool) error {
 // surface before they are saved. YUV and paletted 1-bit and 4-bit formats are
 // not supported.
 //
-// surface: the SDL_Surface structure containing the image to be saved.
+// surface: the [Surface] structure containing the image to be saved.
 //
 // file: a file to save to.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -707,12 +684,11 @@ func SaveBMP(surface *Surface, file string) error {
 // If RLE is enabled, color key and alpha blending blits are much faster, but
 // the surface must be locked before directly accessing the pixels.
 //
-// surface: the SDL_Surface structure to optimize.
+// surface: the [Surface] structure to optimize.
 //
 // enabled: true to enable RLE acceleration, false to disable it.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -726,9 +702,7 @@ func (surface *Surface) SetRLE(enabled bool) error {
 
 // Returns whether the surface is RLE enabled.
 //
-// It is safe to pass a NULL `surface` here; it will return false.
-//
-// surface: the SDL_Surface structure to query.
+// surface: the [Surface] structure to query.
 //
 // Returns true if the surface is RLE enabled, false otherwise.
 //
@@ -746,16 +720,15 @@ func (surface *Surface) HasRLE() bool {
 // considered transparent, and therefore not rendered.
 //
 // It is a pixel of the format used by the surface, as generated by
-// SDL_MapRGB().
+// [PixelFormatDetails.MapRGB].
 //
-// surface: the SDL_Surface structure to update.
+// surface: the [Surface] structure to update.
 //
 // enabled: true to enable color key, false to disable color key.
 //
 // key: the transparent pixel.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -769,9 +742,7 @@ func (surface *Surface) SetColorKey(enabled bool, key uint32) error {
 
 // Returns whether the surface has a color key.
 //
-// It is safe to pass a NULL `surface` here; it will return false.
-//
-// surface: the SDL_Surface structure to query.
+// surface: the [Surface] structure to query.
 //
 // Returns true if the surface has a color key, false otherwise.
 //
@@ -785,16 +756,15 @@ func (surface *Surface) HasColorKey() bool {
 // Get the color key (transparent pixel) for a surface.
 //
 // The color key is a pixel of the format used by the surface, as generated by
-// SDL_MapRGB().
+// [PixelFormatDetails.MapRGB].
 //
 // If the surface doesn't have color key enabled this function returns false.
 //
-// surface: the SDL_Surface structure to query.
+// surface: the [Surface] structure to query.
 //
-// key: a pointer filled in with the transparent pixel.
+// key: the transparent pixel.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -813,9 +783,9 @@ func (surface *Surface) ColorKey() (uint32, error) {
 // channel is modulated by the appropriate color value according to the
 // following formula:
 //
-// `srcC = srcC * (color / 255)`
+//	srcC = srcC * (color / 255)
 //
-// surface: the SDL_Surface structure to update.
+// surface: the [Surface] structure to update.
 //
 // r: the red color value multiplied into blit operations.
 //
@@ -823,8 +793,7 @@ func (surface *Surface) ColorKey() (uint32, error) {
 //
 // b: the blue color value multiplied into blit operations.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -838,16 +807,15 @@ func (surface *Surface) SetColorMod(r byte, g byte, b byte) error {
 
 // Get the additional color value multiplied into blit operations.
 //
-// surface: the SDL_Surface structure to query.
+// surface: the [Surface] structure to query.
 //
-// r: a pointer filled in with the current red color value.
+// r: the current red color value.
 //
-// g: a pointer filled in with the current green color value.
+// g: the current green color value.
 //
-// b: a pointer filled in with the current blue color value.
+// b: the current blue color value.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns the current color mod or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -865,14 +833,13 @@ func (surface *Surface) ColorMod() (r, g, b byte, err error) {
 // When this surface is blitted, during the blit operation the source alpha
 // value is modulated by this alpha value according to the following formula:
 //
-// `srcA = srcA * (alpha / 255)`
+//	srcA = srcA * (alpha / 255)
 //
-// surface: the SDL_Surface structure to update.
+// surface: the [Surface] structure to update.
 //
 // alpha: the alpha value multiplied into blit operations.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -886,12 +853,11 @@ func (surface *Surface) SetAlphaMod(alpha byte) error {
 
 // Get the additional alpha value used in blit operations.
 //
-// surface: the SDL_Surface structure to query.
+// surface: the [Surface] structure to query.
 //
-// alpha: a pointer filled in with the current alpha value.
+// alpha: the current alpha value.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns the current alpha value or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -908,14 +874,13 @@ func (surface *Surface) AlphaMod() (byte, error) {
 //
 // To copy a surface to another surface (or texture) without blending with the
 // existing data, the blendmode of the SOURCE surface should be set to
-// `SDL_BLENDMODE_NONE`.
+// [BlendmodeNone].
 //
-// surface: the SDL_Surface structure to update.
+// surface: the [Surface] structure to update.
 //
-// blendMode: the SDL_BlendMode to use for blit blending.
+// blendMode: the [BlendMode] to use for blit blending.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -929,12 +894,11 @@ func (surface *Surface) SetBlendMode(blendMode BlendMode) error {
 
 // Get the blend mode used for blit operations.
 //
-// surface: the SDL_Surface structure to query.
+// surface: the [Surface] structure to query.
 //
-// blendMode: a pointer filled in with the current SDL_BlendMode.
+// blendMode: the current [BlendMode].
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns the current [BlendMode] or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -949,16 +913,16 @@ func (surface *Surface) BlendMode() (BlendMode, error) {
 
 // Set the clipping rectangle for a surface.
 //
-// When `surface` is the destination of a blit, only the area within the clip
+// When surface is the destination of a blit, only the area within the clip
 // rectangle is drawn into.
 //
 // Note that blits are automatically clipped to the edges of the source and
 // destination surfaces.
 //
-// surface: the SDL_Surface structure to be clipped.
+// surface: the [Surface] structure to be clipped.
 //
-// rect: the SDL_Rect structure representing the clipping rectangle, or
-// NULL to disable clipping.
+// rect: the [Rect] structure representing the clipping rectangle, or
+// nil to disable clipping.
 //
 // Returns true if the rectangle intersects the surface, otherwise false and
 // blits will be completely clipped.
@@ -976,17 +940,15 @@ func (surface *Surface) SetClipRect(rect *Rect) bool {
 
 // Get the clipping rectangle for a surface.
 //
-// When `surface` is the destination of a blit, only the area within the clip
+// When surface is the destination of a blit, only the area within the clip
 // rectangle is drawn into.
 //
-// surface: the SDL_Surface structure representing the surface to be
+// surface: the [Surface] structure representing the surface to be
 // clipped.
 //
-// rect: an SDL_Rect structure filled in with the clipping rectangle for
-// the surface.
+// rect: the clipping rectangle for the surface.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns the clipping rectangle for the surface or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1005,8 +967,7 @@ func (surface *Surface) ClipRect() (Rect, error) {
 //
 // flip: the direction to flip.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1023,12 +984,11 @@ func (surface *Surface) Flip(flip FlipMode) error {
 // If the original surface has alternate images, the new surface will have a
 // reference to them as well.
 //
-// The returned surface should be freed with SDL_DestroySurface().
+// The returned surface should be freed with [Surface.Destroy].
 //
 // surface: the surface to duplicate.
 //
-// Returns a copy of the surface or NULL on failure; call SDL_GetError() for
-// more information.
+// Returns a copy of the surface or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1044,7 +1004,7 @@ func (surface *Surface) Duplicate() (*Surface, error) {
 // Creates a new surface identical to the existing surface, scaled to the
 // desired size.
 //
-// The returned surface should be freed with SDL_DestroySurface().
+// The returned surface should be freed with [Surface.Destroy].
 //
 // surface: the surface to duplicate and scale.
 //
@@ -1052,10 +1012,9 @@ func (surface *Surface) Duplicate() (*Surface, error) {
 //
 // height: the height of the new surface.
 //
-// scaleMode: the SDL_ScaleMode to be used.
+// scaleMode: the [ScaleMode] to be used.
 //
-// Returns a copy of the surface or NULL on failure; call SDL_GetError() for
-// more information.
+// Returns a copy of the surface or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1076,17 +1035,16 @@ func (surface *Surface) Scale(width int, height int, scaleMode ScaleMode) (*Surf
 // future blits, making them faster.
 //
 // If you are converting to an indexed surface and want to map colors to a
-// palette, you can use SDL_ConvertSurfaceAndColorspace() instead.
+// palette, you can use [Surface.ConvertColorspace] instead.
 //
 // If the original surface has alternate images, the new surface will have a
 // reference to them as well.
 //
-// surface: the existing SDL_Surface structure to convert.
+// surface: the existing [Surface] structure to convert.
 //
 // format: the new pixel format.
 //
-// Returns the new SDL_Surface structure that is created or NULL on failure;
-// call SDL_GetError() for more information.
+// Returns the new [Surface] structure that is created or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1109,24 +1067,27 @@ func (surface *Surface) Convert(format PixelFormat) (*Surface, error) {
 // If the original surface has alternate images, the new surface will have a
 // reference to them as well.
 //
-// surface: the existing SDL_Surface structure to convert.
+// surface: the existing [Surface] structure to convert.
 //
 // format: the new pixel format.
 //
-// palette: an optional palette to use for indexed formats, may be NULL.
+// palette: an optional palette to use for indexed formats, may be nil.
 //
 // colorspace: the new colorspace.
 //
-// props: an SDL_PropertiesID with additional color properties, or 0.
+// props: a [PropertiesID] with additional color properties, or 0.
 //
-// Returns the new SDL_Surface structure that is created or NULL on failure;
-// call SDL_GetError() for more information.
+// Returns the new [Surface] structure that is created or an error.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_ConvertSurfaceAndColorspace
 func (surface *Surface) ConvertColorspace(format PixelFormat, palette *Palette, colorspace Colorspace, props PropertiesID) (*Surface, error) {
-	s := C.SDL_ConvertSurfaceAndColorspace(surface.internal, (C.SDL_PixelFormat)(format), palette.internal, (C.SDL_Colorspace)(colorspace), (C.SDL_PropertiesID)(props))
+	var p *C.SDL_Palette
+	if palette != nil {
+		p = palette.internal
+	}
+	s := C.SDL_ConvertSurfaceAndColorspace(surface.internal, (C.SDL_PixelFormat)(format), p, (C.SDL_Colorspace)(colorspace), (C.SDL_PropertiesID)(props))
 	if s == nil {
 		return nil, getError()
 	}
@@ -1139,29 +1100,28 @@ func (surface *Surface) ConvertColorspace(format PixelFormat, palette *Palette, 
 //
 // height: the height of the block to copy, in pixels.
 //
-// src_format: an SDL_PixelFormat value of the `src` pixels format.
+// srcFormat: a [PixelFormat] value of the src pixels format.
 //
 // src: a pointer to the source pixels.
 //
-// src_pitch: the pitch of the source pixels, in bytes.
+// srcPitch: the pitch of the source pixels, in bytes.
 //
-// dst_format: an SDL_PixelFormat value of the `dst` pixels format.
+// dstFormat: a [PixelFormat] value of the dst pixels format.
 //
 // dst: a pointer to be filled in with new pixel data.
 //
-// dst_pitch: the pitch of the destination pixels, in bytes.
+// dstPitch: the pitch of the destination pixels, in bytes.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_ConvertPixels
-func ConvertPixels(width int, height int, src_format PixelFormat, src []byte, src_pitch int, dst_format PixelFormat, dst []byte, dst_pitch int) error {
-	if len(src) < height*src_pitch || len(dst) < height*src_pitch {
+func ConvertPixels(width int, height int, srcFormat PixelFormat, src []byte, srcPitch int, dstFormat PixelFormat, dst []byte, dstPitch int) error {
+	if len(src) < height*srcPitch || len(dst) < height*srcPitch {
 		return sdlError("ConvertPixels out of bounds")
 	}
-	if !C.SDL_ConvertPixels((C.int)(width), (C.int)(height), (C.SDL_PixelFormat)(src_format), unsafe.Pointer(unsafe.SliceData(src)), (C.int)(src_pitch), (C.SDL_PixelFormat)(dst_format), unsafe.Pointer(unsafe.SliceData(dst)), (C.int)(dst_pitch)) {
+	if !C.SDL_ConvertPixels((C.int)(width), (C.int)(height), (C.SDL_PixelFormat)(srcFormat), unsafe.Pointer(unsafe.SliceData(src)), (C.int)(srcPitch), (C.SDL_PixelFormat)(dstFormat), unsafe.Pointer(unsafe.SliceData(dst)), (C.int)(dstPitch)) {
 		return getError()
 	}
 	return nil
@@ -1174,41 +1134,40 @@ func ConvertPixels(width int, height int, src_format PixelFormat, src []byte, sr
 //
 // height: the height of the block to copy, in pixels.
 //
-// src_format: an SDL_PixelFormat value of the `src` pixels format.
+// srcFormat: a [PixelFormat] value of the src pixels format.
 //
-// src_colorspace: an SDL_Colorspace value describing the colorspace of
-// the `src` pixels.
+// srcColorspace: a [Colorspace] value describing the colorspace of
+// the src pixels.
 //
-// src_properties: an SDL_PropertiesID with additional source color
+// srcProperties: a [PropertiesID] with additional source color
 // properties, or 0.
 //
 // src: a pointer to the source pixels.
 //
-// src_pitch: the pitch of the source pixels, in bytes.
+// srcPitch: the pitch of the source pixels, in bytes.
 //
-// dst_format: an SDL_PixelFormat value of the `dst` pixels format.
+// dstFormat: a [PixelFormat] value of the dst pixels format.
 //
-// dst_colorspace: an SDL_Colorspace value describing the colorspace of
-// the `dst` pixels.
+// dstColorspace: a [Colorspace] value describing the colorspace of
+// the dst pixels.
 //
-// dst_properties: an SDL_PropertiesID with additional destination color
+// dstProperties: a [PropertiesID] with additional destination color
 // properties, or 0.
 //
 // dst: a pointer to be filled in with new pixel data.
 //
-// dst_pitch: the pitch of the destination pixels, in bytes.
+// dstPitch: the pitch of the destination pixels, in bytes.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_ConvertPixelsAndColorspace
-func ConvertPixelsAndColorspace(width int, height int, src_format PixelFormat, src_colorspace Colorspace, src_properties PropertiesID, src []byte, src_pitch int, dst_format PixelFormat, dst_colorspace Colorspace, dst_properties PropertiesID, dst []byte, dst_pitch int) error {
-	if len(src) < height*src_pitch || len(dst) < height*src_pitch {
+func ConvertPixelsAndColorspace(width int, height int, srcFormat PixelFormat, srcColorspace Colorspace, srcProperties PropertiesID, src []byte, srcPitch int, dstFormat PixelFormat, dstColorspace Colorspace, dstProperties PropertiesID, dst []byte, dstPitch int) error {
+	if len(src) < height*srcPitch || len(dst) < height*srcPitch {
 		return sdlError("ConvertPixelsAndColorspace out of bounds")
 	}
-	if !C.SDL_ConvertPixelsAndColorspace((C.int)(width), (C.int)(height), (C.SDL_PixelFormat)(src_format), (C.SDL_Colorspace)(src_colorspace), (C.SDL_PropertiesID)(src_properties), unsafe.Pointer(unsafe.SliceData(src)), (C.int)(src_pitch), (C.SDL_PixelFormat)(dst_format), (C.SDL_Colorspace)(dst_colorspace), (C.SDL_PropertiesID)(dst_properties), unsafe.Pointer(unsafe.SliceData(dst)), (C.int)(dst_pitch)) {
+	if !C.SDL_ConvertPixelsAndColorspace((C.int)(width), (C.int)(height), (C.SDL_PixelFormat)(srcFormat), (C.SDL_Colorspace)(srcColorspace), (C.SDL_PropertiesID)(srcProperties), unsafe.Pointer(unsafe.SliceData(src)), (C.int)(srcPitch), (C.SDL_PixelFormat)(dstFormat), (C.SDL_Colorspace)(dstColorspace), (C.SDL_PropertiesID)(dstProperties), unsafe.Pointer(unsafe.SliceData(dst)), (C.int)(dstPitch)) {
 		return getError()
 	}
 	return nil
@@ -1222,32 +1181,31 @@ func ConvertPixelsAndColorspace(width int, height int, src_format PixelFormat, s
 //
 // height: the height of the block to convert, in pixels.
 //
-// src_format: an SDL_PixelFormat value of the `src` pixels format.
+// srcFormat: a [PixelFormat] value of the src pixels format.
 //
 // src: a pointer to the source pixels.
 //
-// src_pitch: the pitch of the source pixels, in bytes.
+// srcPitch: the pitch of the source pixels, in bytes.
 //
-// dst_format: an SDL_PixelFormat value of the `dst` pixels format.
+// dstFormat: a [PixelFormat] value of the dst pixels format.
 //
 // dst: a pointer to be filled in with premultiplied pixel data.
 //
-// dst_pitch: the pitch of the destination pixels, in bytes.
+// dstPitch: the pitch of the destination pixels, in bytes.
 //
 // linear: true to convert from sRGB to linear space for the alpha
 // multiplication, false to do multiplication in sRGB space.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_PremultiplyAlpha
-func PremultiplyAlpha(width int, height int, src_format PixelFormat, src []byte, src_pitch int, dst_format PixelFormat, dst []byte, dst_pitch int, linear bool) error {
-	if len(src) < height*src_pitch || len(dst) < height*src_pitch {
+func PremultiplyAlpha(width int, height int, srcFormat PixelFormat, src []byte, srcPitch int, dstFormat PixelFormat, dst []byte, dstPitch int, linear bool) error {
+	if len(src) < height*srcPitch || len(dst) < height*srcPitch {
 		return sdlError("PremultiplyAlpha out of bounds")
 	}
-	if !C.SDL_PremultiplyAlpha((C.int)(width), (C.int)(height), (C.SDL_PixelFormat)(src_format), unsafe.Pointer(unsafe.SliceData(src)), (C.int)(src_pitch), (C.SDL_PixelFormat)(dst_format), unsafe.Pointer(unsafe.SliceData(dst)), (C.int)(dst_pitch), (C.bool)(linear)) {
+	if !C.SDL_PremultiplyAlpha((C.int)(width), (C.int)(height), (C.SDL_PixelFormat)(srcFormat), unsafe.Pointer(unsafe.SliceData(src)), (C.int)(srcPitch), (C.SDL_PixelFormat)(dstFormat), unsafe.Pointer(unsafe.SliceData(dst)), (C.int)(dstPitch), (C.bool)(linear)) {
 		return getError()
 	}
 	return nil
@@ -1262,8 +1220,7 @@ func PremultiplyAlpha(width int, height int, src_format PixelFormat, src []byte,
 // linear: true to convert from sRGB to linear space for the alpha
 // multiplication, false to do multiplication in sRGB space.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1282,7 +1239,7 @@ func (surface *Surface) PremultiplyAlpha(linear bool) error {
 // If the surface is YUV, the color is assumed to be in the sRGB colorspace,
 // otherwise the color is assumed to be in the colorspace of the suface.
 //
-// surface: the SDL_Surface to clear.
+// surface: the [Surface] to clear.
 //
 // r: the red component of the pixel, normally in the range 0-1.
 //
@@ -1292,8 +1249,7 @@ func (surface *Surface) PremultiplyAlpha(linear bool) error {
 //
 // a: the alpha component of the pixel, normally in the range 0-1.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1307,30 +1263,33 @@ func (surface *Surface) Clear(r float32, g float32, b float32, a float32) error 
 
 // Perform a fast fill of a rectangle with a specific color.
 //
-// `color` should be a pixel of the format used by the surface, and can be
-// generated by SDL_MapRGB() or SDL_MapRGBA(). If the color value contains an
-// alpha component then the destination is simply filled with that alpha
-// information, no blending takes place.
+// color should be a pixel of the format used by the surface, and can be
+// generated by [PixelFormatDetails.MapRGB] or [PixelFormatDetails.MapRGBA].
+// If the color value contains an alpha component then the destination is
+// simply filled with that alpha information, no blending takes place.
 //
 // If there is a clip rectangle set on the destination (set via
-// SDL_SetSurfaceClipRect()), then this function will fill based on the
-// intersection of the clip rectangle and `rect`.
+// [Surface.SetClipRect]), then this function will fill based on the
+// intersection of the clip rectangle and rec`.
 //
-// dst: the SDL_Surface structure that is the drawing target.
+// surface: the [Surface] structure that is the drawing target.
 //
-// rect: the SDL_Rect structure representing the rectangle to fill, or
-// NULL to fill the entire surface.
+// rect: the [Rect] structure representing the rectangle to fill, or
+// nil to fill the entire surface.
 //
 // color: the color to fill with.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_FillSurfaceRect
-func (surface *Surface) FillRect(rect Rect, color uint32) error {
-	if !C.SDL_FillSurfaceRect(surface.internal, &C.SDL_Rect{C.int(rect.X), C.int(rect.Y), C.int(rect.W), C.int(rect.H)}, (C.Uint32)(color)) {
+func (surface *Surface) FillRect(rect *Rect, color uint32) error {
+	var crect *C.SDL_Rect
+	if rect != nil {
+		crect = &C.SDL_Rect{C.int(rect.X), C.int(rect.Y), C.int(rect.W), C.int(rect.H)}
+	}
+	if !C.SDL_FillSurfaceRect(surface.internal, crect, (C.Uint32)(color)) {
 		return getError()
 	}
 	return nil
@@ -1338,25 +1297,22 @@ func (surface *Surface) FillRect(rect Rect, color uint32) error {
 
 // Perform a fast fill of a set of rectangles with a specific color.
 //
-// `color` should be a pixel of the format used by the surface, and can be
-// generated by SDL_MapRGB() or SDL_MapRGBA(). If the color value contains an
-// alpha component then the destination is simply filled with that alpha
-// information, no blending takes place.
+// color should be a pixel of the format used by the surface, and can be
+// generated by [PixelFormatDetails.MapRGB] or [PixelFormatDetails.MapRGBA].
+// If the color value contains an alpha component then the destination is
+// simply filled with that alpha information, no blending takes place.
 //
 // If there is a clip rectangle set on the destination (set via
-// SDL_SetSurfaceClipRect()), then this function will fill based on the
-// intersection of the clip rectangle and `rect`.
+// [Surface.SetClipRect]), then this function will fill based on the
+// intersection of the clip rectangle and rect.
 //
-// dst: the SDL_Surface structure that is the drawing target.
+// surface: the [Surface] structure that is the drawing target.
 //
-// rects: an array of SDL_Rects representing the rectangles to fill.
-//
-// count: the number of rectangles in the array.
+// rects: an array of [Rect]s representing the rectangles to fill.
 //
 // color: the color to fill with.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1375,10 +1331,10 @@ func (surface *Surface) FillRects(dst *Surface, rects []Rect, color uint32) erro
 // Performs a fast blit from the source surface to the destination surface
 // with clipping.
 //
-// If either `srcrect` or `dstrect` are NULL, the entire surface (`src` or
-// `dst`) is copied while ensuring clipping to `dst->clip_rect`.
+// If either srcrect or dstrect are nil, the entire surface (src or
+// dst) is copied while ensuring clipping to the clip rect of dst.
 //
-// The final blit rectangles are saved in `srcrect` and `dstrect` after all
+// The final blit rectangles are saved in srcrect and dstrect after all
 // clipping is performed.
 //
 // The blit function should not be called on a locked surface.
@@ -1386,61 +1342,58 @@ func (surface *Surface) FillRects(dst *Surface, rects []Rect, color uint32) erro
 // The blit semantics for surfaces with and without blending and colorkey are
 // defined as follows:
 //
-// ```
-// RGBA->RGB:
-// Source surface blend mode set to SDL_BLENDMODE_BLEND:
-// alpha-blend (using the source alpha-channel and per-surface alpha)
-// SDL_SRCCOLORKEY ignored.
-// Source surface blend mode set to SDL_BLENDMODE_NONE:
-// copy RGB.
-// if SDL_SRCCOLORKEY set, only copy the pixels that do not match the
-// RGB values of the source color key, ignoring alpha in the
-// comparison.
+//	RGBA->RGB:
+//	   Source surface blend mode set to SDL_BLENDMODE_BLEND:
+//	    alpha-blend (using the source alpha-channel and per-surface alpha)
+//	    SDL_SRCCOLORKEY ignored.
+//	  Source surface blend mode set to SDL_BLENDMODE_NONE:
+//	    copy RGB.
+//	    if SDL_SRCCOLORKEY set, only copy the pixels that do not match the
+//	    RGB values of the source color key, ignoring alpha in the
+//	    comparison.
 //
-// RGB->RGBA:
-// Source surface blend mode set to SDL_BLENDMODE_BLEND:
-// alpha-blend (using the source per-surface alpha)
-// Source surface blend mode set to SDL_BLENDMODE_NONE:
-// copy RGB, set destination alpha to source per-surface alpha value.
-// both:
-// if SDL_SRCCOLORKEY set, only copy the pixels that do not match the
-// source color key.
+//	RGB->RGBA:
+//	  Source surface blend mode set to SDL_BLENDMODE_BLEND:
+//	    alpha-blend (using the source per-surface alpha)
+//	  Source surface blend mode set to SDL_BLENDMODE_NONE:
+//	    copy RGB, set destination alpha to source per-surface alpha value.
+//	  both:
+//	    if SDL_SRCCOLORKEY set, only copy the pixels that do not match the
+//	    source color key.
 //
-// RGBA->RGBA:
-// Source surface blend mode set to SDL_BLENDMODE_BLEND:
-// alpha-blend (using the source alpha-channel and per-surface alpha)
-// SDL_SRCCOLORKEY ignored.
-// Source surface blend mode set to SDL_BLENDMODE_NONE:
-// copy all of RGBA to the destination.
-// if SDL_SRCCOLORKEY set, only copy the pixels that do not match the
-// RGB values of the source color key, ignoring alpha in the
-// comparison.
+//	RGBA->RGBA:
+//	  Source surface blend mode set to SDL_BLENDMODE_BLEND:
+//	    alpha-blend (using the source alpha-channel and per-surface alpha)
+//	    SDL_SRCCOLORKEY ignored.
+//	  Source surface blend mode set to SDL_BLENDMODE_NONE:
+//	    copy all of RGBA to the destination.
+//	    if SDL_SRCCOLORKEY set, only copy the pixels that do not match the
+//	    RGB values of the source color key, ignoring alpha in the
+//	    comparison.
 //
-// RGB->RGB:
-// Source surface blend mode set to SDL_BLENDMODE_BLEND:
-// alpha-blend (using the source per-surface alpha)
-// Source surface blend mode set to SDL_BLENDMODE_NONE:
-// copy RGB.
-// both:
-// if SDL_SRCCOLORKEY set, only copy the pixels that do not match the
-// source color key.
-// ```
+//	RGB->RGB:
+//	  Source surface blend mode set to SDL_BLENDMODE_BLEND:
+//	    alpha-blend (using the source per-surface alpha)
+//	  Source surface blend mode set to SDL_BLENDMODE_NONE:
+//	    copy RGB.
+//	  both:
+//	    if SDL_SRCCOLORKEY set, only copy the pixels that do not match the
+//	    source color key.
 //
-// src: the SDL_Surface structure to be copied from.
+// src: the [Surface] structure to be copied from.
 //
-// srcrect: the SDL_Rect structure representing the rectangle to be
-// copied, or NULL to copy the entire surface.
+// srcrect: the [Rect] structure representing the rectangle to be
+// copied, or nil to copy the entire surface.
 //
-// dst: the SDL_Surface structure that is the blit target.
+// surface: the [Surface] structure that is the blit target.
 //
-// dstrect: the SDL_Rect structure representing the x and y position in
-// the destination surface, or NULL for (0,0). The width and
-// height are ignored, and are copied from `srcrect`. If you
+// dstrect: the [Rect] structure representing the x and y position in
+// the destination surface, or nil for (0,0). The width and
+// height are ignored, and are copied from srcrect. If you
 // want a specific width and height, you should use
-// SDL_BlitSurfaceScaled().
+// [BlitSurfaceScaled].
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // The same destination surface should not be used from two
 // threads at once. It is safe to use the same source surface
@@ -1468,18 +1421,17 @@ func BlitSurface(src *Surface, srcrect *Rect, dst *Surface, dstrect *Rect) error
 // This is a semi-private blit function and it performs low-level surface
 // blitting, assuming the input rectangles have already been clipped.
 //
-// src: the SDL_Surface structure to be copied from.
+// src: the [Surface] structure to be copied from.
 //
-// srcrect: the SDL_Rect structure representing the rectangle to be
-// copied, may not be NULL.
+// srcrect: the [Rect] structure representing the rectangle to be
+// copied.
 //
-// dst: the SDL_Surface structure that is the blit target.
+// surface: the [Surface] structure that is the blit target.
 //
-// dstrect: the SDL_Rect structure representing the target rectangle in
-// the destination surface, may not be NULL.
+// dstrect: the [Rect] structure representing the target rectangle in
+// the destination surface.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // The same destination surface should not be used from two
 // threads at once. It is safe to use the same source surface
@@ -1500,21 +1452,20 @@ func BlitSurfaceUnchecked(src *Surface, srcrect Rect, dst *Surface, dstrect Rect
 // Perform a scaled blit to a destination surface, which may be of a different
 // format.
 //
-// src: the SDL_Surface structure to be copied from.
+// src: the [Surface] structure to be copied from.
 //
-// srcrect: the SDL_Rect structure representing the rectangle to be
-// copied, or NULL to copy the entire surface.
+// srcrect: the [Rect] structure representing the rectangle to be
+// copied, or nil to copy the entire surface.
 //
-// dst: the SDL_Surface structure that is the blit target.
+// surface: the [Surface] structure that is the blit target.
 //
-// dstrect: the SDL_Rect structure representing the target rectangle in
-// the destination surface, or NULL to fill the entire
+// dstrect: the [Rect] structure representing the target rectangle in
+// the destination surface, or nil to fill the entire
 // destination surface.
 //
-// scaleMode: the SDL_ScaleMode to be used.
+// scaleMode: the [ScaleMode] to be used.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // The same destination surface should not be used from two
 // threads at once. It is safe to use the same source surface
@@ -1542,20 +1493,18 @@ func BlitSurfaceScaled(src *Surface, srcrect *Rect, dst *Surface, dstrect *Rect,
 // This is a semi-private function and it performs low-level surface blitting,
 // assuming the input rectangles have already been clipped.
 //
-// src: the SDL_Surface structure to be copied from.
+// src: the [Surface] structure to be copied from.
 //
-// srcrect: the SDL_Rect structure representing the rectangle to be
-// copied, may not be NULL.
+// srcrect: the [Rect] structure representing the rectangle to be copied.
 //
-// dst: the SDL_Surface structure that is the blit target.
+// surface: the [Surface] structure that is the blit target.
 //
-// dstrect: the SDL_Rect structure representing the target rectangle in
-// the destination surface, may not be NULL.
+// dstrect: the [Rect] structure representing the target rectangle in
+// the destination surface.
 //
-// scaleMode: the SDL_ScaleMode to be used.
+// scaleMode: the [ScaleMode] to be used.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // The same destination surface should not be used from two
 // threads at once. It is safe to use the same source surface
@@ -1576,21 +1525,20 @@ func BlitSurfaceUncheckedScaled(src *Surface, srcrect *Rect, dst *Surface, dstre
 // Perform a tiled blit to a destination surface, which may be of a different
 // format.
 //
-// The pixels in `srcrect` will be repeated as many times as needed to
-// completely fill `dstrect`.
+// The pixels in srcrect will be repeated as many times as needed to
+// completely fill dstrect.
 //
-// src: the SDL_Surface structure to be copied from.
+// src: the [Surface] structure to be copied from.
 //
-// srcrect: the SDL_Rect structure representing the rectangle to be
-// copied, or NULL to copy the entire surface.
+// srcrect: the [Rect] structure representing the rectangle to be
+// copied, or nil to copy the entire surface.
 //
-// dst: the SDL_Surface structure that is the blit target.
+// surface: the [Surface] structure that is the blit target.
 //
-// dstrect: the SDL_Rect structure representing the target rectangle in
-// the destination surface, or NULL to fill the entire surface.
+// dstrect: the [Rect] structure representing the target rectangle in
+// the destination surface, or nil to fill the entire surface.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // The same destination surface should not be used from two
 // threads at once. It is safe to use the same source surface
@@ -1616,13 +1564,13 @@ func BlitSurfaceTiled(src *Surface, srcrect *Rect, dst *Surface, dstrect *Rect) 
 // Perform a scaled and tiled blit to a destination surface, which may be of a
 // different format.
 //
-// The pixels in `srcrect` will be scaled and repeated as many times as needed
-// to completely fill `dstrect`.
+// The pixels in srcrect will be scaled and repeated as many times as needed
+// to completely fill dstrect.
 //
-// src: the SDL_Surface structure to be copied from.
+// src: the [Surface] structure to be copied from.
 //
-// srcrect: the SDL_Rect structure representing the rectangle to be
-// copied, or NULL to copy the entire surface.
+// srcrect: the [Rect] structure representing the rectangle to be
+// copied, or nil to copy the entire surface.
 //
 // scale: the scale used to transform srcrect into the destination
 // rectangle, e.g. a 32x32 texture with a scale of 2 would fill
@@ -1630,13 +1578,12 @@ func BlitSurfaceTiled(src *Surface, srcrect *Rect, dst *Surface, dstrect *Rect) 
 //
 // scaleMode: scale algorithm to be used.
 //
-// dst: the SDL_Surface structure that is the blit target.
+// surface: the [Surface] structure that is the blit target.
 //
-// dstrect: the SDL_Rect structure representing the target rectangle in
-// the destination surface, or NULL to fill the entire surface.
+// dstrect: the [Rect] structure representing the target rectangle in
+// the destination surface, or nil to fill the entire surface.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // The same destination surface should not be used from two
 // threads at once. It is safe to use the same source surface
@@ -1664,36 +1611,35 @@ func BlitSurfaceTiledWithScale(src *Surface, srcrect *Rect, scale float32, scale
 //
 // The pixels in the source surface are split into a 3x3 grid, using the
 // different corner sizes for each corner, and the sides and center making up
-// the remaining pixels. The corners are then scaled using `scale` and fit
+// the remaining pixels. The corners are then scaled using scale and fit
 // into the corners of the destination rectangle. The sides and center are
 // then stretched into place to cover the remaining destination rectangle.
 //
-// src: the SDL_Surface structure to be copied from.
+// src: the [Surface] structure to be copied from.
 //
-// srcrect: the SDL_Rect structure representing the rectangle to be used
-// for the 9-grid, or NULL to use the entire surface.
+// srcrect: the [Rect] structure representing the rectangle to be used
+// for the 9-grid, or nil to use the entire surface.
 //
-// left_width: the width, in pixels, of the left corners in `srcrect`.
+// leftWidth: the width, in pixels, of the left corners in srcrect.
 //
-// right_width: the width, in pixels, of the right corners in `srcrect`.
+// rightWidth: the width, in pixels, of the right corners in srcrect.
 //
-// top_height: the height, in pixels, of the top corners in `srcrect`.
+// topHeight: the height, in pixels, of the top corners in srcrect.
 //
-// bottom_height: the height, in pixels, of the bottom corners in
-// `srcrect`.
+// bottomHeight: the height, in pixels, of the bottom corners in
+// srcrect.
 //
-// scale: the scale used to transform the corner of `srcrect` into the
-// corner of `dstrect`, or 0.0f for an unscaled blit.
+// scale: the scale used to transform the corner of srcrect into the
+// corner of dstrect, or 0 for an unscaled blit.
 //
 // scaleMode: scale algorithm to be used.
 //
-// dst: the SDL_Surface structure that is the blit target.
+// surface: the [Surface] structure that is the blit target.
 //
-// dstrect: the SDL_Rect structure representing the target rectangle in
-// the destination surface, or NULL to fill the entire surface.
+// dstrect: the [Rect] structure representing the target rectangle in
+// the destination surface, or nil to fill the entire surface.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // The same destination surface should not be used from two
 // threads at once. It is safe to use the same source surface
@@ -1730,7 +1676,7 @@ func BlitSurface9Grid(src *Surface, srcrect *Rect, leftWidth int, rightWidth int
 //
 // If the pixel format bpp (color depth) is less than 32-bpp then the unused
 // upper bits of the return value can safely be ignored (e.g., with a 16-bpp
-// format the return value can be assigned to a Uint16, and similarly a Uint8
+// format the return value can be assigned to a uint16, and similarly a uint8
 // for an 8-bpp format).
 //
 // surface: the surface to use for the pixel format and palette.
@@ -1764,7 +1710,7 @@ func (surface *Surface) MapRGB(r byte, g byte, b byte) uint32 {
 //
 // If the pixel format bpp (color depth) is less than 32-bpp then the unused
 // upper bits of the return value can safely be ignored (e.g., with a 16-bpp
-// format the return value can be assigned to a Uint16, and similarly a Uint8
+// format the return value can be assigned to a uint16, and similarly a uint8
 // for an 8-bpp format).
 //
 // surface: the surface to use for the pixel format and palette.
@@ -1791,7 +1737,7 @@ func (surface *Surface) MapRGBA(r byte, g byte, b byte, a byte) uint32 {
 // This function prioritizes correctness over speed: it is suitable for unit
 // tests, but is not intended for use in a game engine.
 //
-// Like SDL_GetRGBA, this uses the entire 0..255 range when converting color
+// Like [PixelFormatDetails.GetRGBA], this uses the entire 0..255 range when converting color
 // components from pixel formats with less than 8 bits per RGB component.
 //
 // surface: the surface to read.
@@ -1800,20 +1746,15 @@ func (surface *Surface) MapRGBA(r byte, g byte, b byte, a byte) uint32 {
 //
 // y: the vertical coordinate, 0 <= y < height.
 //
-// r: a pointer filled in with the red channel, 0-255, or NULL to ignore
-// this channel.
+// r: the red channel, 0-255.
 //
-// g: a pointer filled in with the green channel, 0-255, or NULL to
-// ignore this channel.
+// g: the green channel, 0-255.
 //
-// b: a pointer filled in with the blue channel, 0-255, or NULL to
-// ignore this channel.
+// b: the blue channel, 0-255.
 //
-// a: a pointer filled in with the alpha channel, 0-255, or NULL to
-// ignore this channel.
+// a: the alpha channel, 0-255.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns the color values or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1836,20 +1777,15 @@ func ReadSurfacePixel(surface *Surface, x int, y int) (r, g, b, a byte, err erro
 //
 // y: the vertical coordinate, 0 <= y < height.
 //
-// r: a pointer filled in with the red channel, normally in the range
-// 0-1, or NULL to ignore this channel.
+// r: the red channel, normally in the range 0-1.
 //
-// g: a pointer filled in with the green channel, normally in the range
-// 0-1, or NULL to ignore this channel.
+// g: the green channel, normally in the range 0-1.
 //
-// b: a pointer filled in with the blue channel, normally in the range
-// 0-1, or NULL to ignore this channel.
+// b: the blue channel, normally in the range 0-1.
 //
-// a: a pointer filled in with the alpha channel, normally in the range
-// 0-1, or NULL to ignore this channel.
+// a: the alpha channel, normally in the range 0-1.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns the color values or an error.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1866,7 +1802,7 @@ func ReadSurfacePixelFloat(surface *Surface, x int, y int) (r, g, b, a float32, 
 // This function prioritizes correctness over speed: it is suitable for unit
 // tests, but is not intended for use in a game engine.
 //
-// Like SDL_MapRGBA, this uses the entire 0..255 range when converting color
+// Like [PixelFormatDetails.MapRGBA], this uses the entire 0..255 range when converting color
 // components from pixel formats with less than 8 bits per RGB component.
 //
 // surface: the surface to write.
@@ -1883,8 +1819,7 @@ func ReadSurfacePixelFloat(surface *Surface, x int, y int) (r, g, b, a float32, 
 //
 // a: the alpha channel value, 0-255.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1915,8 +1850,7 @@ func (surface *Surface) WritePixel(x int, y int, r byte, g byte, b byte, a byte)
 //
 // a: the alpha channel value, normally in the range 0-1.
 //
-// Returns true on success or false on failure; call SDL_GetError() for more
-// information.
+// Returns nil on success or an error on failure.
 //
 // This function is available since SDL 3.2.0.
 //

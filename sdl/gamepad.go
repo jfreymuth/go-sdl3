@@ -593,7 +593,7 @@ func (gamepad *Gamepad) Mapping() (string, error) {
 //
 // id: the joystick instance ID.
 //
-// mapping: the mapping to use for this device, or NULL to clear the
+// mapping: the mapping to use for this device, or "" to clear the
 // mapping.
 //
 // Returns nil on success or an error on failure.
@@ -949,8 +949,8 @@ func (gamepad *Gamepad) Name() string {
 //
 // gamepad: a gamepad identifier previously returned by [OpenGamepad].
 //
-// Returns the implementation dependent path for the gamepad, or NULL if
-// there is no path or the identifier passed is invalid.
+// Returns the implementation dependent path for the gamepad, or an empty string
+// if there is no path or the identifier passed is invalid.
 //
 // This function is available since SDL 3.2.0.
 //
@@ -1390,7 +1390,7 @@ func GetGamepadButtonFromString(str string) GamepadButton {
 //
 // button: an enum value for a given [GamepadButton].
 //
-// Returns a string for the given button, or NULL if an invalid button is
+// Returns a string for the given button, or "" if an invalid button is
 // specified. The string returned is of the format used by [Gamepad] mapping
 // strings.
 //

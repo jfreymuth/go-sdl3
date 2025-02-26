@@ -1491,14 +1491,13 @@ const (
 //
 // action may be any of the following:
 //
-//   - [AddEvent]: up to `numevents` events will be added to the back of the
+//   - [AddEvent]: up to len(events) events will be added to the back of the
 //     event queue.
-//   - [PeekEvent]: `numevents` events at the front of the event queue,
+//   - [PeekEvent]: len(events) events at the front of the event queue,
 //     within the specified minimum and maximum type, will be returned to the
-//     caller and will _not_ be removed from the queue. If you pass NULL for
-//     `events`, then `numevents` is ignored and the total number of matching
-//     events will be returned.
-//   - [GetEvent]: up to `numevents` events at the front of the event queue,
+//     caller and will _not_ be removed from the queue. If you pass nil for
+//     events, the total number of matching events will be returned.
+//   - [GetEvent]: up to len(events) events at the front of the event queue,
 //     within the specified minimum and maximum type, will be returned to the
 //     caller and will be removed from the queue.
 //
@@ -1506,7 +1505,7 @@ const (
 // Otherwise, the events may not be ready to be filtered when you call
 // PeepEvents.
 //
-// events: destination buffer for the retrieved events, may be NULL to
+// events: destination buffer for the retrieved events, may be nil to
 // leave the events in the queue and return the number of events
 // that would have been stored.
 //

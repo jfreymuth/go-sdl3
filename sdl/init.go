@@ -285,7 +285,7 @@ func RunOnMainThread(callback MainThreadCallback, waitComplete bool) error {
 //
 // There are several locations where SDL can make use of metadata (an "About"
 // box in the macOS menu bar, the name of the app can be shown on some audio
-// mixers, etc). Any piece of metadata can be left as NULL, if a specific
+// mixers, etc). Any piece of metadata can be left as "", if a specific
 // detail doesn't make sense for the app.
 //
 // This function should be called as early as possible, before [Init].
