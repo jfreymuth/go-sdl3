@@ -139,9 +139,10 @@ const (
 	EventKeyUp                      EventType = 0x301 // Key released
 	EventTextEditing                EventType = 0x302 // Keyboard text editing (composition)
 	EventTextInput                  EventType = 0x303 // Keyboard text input
-	EventKeyboardAdded              EventType = 0x304 // A new keyboard has been inserted into the system
-	EventKeyboardRemoved            EventType = 0x305 // A keyboard has been removed
-	EventTextEditingCandidates      EventType = 0x306 // Keyboard text editing candidates
+	EventKeymapChanged              EventType = 0x304 // Keymap changed due to a system event such as an input language or keyboard layout change.
+	EventKeyboardAdded              EventType = 0x305 // A new keyboard has been inserted into the system
+	EventKeyboardRemoved            EventType = 0x306 // A keyboard has been removed
+	EventTextEditingCandidates      EventType = 0x307 // Keyboard text editing candidates
 	EventMouseMotion                EventType = 0x400 // Mouse moved
 	EventMouseButtonDown            EventType = 0x401 // Mouse button pressed
 	EventMouseButtonUp              EventType = 0x402 // Mouse button released
