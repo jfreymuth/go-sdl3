@@ -4,11 +4,14 @@ This package provides cgo-based bindings for SDL3
 
 ## Status
 
+- Relatively untested, feedback/bug reports are very welcome
+- Breaking API changes may happen
 - Most functions are available, exceptions are:
 	- some macros and varargs functions that don't really make sense in Go
 	- headers that provide functionality that is already available in the Go standard library
-- Many features are untested, especially OpenGL and platform specific APIs
-- The documentation is copied directly from the C headers and needs to be adjusted
+	- Feel free to open an issue if you think a particular function or header should be implemented
+- The documentation is copied from the C headers and slightly adjusted (cross-references, different parameters etc.), but does not follow Go conventions.
+  Reworking it to conform to godoc style would be a huge effort with questionable benefit
 
 ## Why not purego-sdl3
 
