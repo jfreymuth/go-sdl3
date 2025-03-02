@@ -229,13 +229,13 @@ import (
 // Next the app prepares static data (things that are created once and used
 // over and over). For example:
 //
-// - Shaders (programs that run on the GPU): use SDL_CreateGPUShader().
-// - Vertex buffers (arrays of geometry data) and other data rendering will
-// need: use SDL_UploadToGPUBuffer().
-// - Textures (images): use SDL_UploadToGPUTexture().
-// - Samplers (how textures should be read from): use SDL_CreateGPUSampler().
-// - Render pipelines (precalculated rendering state): use
-// SDL_CreateGPUGraphicsPipeline()
+//   - Shaders (programs that run on the GPU): use SDL_CreateGPUShader().
+//   - Vertex buffers (arrays of geometry data) and other data rendering will
+//     need: use SDL_UploadToGPUBuffer().
+//   - Textures (images): use SDL_UploadToGPUTexture().
+//   - Samplers (how textures should be read from): use SDL_CreateGPUSampler().
+//   - Render pipelines (precalculated rendering state): use
+//     SDL_CreateGPUGraphicsPipeline()
 //
 // To render, the app creates one or more command buffers, with
 // SDL_AcquireGPUCommandBuffer(). Command buffers collect rendering
@@ -260,18 +260,18 @@ import (
 // The app calls SDL_BeginGPURenderPass(). Then it sets states it needs for
 // each draw:
 //
-// - SDL_BindGPUGraphicsPipeline()
-// - SDL_SetGPUViewport()
-// - SDL_BindGPUVertexBuffers()
-// - SDL_BindGPUVertexSamplers()
-// - etc
+//   - SDL_BindGPUGraphicsPipeline()
+//   - SDL_SetGPUViewport()
+//   - SDL_BindGPUVertexBuffers()
+//   - SDL_BindGPUVertexSamplers()
+//   - etc
 //
 // Then, make the actual draw commands with these states:
 //
-// - SDL_DrawGPUPrimitives()
-// - SDL_DrawGPUPrimitivesIndirect()
-// - SDL_DrawGPUIndexedPrimitivesIndirect()
-// - etc
+//   - SDL_DrawGPUPrimitives()
+//   - SDL_DrawGPUPrimitivesIndirect()
+//   - SDL_DrawGPUIndexedPrimitivesIndirect()
+//   - etc
 //
 // After all the drawing commands for a pass are complete, the app should call
 // SDL_EndGPURenderPass(). Once a render pass ends all render-related state is
@@ -296,13 +296,13 @@ import (
 // with compute-writeable textures and/or buffers, which can be written to in
 // a compute shader. Then it sets states it needs for the compute dispatches:
 //
-// - SDL_BindGPUComputePipeline()
-// - SDL_BindGPUComputeStorageBuffers()
-// - SDL_BindGPUComputeStorageTextures()
+//   - SDL_BindGPUComputePipeline()
+//   - SDL_BindGPUComputeStorageBuffers()
+//   - SDL_BindGPUComputeStorageTextures()
 //
 // Then, dispatch compute work:
 //
-// - SDL_DispatchGPUCompute()
+//   - SDL_DispatchGPUCompute()
 //
 // For advanced users, this opens up powerful GPU-driven workflows.
 //
@@ -344,21 +344,21 @@ import (
 //
 // Here are some basic tips for maximizing your rendering performance.
 //
-// - Beginning a new render pass is relatively expensive. Use as few render
-// passes as you can.
-// - Minimize the amount of state changes. For example, binding a pipeline is
-// relatively cheap, but doing it hundreds of times when you don't need to
-// will slow the performance significantly.
-// - Perform your data uploads as early as possible in the frame.
-// - Don't churn resources. Creating and releasing resources is expensive.
-// It's better to create what you need up front and cache it.
-// - Don't use uniform buffers for large amounts of data (more than a matrix
-// or so). Use a storage buffer instead.
-// - Use cycling correctly. There is a detailed explanation of cycling further
-// below.
-// - Use culling techniques to minimize pixel writes. The less writing the GPU
-// has to do the better. Culling can be a very advanced topic but even
-// simple culling techniques can boost performance significantly.
+//   - Beginning a new render pass is relatively expensive. Use as few render
+//     passes as you can.
+//   - Minimize the amount of state changes. For example, binding a pipeline is
+//     relatively cheap, but doing it hundreds of times when you don't need to
+//     will slow the performance significantly.
+//   - Perform your data uploads as early as possible in the frame.
+//   - Don't churn resources. Creating and releasing resources is expensive.
+//     It's better to create what you need up front and cache it.
+//   - Don't use uniform buffers for large amounts of data (more than a matrix
+//     or so). Use a storage buffer instead.
+//   - Use cycling correctly. There is a detailed explanation of cycling further
+//     below.
+//   - Use culling techniques to minimize pixel writes. The less writing the GPU
+//     has to do the better. Culling can be a very advanced topic but even
+//     simple culling techniques can boost performance significantly.
 //
 // In general try to remember the golden rule of performance: doing things is
 // more expensive than not doing things. Don't Touch The Driver!
@@ -404,13 +404,13 @@ import (
 // Android devices. Requires Vulkan 1.0 with the following extensions and
 // device features:
 //
-// - `VK_KHR_swapchain`
-// - `VK_KHR_maintenance1`
-// - `independentBlend`
-// - `imageCubeArray`
-// - `depthClamp`
-// - `shaderClipDistance`
-// - `drawIndirectFirstInstance`
+//   - `VK_KHR_swapchain`
+//   - `VK_KHR_maintenance1`
+//   - `independentBlend`
+//   - `imageCubeArray`
+//   - `depthClamp`
+//   - `shaderClipDistance`
+//   - `drawIndirectFirstInstance`
 //
 // **D3D12:** Supported on Windows 10 or newer, Xbox One (GDK), and Xbox
 // Series X|S (GDK). Requires a GPU that supports DirectX 12 Feature Level
@@ -419,11 +419,11 @@ import (
 // **Metal:** Supported on macOS 10.14+ and iOS/tvOS 13.0+. Hardware
 // requirements vary by operating system:
 //
-// - macOS requires an Apple Silicon or
-// [Intel Mac2 family](https://developer.apple.com/documentation/metal/mtlfeatureset/mtlfeatureset_macos_gpufamily2_v1?language=objc)
-// GPU
-// - iOS/tvOS requires an A9 GPU or newer
-// - iOS Simulator and tvOS Simulator are unsupported
+//   - macOS requires an Apple Silicon or
+//     [Intel Mac2 family](https://developer.apple.com/documentation/metal/mtlfeatureset/mtlfeatureset_macos_gpufamily2_v1?language=objc)
+//     GPU
+//   - iOS/tvOS requires an A9 GPU or newer
+//   - iOS Simulator and tvOS Simulator are unsupported
 //
 // ## Uniform Data
 //
@@ -2121,7 +2121,7 @@ func (device *GPUDevice) ShaderFormats() GPUShaderFormat {
 //   - [[texture]]: Sampled textures, followed by read-only storage textures,
 //     followed by read-write storage textures
 //
-// There are optional properties that can be provided through `props`. These
+// There are optional properties that can be provided through props. These
 // are the supported properties:
 //
 //   - [PropGPUComputepipelineCreateNameString]: a name that can be
@@ -2168,7 +2168,7 @@ const PropGPUComputepipelineCreateNameString = "SDL.gpu.computepipeline.create.n
 
 // Creates a pipeline object to be used in a graphics workflow.
 //
-// There are optional properties that can be provided through `props`. These
+// There are optional properties that can be provided through props. These
 // are the supported properties:
 //
 //   - [PropGPUGraphicspipelineCreateNameString]: a name that can be
@@ -2290,11 +2290,11 @@ const PropGPUGraphicspipelineCreateNameString = "SDL.gpu.graphicspipeline.create
 // Creates a sampler object to be used when binding textures in a graphics
 // workflow.
 //
-// There are optional properties that can be provided through `props`. These
+// There are optional properties that can be provided through props. These
 // are the supported properties:
 //
-// - [PropGPUSamplerCreateNameString]: a name that can be displayed
-// in debugging tools.
+//   - [PropGPUSamplerCreateNameString]: a name that can be displayed
+//     in debugging tools.
 //
 // device: a GPU Context.
 //
@@ -2386,11 +2386,11 @@ const PropGPUSamplerCreateNameString = "SDL.gpu.sampler.create.name"
 // [PropGPUDeviceCreateD3D12SemanticNameString] with
 // [CreateGPUDeviceWithProperties].
 //
-// There are optional properties that can be provided through `props`. These
+// There are optional properties that can be provided through props. These
 // are the supported properties:
 //
-// - [PropGPUShaderCreateNameString]: a name that can be displayed in
-// debugging tools.
+//   - [PropGPUShaderCreateNameString]: a name that can be displayed in
+//     debugging tools.
 //
 // device: a GPU Context.
 //
@@ -2509,7 +2509,7 @@ const PropGPUTextureCreateNameString = "SDL.gpu.texture.create.name"
 // SDL GPU API, you may refer
 // [this blog post](https://moonside.games/posts/sdl-gpu-concepts-cycling/).
 //
-// There are optional properties that can be provided through `props`. These
+// There are optional properties that can be provided through props. These
 // are the supported properties:
 //
 //   - [PropGPUBufferCreateNameString]: a name that can be displayed in
@@ -2544,7 +2544,7 @@ const PropGPUBufferCreateNameString = "SDL.gpu.buffer.create.name"
 // Download buffers can be particularly expensive to create, so it is good
 // practice to reuse them if data will be downloaded regularly.
 //
-// There are optional properties that can be provided through `props`. These
+// There are optional properties that can be provided through props. These
 // are the supported properties:
 //
 //   - [PropGPUTransferbufferCreateNameString]: a name that can be

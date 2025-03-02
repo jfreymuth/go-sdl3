@@ -244,7 +244,7 @@ func (surface *Surface) Height() int { return int(surface.internal.h) }
 // The distance in bytes between rows of pixels
 func (surface *Surface) Pitch() int { return int(surface.internal.pitch) }
 
-// A pointer to the pixels of the surface, the pixels are writeable if non-NULL
+// A pointer to the pixels of the surface, the pixels are writeable if non-nil
 func (surface *Surface) Pixels() []byte {
 	return unsafe.Slice((*byte)(surface.internal.pixels), surface.internal.h*surface.internal.pitch)
 }
@@ -1108,7 +1108,7 @@ func (surface *Surface) ConvertColorspace(format PixelFormat, palette *Palette, 
 //
 // dstFormat: a [PixelFormat] value of the dst pixels format.
 //
-// dst: a pointer to be filled in with new pixel data.
+// dst: a slice to be filled in with new pixel data.
 //
 // dstPitch: the pitch of the destination pixels, in bytes.
 //
@@ -1154,7 +1154,7 @@ func ConvertPixels(width int, height int, srcFormat PixelFormat, src []byte, src
 // dstProperties: a [PropertiesID] with additional destination color
 // properties, or 0.
 //
-// dst: a pointer to be filled in with new pixel data.
+// dst: a slice to be filled in with new pixel data.
 //
 // dstPitch: the pitch of the destination pixels, in bytes.
 //
@@ -1189,7 +1189,7 @@ func ConvertPixelsAndColorspace(width int, height int, srcFormat PixelFormat, sr
 //
 // dstFormat: a [PixelFormat] value of the dst pixels format.
 //
-// dst: a pointer to be filled in with premultiplied pixel data.
+// dst: a slice to be filled in with premultiplied pixel data.
 //
 // dstPitch: the pitch of the destination pixels, in bytes.
 //

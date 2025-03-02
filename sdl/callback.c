@@ -127,6 +127,10 @@ void wrap_SDL_SetTrayEntryCallback(SDL_TrayEntry *entry, uintptr_t userdata) {
 }
 
 /* video */
+extern SDL_HitTestResult cb_HitTest(SDL_Window *win, const SDL_Point *area, void *data);
+bool wrap_SDL_SetWindowHitTest(SDL_Window *window, uintptr_t userdata) {
+	return SDL_SetWindowHitTest(window, cb_HitTest, (void *)userdata);
+}
 extern SDL_EGLAttrib *cb_EGLAttribArrayCallback(void *userdata);
 extern SDL_EGLint *cb_EGLSurfaceArrayCallback(void *userdata, SDL_EGLDisplay display, SDL_EGLConfig config);
 extern SDL_EGLint *cb_EGLContextArrayCallback(void *userdata, SDL_EGLDisplay display, SDL_EGLConfig config);

@@ -569,9 +569,9 @@ type RenderEvent struct {
 
 // Touch finger event structure ([Event.TouchFinger])
 //
-// Coordinates in this event are normalized. `x` and `y` are normalized to a
+// Coordinates in this event are normalized. X and Y are normalized to a
 // range between 0.0f and 1.0f, relative to the window, so (0,0) is the top
-// left and (1,1) is the bottom right. Delta coordinates `dx` and `dy` are
+// left and (1,1) is the bottom right. Delta coordinates DX and DY are
 // normalized in the ranges of -1.0f (traversed all the way from the bottom or
 // right to all the way up or left) to 1.0f (traversed all the way from the
 // top or left to all the way down or right).
@@ -1542,10 +1542,10 @@ func PeepEvents(events []Event, action EventAction, minType, maxType EventType) 
 // If you need to check for a range of event types, use [HasEvents]
 // instead.
 //
-// type: the type of event to be queried; see [EventType] for details.
+// typ: the type of event to be queried; see [EventType] for details.
 //
-// Returns true if events matching `type` are present, or false if events
-// matching `type` are not present.
+// Returns true if events matching typ are present, or false if events
+// matching typ are not present.
 //
 // It is safe to call this function from any thread.
 //
@@ -1581,7 +1581,7 @@ func HasEvents(minType, maxType EventType) bool {
 // Clear events of a specific type from the event queue.
 //
 // This will unconditionally remove any events from the queue that match
-// `type`. If you need to remove a range of event types, use [FlushEvents]
+// typ. If you need to remove a range of event types, use [FlushEvents]
 // instead.
 //
 // It's also normal to just ignore events you don't care about in your event
@@ -1595,7 +1595,7 @@ func HasEvents(minType, maxType EventType) bool {
 // use [PeepEvents] to remove and clean up those events before calling
 // this function.
 //
-// type: the type of event to be cleared; see [EventType] for details.
+// typ: the type of event to be cleared; see [EventType] for details.
 //
 // It is safe to call this function from any thread.
 //
@@ -1748,7 +1748,7 @@ func WaitEventTimeout(event *Event, timeoutMS int32) bool {
 //
 // The event queue can actually be used as a two way communication channel.
 // Not only can events be read from the queue, but the user can also push
-// their own events onto it. `event` is a pointer to the event structure you
+// their own events onto it. event is a pointer to the event structure you
 // wish to push onto the queue. The event is copied into the queue, and the
 // caller may dispose of the memory pointed to after PushEvent returns.
 //

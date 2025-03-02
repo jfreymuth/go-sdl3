@@ -42,7 +42,7 @@ import "unsafe"
 //
 // Locale data is split into a spoken language, like English, and an optional
 // country, like Canada. The language will be in ISO-639 format (so English
-// would be "en"), and the country, if not NULL, will be an ISO-3166 country
+// would be "en"), and the country, if not empty, will be an ISO-3166 country
 // code (so Canada would be "CA").
 //
 // This function is available since SDL 3.2.0.
@@ -50,7 +50,7 @@ import "unsafe"
 // https://wiki.libsdl.org/SDL3/SDL_Locale
 type Locale struct {
 	Language string // A language name, like "en" for English.
-	Country  string // A country, like "US" for America. Can be NULL.
+	Country  string // A country, like "US" for America. Can be "".
 }
 
 // Report the user's preferred locale.

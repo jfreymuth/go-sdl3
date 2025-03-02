@@ -186,6 +186,8 @@ package sdl
 // #cgo nocallback SDL_ShowWindowSystemMenu
 // #cgo noescape SDL_SetWindowHitTest
 // #cgo nocallback SDL_SetWindowHitTest
+// #cgo noescape wrap_SDL_SetWindowHitTest
+// #cgo nocallback wrap_SDL_SetWindowHitTest
 // #cgo noescape SDL_SetWindowShape
 // #cgo nocallback SDL_SetWindowShape
 // #cgo noescape SDL_FlashWindow
@@ -233,7 +235,7 @@ package sdl
 // #cgo noescape SDL_GL_DestroyContext
 // #cgo nocallback SDL_GL_DestroyContext
 // #include <SDL3/SDL.h>
-// extern SDL_HitTestResult cb_HitTest(SDL_Window *win, SDL_Point *area, void *data);
+// extern bool wrap_SDL_SetWindowHitTest(SDL_Window *window, uintptr_t userdata);
 // extern void wrap_SDL_EGL_SetAttributeCallbacks(uintptr_t userdata);
 import "C"
 import (
@@ -298,7 +300,7 @@ type WindowID uint32
 // uninitialized will either return the user provided value, if one was set
 // prior to initialization, or NULL. See docs/README-wayland.md for more
 // information.
-const PropGlobalVideoWaylandWlDisplayPointer = "SDL.video.wayland.wl_display"
+const PropGlobalVideoWaylandWLDisplayPointer = "SDL.video.wayland.wl_display"
 
 // System theme.
 //
@@ -716,7 +718,7 @@ func GetVideoDriver(index int) string {
 // "x11" or "windows". These never have Unicode characters, and are not meant
 // to be proper names.
 //
-// Returns the name of the current video driver or NULL if no driver has been
+// Returns the name of the current video driver or "" if no driver has been
 // initialized.
 //
 // This function should only be called on the main thread.
@@ -3003,7 +3005,7 @@ func (window *Window) Opacity() (float32, error) {
 // Set the window as a child of a parent window.
 //
 // If the window is already the child of an existing window, it will be
-// reparented to the new owner. Setting the parent window to NULL unparents
+// reparented to the new owner. Setting the parent window to nil unparents
 // the window and removes child window status.
 //
 // If a parent window is hidden or destroyed, the operation will be
@@ -3147,8 +3149,8 @@ const (
 type HitTest func(win *Window, area Point) HitTestResult
 
 // export cb_HitTest
-func cb_HitTest(win *C.SDL_Window, area *C.SDL_Point, data unsafe.Pointer) C.SDL_HitTestResult {
-	h := *(*cgo.Handle)(data)
+func cb_HitTest(win *C.SDL_Window, area *C.SDL_Point, data uintptr) C.SDL_HitTestResult {
+	h := cgo.Handle(data)
 	return (C.SDL_HitTestResult)(h.Value().(HitTest)((*Window)(win), Point{int(area.x), int(area.y)}))
 }
 
@@ -3169,7 +3171,7 @@ func cb_HitTest(win *C.SDL_Window, area *C.SDL_Point, data unsafe.Pointer) C.SDL
 // special area; the OS will often apply that input to moving the window or
 // resizing the window and not deliver it to the application.
 //
-// Specifying NULL for a callback disables hit-testing. Hit-testing is
+// Specifying nil for a callback disables hit-testing. Hit-testing is
 // disabled by default.
 //
 // Platforms that don't support this functionality will return false
@@ -3195,9 +3197,14 @@ func cb_HitTest(win *C.SDL_Window, area *C.SDL_Point, data unsafe.Pointer) C.SDL
 //
 // https://wiki.libsdl.org/SDL3/SDL_SetWindowHitTest
 func (window *Window) SetHitTest(callback HitTest) error {
+	if callback == nil {
+		if !C.SDL_SetWindowHitTest((*C.SDL_Window)(window), nil, nil) {
+			return getError()
+		}
+		return nil
+	}
 	h := cgo.NewHandle(callback)
-	ok := C.SDL_SetWindowHitTest((*C.SDL_Window)(window), (*[0]byte)(C.cb_HitTest), unsafe.Pointer(&h))
-	if !ok {
+	if !C.wrap_SDL_SetWindowHitTest((*C.SDL_Window)(window), C.uintptr_t(h)) {
 		h.Delete()
 		return getError()
 	}
@@ -3348,7 +3355,7 @@ func DisableScreenSaver() error {
 // If you do this, you need to retrieve all of the GL functions used in your
 // program from the dynamic library using [GL_GetProcAddress]().
 //
-// path: the platform dependent OpenGL library name, or NULL to open the
+// path: the platform dependent OpenGL library name, or "" to open the
 // default OpenGL library.
 //
 // Returns nil on success or an error on failure.
@@ -3375,35 +3382,35 @@ func GL_LoadLibrary(path string) error {
 // extra care from the application. If you code carefully, you can handle
 // these quirks without any platform-specific code, though:
 //
-// - On Windows, function pointers are specific to the current GL context;
-// this means you need to have created a GL context and made it current
-// before calling [GL_GetProcAddress]. If you recreate your context or
-// create a second context, you should assume that any existing function
-// pointers aren't valid to use with it. This is (currently) a
-// Windows-specific limitation, and in practice lots of drivers don't suffer
-// this limitation, but it is still the way the wgl API is documented to
-// work and you should expect crashes if you don't respect it. Store a copy
-// of the function pointers that comes and goes with context lifespan.
-// - On X11, function pointers returned by this function are valid for any
-// context, and can even be looked up before a context is created at all.
-// This means that, for at least some common OpenGL implementations, if you
-// look up a function that doesn't exist, you'll get a non-NULL result that
-// is _NOT_ safe to call. You must always make sure the function is actually
-// available for a given GL context before calling it, by checking for the
-// existence of the appropriate extension with [GL_ExtensionSupported],
-// or verifying that the version of OpenGL you're using offers the function
-// as core functionality.
-// - Some OpenGL drivers, on all platforms, *will* return NULL if a function
-// isn't supported, but you can't count on this behavior. Check for
-// extensions you use, and if you get a NULL anyway, act as if that
-// extension wasn't available. This is probably a bug in the driver, but you
-// can code defensively for this scenario anyhow.
-// - Just because you're on Linux/Unix, don't assume you'll be using X11.
-// Next-gen display servers are waiting to replace it, and may or may not
-// make the same promises about function pointers.
-// - OpenGL function pointers must be declared APIENTRY as in the example
-// code. This will ensure the proper calling convention is followed on
-// platforms where this matters (Win32) thereby avoiding stack corruption.
+//   - On Windows, function pointers are specific to the current GL context;
+//     this means you need to have created a GL context and made it current
+//     before calling [GL_GetProcAddress]. If you recreate your context or
+//     create a second context, you should assume that any existing function
+//     pointers aren't valid to use with it. This is (currently) a
+//     Windows-specific limitation, and in practice lots of drivers don't suffer
+//     this limitation, but it is still the way the wgl API is documented to
+//     work and you should expect crashes if you don't respect it. Store a copy
+//     of the function pointers that comes and goes with context lifespan.
+//   - On X11, function pointers returned by this function are valid for any
+//     context, and can even be looked up before a context is created at all.
+//     This means that, for at least some common OpenGL implementations, if you
+//     look up a function that doesn't exist, you'll get a non-nil result that
+//     is _NOT_ safe to call. You must always make sure the function is actually
+//     available for a given GL context before calling it, by checking for the
+//     existence of the appropriate extension with [GL_ExtensionSupported],
+//     or verifying that the version of OpenGL you're using offers the function
+//     as core functionality.
+//   - Some OpenGL drivers, on all platforms, *will* return nil if a function
+//     isn't supported, but you can't count on this behavior. Check for
+//     extensions you use, and if you get a nil anyway, act as if that
+//     extension wasn't available. This is probably a bug in the driver, but you
+//     can code defensively for this scenario anyhow.
+//   - Just because you're on Linux/Unix, don't assume you'll be using X11.
+//     Next-gen display servers are waiting to replace it, and may or may not
+//     make the same promises about function pointers.
+//   - OpenGL function pointers must be declared APIENTRY as in the example
+//     code. This will ensure the proper calling convention is followed on
+//     platforms where this matters (Win32) thereby avoiding stack corruption.
 //
 // proc: the name of an OpenGL function.
 //

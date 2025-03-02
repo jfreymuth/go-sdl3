@@ -206,11 +206,11 @@ import "unsafe"
 //
 // This API supports the following features:
 //
-// - single pixel points
-// - single pixel lines
-// - filled rectangles
-// - texture images
-// - 2D polygons
+//   - single pixel points
+//   - single pixel lines
+//   - filled rectangles
+//   - texture images
+//   - 2D polygons
 //
 // The primitives may be drawn in opaque, blended, or additive modes.
 //
@@ -1919,7 +1919,7 @@ func (renderer *Renderer) Viewport() (Rect, error) {
 // Return whether an explicit rectangle was set as the viewport.
 //
 // This is useful if you're saving and restoring the viewport and want to know
-// whether you should restore a specific rectangle or NULL. Note that the
+// whether you should restore a specific rectangle or nil. Note that the
 // viewport is always reset when changing rendering targets.
 //
 // renderer: the rendering context.
@@ -1994,8 +1994,7 @@ func (renderer *Renderer) SetClipRect(rect *Rect) error {
 //
 // renderer: the rendering context.
 //
-// rect: a [Rect] structure filled in with the current clipping area
-// or an empty rectangle if clipping is disabled.
+// rect: the current clipping area or an empty rectangle if clipping is disabled.
 //
 // Returns the clip rectangle or an error.
 //
@@ -2345,8 +2344,6 @@ func (renderer *Renderer) Point(x, y float32) error {
 // renderer: the renderer which should draw multiple points.
 //
 // points: the points to draw.
-//
-// count: the number of points to draw.
 //
 // Returns nil on success or an error on failure.
 //
@@ -2763,7 +2760,7 @@ func (renderer *Renderer) GeometryRaw(texture *Texture, xy *float32, xy_stride i
 // renderer: the rendering context.
 //
 // rect: a [Rect] structure representing the area in pixels relative
-// to the to current viewport, or NULL for the entire viewport.
+// to the to current viewport, or nil for the entire viewport.
 //
 // Returns a new [Surface] on success or an error.
 //

@@ -53,10 +53,10 @@ import (
 
 // An entry for filters for file dialogs.
 //
-// `name` is a user-readable label for the filter (for example, "Office
+// Name is a user-readable label for the filter (for example, "Office
 // document").
 //
-// `pattern` is a semicolon-separated list of file extensions (for example,
+// Pattern is a semicolon-separated list of file extensions (for example,
 // "doc;docx"). File extensions may only contain alphanumeric characters,
 // hyphens, underscores and periods. Alternatively, the whole string can be a
 // single asterisk ("*"), which serves as an "All files" filter.
@@ -85,7 +85,7 @@ type DialogFileFilter struct {
 // no filter was selected or if the platform or method doesn't support
 // fetching the selected filter.
 //
-// In Android, the `filelist` are `content://` URIs. They should be opened
+// In Android, the filelist are `content://` URIs. They should be opened
 // using [IOFromFile] with appropriate modes. This applies both to open
 // and save file dialog.
 //

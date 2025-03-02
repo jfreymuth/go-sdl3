@@ -758,8 +758,6 @@ func (stream *IOStream) ReadU8() (byte, error) {
 //
 // stream: the [IOStream] to read from.
 //
-// value: a pointer filled in with the data read.
-//
 // Returns the data read or an error.
 //
 // This function is not thread safe.
@@ -787,8 +785,6 @@ func (stream *IOStream) ReadS8() (int8, error) {
 // value. In both cases, this method will return a non-nil error
 //
 // stream: the stream from which to read data.
-//
-// value: a pointer filled in with the data read.
 //
 // Returns the data read or an error.
 //

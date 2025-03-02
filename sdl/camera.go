@@ -575,7 +575,7 @@ func (camera *Camera) ReleaseFrame(frame *Surface) {
 // camera: opened camera device.
 //
 // It is safe to call this function from any thread, but no
-// thread may reference `device` once this function is called.
+// thread may reference camera once this function is called.
 //
 // This function is available since SDL 3.2.0.
 //

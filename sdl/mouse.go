@@ -168,11 +168,11 @@ const (
 
 // A bitmask of pressed mouse buttons, as reported by [GetMouseState], etc.
 //
-// - Button 1: Left mouse button
-// - Button 2: Middle mouse button
-// - Button 3: Right mouse button
-// - Button 4: Side mouse button 1
-// - Button 5: Side mouse button 2
+//   - Button 1: Left mouse button
+//   - Button 2: Middle mouse button
+//   - Button 3: Right mouse button
+//   - Button 4: Side mouse button 1
+//   - Button 5: Side mouse button 2
 //
 // This datatype is available since SDL 3.2.0.
 //
@@ -220,9 +220,6 @@ func HasMouse() bool {
 // mouse functionality, including some game controllers, KVM switches, etc.
 // You should wait for input from a device before you consider it actively in
 // use.
-//
-// count: a pointer filled in with the number of mice returned, may be
-// NULL.
 //
 // Returns a slice of mouse instance IDs or an error.
 //

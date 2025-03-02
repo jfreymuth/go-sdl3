@@ -1033,7 +1033,7 @@ func (joystick *Joystick) FirmwareVersion() uint16 {
 //
 // joystick: the [Joystick] obtained from [OpenJoystick].
 //
-// Returns the serial number of the selected joystick, or NULL if
+// Returns the serial number of the selected joystick, or "" if
 // unavailable.
 //
 // This function is available since SDL 3.2.0.

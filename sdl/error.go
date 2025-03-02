@@ -49,11 +49,11 @@ import "C"
 // A common usage pattern is to have a function that returns true for success
 // and false for failure, and do this when something fails:
 //
-//   if (something_went_wrong) {
-//   return SDL_SetError("The thing broke in this specific way: %d", errcode);
-//   }
+//	if (something_went_wrong) {
+//	return SDL_SetError("The thing broke in this specific way: %d", errcode);
+//	}
 //
-// It's also common to just return `false` in this case if the failing thing
+// It's also common to just return false in this case if the failing thing
 // is known to call [SetError], so errors simply propagate through.
 
 // Set an error indicating that memory allocation failed.

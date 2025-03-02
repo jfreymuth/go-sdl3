@@ -98,10 +98,9 @@ type FRect struct {
 
 // Convert a [Rect] to [FRect]
 //
-// rect: a pointer to a [Rect].
+// r: a [Rect].
 //
-// frect: a pointer filled in with the floating point representation of
-// `rect`.
+// Returns the floating point representation of r.
 //
 // It is safe to call this function from any thread.
 //

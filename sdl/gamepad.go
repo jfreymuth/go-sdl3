@@ -1227,8 +1227,6 @@ func GamepadEventsEnabled() bool {
 //
 // gamepad: a gamepad.
 //
-// count: a pointer filled in with the number of bindings returned.
-//
 // Returns a NULL terminated array of pointers to bindings or NULL on
 // failure; call SDL_GetError() for more information. This is a
 // single allocation that should be freed with SDL_free() when it is
@@ -1599,8 +1597,6 @@ func (gamepad *Gamepad) SensorDataRate(typ SensorType) float32 {
 // type: the type of sensor to query.
 //
 // data: a pointer filled with the current sensor state.
-//
-// num_values: the number of values to write to data.
 //
 // Returns nil on success or an error on failure.
 //

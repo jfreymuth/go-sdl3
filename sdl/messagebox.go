@@ -128,7 +128,7 @@ type MessageBoxData struct {
 	Title       string                 // UTF-8 title
 	Message     string                 // UTF-8 message text
 	Buttons     []MessageBoxButtonData //
-	ColorScheme MessageBoxColorScheme  // [MessageBoxColorScheme], can be NULL to use system settings
+	ColorScheme *MessageBoxColorScheme // [MessageBoxColorScheme], can be nil to use system settings
 }
 
 // Create a modal message box.
@@ -170,11 +170,15 @@ func ShowMessageBox(messageboxdata *MessageBoxData) (int, error) {
 		buttons[i].text = tmpstring(b.Text)
 		pinner.Pin(buttons[i].text)
 	}
-	var colors [MessageboxColorCount]C.SDL_MessageBoxColor
-	for i, c := range messageboxdata.ColorScheme.Colors {
-		colors[i].r = C.Uint8(c.R)
-		colors[i].g = C.Uint8(c.G)
-		colors[i].b = C.Uint8(c.B)
+	var colorScheme *C.SDL_MessageBoxColorScheme
+	if messageboxdata.ColorScheme != nil {
+		var colors [MessageboxColorCount]C.SDL_MessageBoxColor
+		for i, c := range messageboxdata.ColorScheme.Colors {
+			colors[i].r = C.Uint8(c.R)
+			colors[i].g = C.Uint8(c.G)
+			colors[i].b = C.Uint8(c.B)
+		}
+		colorScheme = &C.SDL_MessageBoxColorScheme{colors}
 	}
 	data := &C.SDL_MessageBoxData{
 		C.SDL_MessageBoxFlags(messageboxdata.Flags),
@@ -183,7 +187,7 @@ func ShowMessageBox(messageboxdata *MessageBoxData) (int, error) {
 		tmpstring(messageboxdata.Message),
 		C.int(len(buttons)),
 		unsafe.SliceData(buttons),
-		&C.SDL_MessageBoxColorScheme{colors},
+		colorScheme,
 	}
 	pinner.Pin(data.title)
 	pinner.Pin(data.message)

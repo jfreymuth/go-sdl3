@@ -1300,7 +1300,7 @@ func (format *PixelFormatDetails) MapRGBA(palette *Palette, r byte, g byte, b by
 //
 // format: a pointer to [PixelFormatDetails] describing the pixel format.
 //
-// palette: an optional palette for indexed formats, may be NULL.
+// palette: an optional palette for indexed formats, may be nil.
 //
 // r: the red component.
 //
@@ -1353,7 +1353,7 @@ func (format *PixelFormatDetails) GetRGB(pixel uint32, palette *Palette) (r, b, 
 //
 // format: a pointer to [PixelFormatDetails] describing the pixel format.
 //
-// palette: an optional palette for indexed formats, may be NULL.
+// palette: an optional palette for indexed formats, may be nil.
 //
 // r: the red component.
 //

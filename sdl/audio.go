@@ -204,30 +204,30 @@ import (
 //
 // Abbreviations:
 //
-// - FRONT = single mono speaker
-// - FL = front left speaker
-// - FR = front right speaker
-// - FC = front center speaker
-// - BL = back left speaker
-// - BR = back right speaker
-// - SR = surround right speaker
-// - SL = surround left speaker
-// - BC = back center speaker
-// - LFE = low-frequency speaker
+//   - FRONT = single mono speaker
+//   - FL = front left speaker
+//   - FR = front right speaker
+//   - FC = front center speaker
+//   - BL = back left speaker
+//   - BR = back right speaker
+//   - SR = surround right speaker
+//   - SL = surround left speaker
+//   - BC = back center speaker
+//   - LFE = low-frequency speaker
 //
 // These are listed in the order they are laid out in memory, so "FL, FR"
 // means "the front left speaker is laid out in memory first, then the front
 // right, then it repeats for the next audio frame".
 //
-// - 1 channel (mono) layout: FRONT
-// - 2 channels (stereo) layout: FL, FR
-// - 3 channels (2.1) layout: FL, FR, LFE
-// - 4 channels (quad) layout: FL, FR, BL, BR
-// - 5 channels (4.1) layout: FL, FR, LFE, BL, BR
-// - 6 channels (5.1) layout: FL, FR, FC, LFE, BL, BR (last two can also be
-// SL, SR)
-// - 7 channels (6.1) layout: FL, FR, FC, LFE, BC, SL, SR
-// - 8 channels (7.1) layout: FL, FR, FC, LFE, BL, BR, SL, SR
+//   - 1 channel (mono) layout: FRONT
+//   - 2 channels (stereo) layout: FL, FR
+//   - 3 channels (2.1) layout: FL, FR, LFE
+//   - 4 channels (quad) layout: FL, FR, BL, BR
+//   - 5 channels (4.1) layout: FL, FR, LFE, BL, BR
+//   - 6 channels (5.1) layout: FL, FR, FC, LFE, BL, BR (last two can also be
+//     SL, SR)
+//   - 7 channels (6.1) layout: FL, FR, FC, LFE, BC, SL, SR
+//   - 8 channels (7.1) layout: FL, FR, FC, LFE, BL, BR, SL, SR
 //
 // This is the same order as DirectSound expects, but applied to all
 // platforms; SDL will swizzle the channels as necessary if a platform expects
@@ -519,16 +519,16 @@ func (a AudioSpec) Framesize() int {
 //
 // [AudioStream] is an audio conversion interface.
 //
-// - It can handle resampling data in chunks without generating artifacts,
-// when it doesn't have the complete buffer available.
-// - It can handle incoming data in any variable size.
-// - It can handle input/output format changes on the fly.
-// - It can remap audio channels between inputs and outputs.
-// - You push data as you have it, and pull it when you need it
-// - It can also function as a basic audio data queue even if you just have
-// sound that needs to pass from one place to another.
-// - You can hook callbacks up to them when more data is added or requested,
-// to manage data on-the-fly.
+//   - It can handle resampling data in chunks without generating artifacts,
+//     when it doesn't have the complete buffer available.
+//   - It can handle incoming data in any variable size.
+//   - It can handle input/output format changes on the fly.
+//   - It can remap audio channels between inputs and outputs.
+//   - You push data as you have it, and pull it when you need it
+//   - It can also function as a basic audio data queue even if you just have
+//     sound that needs to pass from one place to another.
+//   - You can hook callbacks up to them when more data is added or requested,
+//     to manage data on-the-fly.
 //
 // Audio streams are the core of the SDL3 audio interface. You create one or
 // more of them, bind them to an opened audio device, and feed data to them
@@ -1085,8 +1085,6 @@ func (devid AudioDeviceID) Close() {
 //
 // streams: an array of audio streams to bind.
 //
-// num_streams: number streams listed in the `streams` array.
-//
 // Returns nil on success or an error on failure.
 //
 // It is safe to call this function from any thread.
@@ -1132,10 +1130,7 @@ func (devid AudioDeviceID) BindAudioStream(stream *AudioStream) error {
 //
 // Unbinding a stream that isn't bound to a device is a legal no-op.
 //
-// streams: an array of audio streams to unbind. Can be nil or contain
-// nil.
-//
-// num_streams: number streams listed in the `streams` array.
+// streams: an array of audio streams to unbind. Can be nil or contain nil.
 //
 // It is safe to call this function from any thread.
 //
@@ -1475,8 +1470,8 @@ func (stream *AudioStream) OutputChannelMap() []int {
 //
 // Each item in the array represents an input channel, and its value is the
 // channel that it should be remapped to. To reverse a stereo signal's left
-// and right values, you'd have an array of `{ 1, 0 }`. It is legal to remap
-// multiple channels to the same thing, so `{ 1, 1 }` would duplicate the
+// and right values, you'd have an array of { 1, 0 }. It is legal to remap
+// multiple channels to the same thing, so { 1, 1 } would duplicate the
 // right channel to both channels of a stereo signal. An element in the
 // channel map set to -1 instead of a valid channel will mute that channel,
 // setting it to a silence value.
@@ -1496,7 +1491,7 @@ func (stream *AudioStream) OutputChannelMap() []int {
 // SDL will copy the channel map; the caller does not have to save this array
 // after this call.
 //
-// If `count` is not equal to the current number of channels in the audio
+// If len(chmap) is not equal to the current number of channels in the audio
 // stream's format, this will fail. This is a safety measure to make sure a
 // race condition hasn't changed the format while this call is setting the
 // channel map.
@@ -1544,8 +1539,8 @@ func (stream *AudioStream) SetInputChannelMap(chmap []int) error {
 //
 // Each item in the array represents an input channel, and its value is the
 // channel that it should be remapped to. To reverse a stereo signal's left
-// and right values, you'd have an array of `{ 1, 0 }`. It is legal to remap
-// multiple channels to the same thing, so `{ 1, 1 }` would duplicate the
+// and right values, you'd have an array of { 1, 0 }. It is legal to remap
+// multiple channels to the same thing, so { 1, 1 } would duplicate the
 // right channel to both channels of a stereo signal. An element in the
 // channel map set to -1 instead of a valid channel will mute that channel,
 // setting it to a silence value.
@@ -1562,7 +1557,7 @@ func (stream *AudioStream) SetInputChannelMap(chmap []int) error {
 // SDL will copy the channel map; the caller does not have to save this array
 // after this call.
 //
-// If `count` is not equal to the current number of channels in the audio
+// If len(chmap) is not equal to the current number of channels in the audio
 // stream's format, this will fail. This is a safety measure to make sure a
 // race condition hasn't changed the format while this call is setting the
 // channel map.
@@ -2099,7 +2094,7 @@ func (stream *AudioStream) Destroy() {
 //
 // This function works with both playback and recording devices.
 //
-// The `spec` parameter represents the app's side of the audio stream. That
+// The spec parameter represents the app's side of the audio stream. That
 // is, for recording audio, this will be the output format, and for playing
 // audio, this will be the input format. If spec is nil, the system will
 // choose the format, and the app can use [AudioStream.Format] to obtain
@@ -2356,9 +2351,9 @@ func LoadWAV(path string) ([]byte, AudioSpec, error) {
 
 // Mix audio data in a specified format.
 //
-// This takes an audio buffer `src` of `format` data and mixes
-// it into `dst`, performing addition, volume adjustment, and overflow
-// clipping. The buffer pointed to by `dst` must be of the same length and
+// This takes an audio buffer src of format data and mixes
+// it into dst, performing addition, volume adjustment, and overflow
+// clipping. The buffer pointed to by dst must be of the same length and
 // format.
 //
 // This is provided for convenience -- you can mix your own audio data.

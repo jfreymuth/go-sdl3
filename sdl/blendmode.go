@@ -115,11 +115,11 @@ const (
 // Where the functions `colorOperation(src, dst)` and `alphaOperation(src,
 // dst)` can return one of the following:
 //
-// - `src + dst`
-// - `src - dst`
-// - `dst - src`
-// - `min(src, dst)`
-// - `max(src, dst)`
+//   - src + dst
+//   - src - dst
+//   - dst - src
+//   - min(src, dst)
+//   - max(src, dst)
 //
 // The red, green, and blue components are always multiplied with the first,
 // second, and third components of the [BlendFactor], respectively. The
@@ -138,17 +138,17 @@ const (
 // All renderers support the four blend modes listed in the [BlendMode]
 // enumeration.
 //
-// - **direct3d**: Supports all operations with all factors. However, some
-// factors produce unexpected results with [BlendoperationMinimum] and
-// [BlendoperationMaximum].
-// - **direct3d11**: Same as Direct3D 9.
-// - **opengl**: Supports the [BlendmodeAdd] operation with all
-// factors. OpenGL versions 1.1, 1.2, and 1.3 do not work correctly here.
-// - **opengles2**: Supports the [BlendmodeAdd],
-// [BlendoperationSubtract], [BlendoperationRevSubtract]
-// operations with all factors.
-// - **psp**: No custom blend mode support.
-// - **software**: No custom blend mode support.
+//   - **direct3d**: Supports all operations with all factors. However, some
+//     factors produce unexpected results with [BlendoperationMinimum] and
+//     [BlendoperationMaximum].
+//   - **direct3d11**: Same as Direct3D 9.
+//   - **opengl**: Supports the [BlendmodeAdd] operation with all
+//     factors. OpenGL versions 1.1, 1.2, and 1.3 do not work correctly here.
+//   - **opengles2**: Supports the [BlendmodeAdd],
+//     [BlendoperationSubtract], [BlendoperationRevSubtract]
+//     operations with all factors.
+//   - **psp**: No custom blend mode support.
+//   - **software**: No custom blend mode support.
 //
 // Some renderers do not provide an alpha component for the default render
 // target. The [BlendfactorDstAlpha] and

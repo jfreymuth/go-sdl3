@@ -146,10 +146,10 @@ func cb_TrayCallback(userdata uintptr, entry *C.SDL_TrayEntry) {
 //
 // Using tray icons require the video subsystem.
 //
-// icon: a surface to be used as icon. May be NULL.
+// icon: a surface to be used as icon. May be nil.
 //
 // tooltip: a tooltip to be displayed when the mouse hovers the icon in
-// UTF-8 encoding. Not supported on all platforms. May be NULL.
+// UTF-8 encoding. Not supported on all platforms. May be empty.
 //
 // Returns The newly created system tray icon.
 //
@@ -159,7 +159,11 @@ func cb_TrayCallback(userdata uintptr, entry *C.SDL_TrayEntry) {
 //
 // https://wiki.libsdl.org/SDL3/SDL_CreateTray
 func CreateTray(icon *Surface, tooltip string) (*Tray, error) {
-	t := (*Tray)(C.SDL_CreateTray(icon.internal, tmpstring(tooltip)))
+	var cicon *C.SDL_Surface
+	if icon != nil {
+		cicon = icon.internal
+	}
+	t := (*Tray)(C.SDL_CreateTray(cicon, tmpstring(tooltip)))
 	if t == nil {
 		return nil, getError()
 	}
@@ -170,7 +174,7 @@ func CreateTray(icon *Surface, tooltip string) (*Tray, error) {
 //
 // tray: the tray icon to be updated.
 //
-// icon: the new icon. May be NULL.
+// icon: the new icon. May be nil.
 //
 // This function should be called on the thread that created the
 // tray.
@@ -179,14 +183,18 @@ func CreateTray(icon *Surface, tooltip string) (*Tray, error) {
 //
 // https://wiki.libsdl.org/SDL3/SDL_SetTrayIcon
 func (tray *Tray) SetIcon(icon *Surface) {
-	C.SDL_SetTrayIcon((*C.SDL_Tray)(tray), icon.internal)
+	var cicon *C.SDL_Surface
+	if icon != nil {
+		cicon = icon.internal
+	}
+	C.SDL_SetTrayIcon((*C.SDL_Tray)(tray), cicon)
 }
 
 // Updates the system tray icon's tooltip.
 //
 // tray: the tray icon to be updated.
 //
-// tooltip: the new tooltip in UTF-8 encoding. May be NULL.
+// tooltip: the new tooltip in UTF-8 encoding. May be empty.
 //
 // This function should be called on the thread that created the
 // tray.
