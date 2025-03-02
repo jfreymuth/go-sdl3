@@ -1093,7 +1093,7 @@ func (gamepad *Gamepad) FirmwareVersion() uint16 {
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetGamepadSerial
-func GetGamepadSerial(gamepad *Gamepad) string {
+func (gamepad *Gamepad) Serial() string {
 	return C.GoString(C.SDL_GetGamepadSerial((*C.SDL_Gamepad)(gamepad)))
 }
 

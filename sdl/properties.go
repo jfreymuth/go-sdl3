@@ -151,7 +151,7 @@ func CreateProperties() (PropertiesID, error) {
 // [PropertiesID.SetPointerWithCleanup]), which will not be copied. Any
 // property that already exists on dst will be overwritten.
 //
-// src: the properties to copy.
+// props: the properties to copy.
 //
 // dst: the destination properties.
 //
@@ -162,8 +162,8 @@ func CreateProperties() (PropertiesID, error) {
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_CopyProperties
-func CopyProperties(src PropertiesID, dst PropertiesID) error {
-	if !C.SDL_CopyProperties((C.SDL_PropertiesID)(src), (C.SDL_PropertiesID)(dst)) {
+func (props PropertiesID) Copy(dst PropertiesID) error {
+	if !C.SDL_CopyProperties((C.SDL_PropertiesID)(props), (C.SDL_PropertiesID)(dst)) {
 		return getError()
 	}
 	return nil

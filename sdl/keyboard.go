@@ -42,7 +42,6 @@ package sdl
 // #cgo nocallback SDL_GetKeyFromScancode
 // #cgo noescape SDL_GetScancodeFromKey
 // #cgo nocallback SDL_GetScancodeFromKey
-// #cgo noescape SDL_SetScancodeName
 // #cgo nocallback SDL_SetScancodeName
 // #cgo noescape SDL_GetScancodeName
 // #cgo nocallback SDL_GetScancodeName
@@ -273,7 +272,7 @@ func SetModState(modstate Keymod) {
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetKeyFromScancode
-func GetKeyFromScancode(scancode Scancode, modstate Keymod, keyEvent bool) Keycode {
+func (scancode Scancode) Key(modstate Keymod, keyEvent bool) Keycode {
 	return (Keycode)(C.SDL_GetKeyFromScancode((C.SDL_Scancode)(scancode), (C.SDL_Keymod)(modstate), (C.bool)(keyEvent)))
 }
 
@@ -293,7 +292,7 @@ func GetKeyFromScancode(scancode Scancode, modstate Keymod, keyEvent bool) Keyco
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetScancodeFromKey
-func GetScancodeFromKey(key Keycode) (Scancode, Keymod) {
+func (key Keycode) Scancode() (Scancode, Keymod) {
 	var mod C.SDL_Keymod
 	return (Scancode)(C.SDL_GetScancodeFromKey((C.SDL_Keycode)(key), &mod)), Keymod(mod)
 }
@@ -302,9 +301,7 @@ func GetScancodeFromKey(key Keycode) (Scancode, Keymod) {
 //
 // scancode: the desired [Scancode].
 //
-// name: the name to use for the scancode, encoded as UTF-8. The string
-// is not copied, so the pointer given to this function must stay
-// valid while SDL is being used.
+// name: the name to use for the scancode, encoded as UTF-8.
 //
 // Returns nil on success or an error on failure.
 //
@@ -313,12 +310,20 @@ func GetScancodeFromKey(key Keycode) (Scancode, Keymod) {
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_SetScancodeName
-func SetScancodeName(scancode Scancode, name string) error {
-	if !C.SDL_SetScancodeName((C.SDL_Scancode)(scancode), tmpstring(name)) {
+func (scancode Scancode) SetName(name string) error {
+	cname := C.CString(name)
+	if !C.SDL_SetScancodeName((C.SDL_Scancode)(scancode), cname) {
+		C.SDL_free(unsafe.Pointer(cname))
 		return getError()
 	}
+	if scancodeNames[scancode] != nil {
+		C.SDL_free(unsafe.Pointer(scancodeNames[scancode]))
+	}
+	scancodeNames[scancode] = cname
 	return nil
 }
+
+var scancodeNames [ScancodeCount]*C.char
 
 // Get a human-readable name for a scancode.
 //
@@ -341,7 +346,7 @@ func SetScancodeName(scancode Scancode, name string) error {
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetScancodeName
-func GetScancodeName(scancode Scancode) string {
+func (scancode Scancode) Name() string {
 	return C.GoString(C.SDL_GetScancodeName((C.SDL_Scancode)(scancode)))
 }
 
@@ -380,7 +385,7 @@ func GetScancodeFromName(name string) (Scancode, error) {
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetKeyName
-func GetKeyName(key Keycode) string {
+func (key Keycode) Name() string {
 	return C.GoString(C.SDL_GetKeyName((C.SDL_Keycode)(key)))
 }
 

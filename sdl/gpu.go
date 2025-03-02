@@ -4212,7 +4212,7 @@ func (device *GPUDevice) ReleaseFence(fence *GPUFence) {
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GPUTextureFormatTexelBlockSize
-func GPUTextureFormatTexelBlockSize(format GPUTextureFormat) int {
+func (format GPUTextureFormat) TexelBlockSize() int {
 	return (int)(C.SDL_GPUTextureFormatTexelBlockSize((C.SDL_GPUTextureFormat)(format)))
 }
 
@@ -4268,6 +4268,6 @@ func (device *GPUDevice) GPUTextureSupportsSampleCount(format GPUTextureFormat, 
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_CalculateGPUTextureFormatSize
-func CalculateGPUTextureFormatSize(format GPUTextureFormat, width int, height int, depthOrLayerCount int) int {
+func (format GPUTextureFormat) CalculateSize(width int, height int, depthOrLayerCount int) int {
 	return (int)(C.SDL_CalculateGPUTextureFormatSize((C.SDL_GPUTextureFormat)(format), (C.Uint32)(width), (C.Uint32)(height), (C.Uint32)(depthOrLayerCount)))
 }

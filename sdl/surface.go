@@ -457,7 +457,7 @@ func (surface *Surface) SetPalette(palette *Palette) error {
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetSurfacePalette
-func GetSurfacePalette(surface *Surface) *Palette {
+func (surface *Surface) Palette() *Palette {
 	p := C.SDL_GetSurfacePalette(surface.internal)
 	if p == nil {
 		return nil
@@ -1331,7 +1331,7 @@ func (surface *Surface) FillRects(dst *Surface, rects []Rect, color uint32) erro
 // Performs a fast blit from the source surface to the destination surface
 // with clipping.
 //
-// If either srcrect or dstrect are nil, the entire surface (src or
+// If either srcrect or dstrect are nil, the entire surface (surface or
 // dst) is copied while ensuring clipping to the clip rect of dst.
 //
 // The final blit rectangles are saved in srcrect and dstrect after all
@@ -1380,7 +1380,7 @@ func (surface *Surface) FillRects(dst *Surface, rects []Rect, color uint32) erro
 //	    if SDL_SRCCOLORKEY set, only copy the pixels that do not match the
 //	    source color key.
 //
-// src: the [Surface] structure to be copied from.
+// surface: the [Surface] structure to be copied from.
 //
 // srcrect: the [Rect] structure representing the rectangle to be
 // copied, or nil to copy the entire surface.
@@ -1402,7 +1402,7 @@ func (surface *Surface) FillRects(dst *Surface, rects []Rect, color uint32) erro
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_BlitSurface
-func BlitSurface(src *Surface, srcrect *Rect, dst *Surface, dstrect *Rect) error {
+func (surface *Surface) Blit(srcrect *Rect, dst *Surface, dstrect *Rect) error {
 	var srcr, dstr *C.SDL_Rect
 	if srcrect != nil {
 		srcr = &C.SDL_Rect{C.int(srcrect.X), C.int(srcrect.Y), C.int(srcrect.W), C.int(srcrect.H)}
@@ -1410,7 +1410,7 @@ func BlitSurface(src *Surface, srcrect *Rect, dst *Surface, dstrect *Rect) error
 	if srcrect != nil {
 		dstr = &C.SDL_Rect{C.int(dstrect.X), C.int(dstrect.Y), C.int(dstrect.W), C.int(dstrect.H)}
 	}
-	if !C.SDL_BlitSurface(src.internal, srcr, dst.internal, dstr) {
+	if !C.SDL_BlitSurface(surface.internal, srcr, dst.internal, dstr) {
 		return getError()
 	}
 	return nil
@@ -1421,7 +1421,7 @@ func BlitSurface(src *Surface, srcrect *Rect, dst *Surface, dstrect *Rect) error
 // This is a semi-private blit function and it performs low-level surface
 // blitting, assuming the input rectangles have already been clipped.
 //
-// src: the [Surface] structure to be copied from.
+// surface: the [Surface] structure to be copied from.
 //
 // srcrect: the [Rect] structure representing the rectangle to be
 // copied.
@@ -1440,8 +1440,8 @@ func BlitSurface(src *Surface, srcrect *Rect, dst *Surface, dstrect *Rect) error
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_BlitSurfaceUnchecked
-func BlitSurfaceUnchecked(src *Surface, srcrect Rect, dst *Surface, dstrect Rect) error {
-	if !C.SDL_BlitSurfaceUnchecked(src.internal,
+func (surface *Surface) BlitUnchecked(srcrect Rect, dst *Surface, dstrect Rect) error {
+	if !C.SDL_BlitSurfaceUnchecked(surface.internal,
 		&C.SDL_Rect{C.int(srcrect.X), C.int(srcrect.Y), C.int(srcrect.W), C.int(srcrect.H)}, dst.internal,
 		&C.SDL_Rect{C.int(dstrect.X), C.int(dstrect.Y), C.int(dstrect.W), C.int(dstrect.H)}) {
 		return getError()
@@ -1452,7 +1452,7 @@ func BlitSurfaceUnchecked(src *Surface, srcrect Rect, dst *Surface, dstrect Rect
 // Perform a scaled blit to a destination surface, which may be of a different
 // format.
 //
-// src: the [Surface] structure to be copied from.
+// surface: the [Surface] structure to be copied from.
 //
 // srcrect: the [Rect] structure representing the rectangle to be
 // copied, or nil to copy the entire surface.
@@ -1474,7 +1474,7 @@ func BlitSurfaceUnchecked(src *Surface, srcrect Rect, dst *Surface, dstrect Rect
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_BlitSurfaceScaled
-func BlitSurfaceScaled(src *Surface, srcrect *Rect, dst *Surface, dstrect *Rect, scaleMode ScaleMode) error {
+func (surface *Surface) BlitScaled(srcrect *Rect, dst *Surface, dstrect *Rect, scaleMode ScaleMode) error {
 	var srcr, dstr *C.SDL_Rect
 	if srcrect != nil {
 		srcr = &C.SDL_Rect{C.int(srcrect.X), C.int(srcrect.Y), C.int(srcrect.W), C.int(srcrect.H)}
@@ -1482,7 +1482,7 @@ func BlitSurfaceScaled(src *Surface, srcrect *Rect, dst *Surface, dstrect *Rect,
 	if srcrect != nil {
 		dstr = &C.SDL_Rect{C.int(dstrect.X), C.int(dstrect.Y), C.int(dstrect.W), C.int(dstrect.H)}
 	}
-	if !C.SDL_BlitSurfaceScaled(src.internal, srcr, dst.internal, dstr, (C.SDL_ScaleMode)(scaleMode)) {
+	if !C.SDL_BlitSurfaceScaled(surface.internal, srcr, dst.internal, dstr, (C.SDL_ScaleMode)(scaleMode)) {
 		return getError()
 	}
 	return nil
@@ -1493,7 +1493,7 @@ func BlitSurfaceScaled(src *Surface, srcrect *Rect, dst *Surface, dstrect *Rect,
 // This is a semi-private function and it performs low-level surface blitting,
 // assuming the input rectangles have already been clipped.
 //
-// src: the [Surface] structure to be copied from.
+// surface: the [Surface] structure to be copied from.
 //
 // srcrect: the [Rect] structure representing the rectangle to be copied.
 //
@@ -1513,8 +1513,8 @@ func BlitSurfaceScaled(src *Surface, srcrect *Rect, dst *Surface, dstrect *Rect,
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_BlitSurfaceUncheckedScaled
-func BlitSurfaceUncheckedScaled(src *Surface, srcrect *Rect, dst *Surface, dstrect *Rect, scaleMode ScaleMode) error {
-	if !C.SDL_BlitSurfaceUncheckedScaled(src.internal,
+func (surface *Surface) BlitUncheckedScaled(srcrect *Rect, dst *Surface, dstrect *Rect, scaleMode ScaleMode) error {
+	if !C.SDL_BlitSurfaceUncheckedScaled(surface.internal,
 		&C.SDL_Rect{C.int(srcrect.X), C.int(srcrect.Y), C.int(srcrect.W), C.int(srcrect.H)}, dst.internal,
 		&C.SDL_Rect{C.int(dstrect.X), C.int(dstrect.Y), C.int(dstrect.W), C.int(dstrect.H)}, (C.SDL_ScaleMode)(scaleMode)) {
 		return getError()
@@ -1528,7 +1528,7 @@ func BlitSurfaceUncheckedScaled(src *Surface, srcrect *Rect, dst *Surface, dstre
 // The pixels in srcrect will be repeated as many times as needed to
 // completely fill dstrect.
 //
-// src: the [Surface] structure to be copied from.
+// surface: the [Surface] structure to be copied from.
 //
 // srcrect: the [Rect] structure representing the rectangle to be
 // copied, or nil to copy the entire surface.
@@ -1547,7 +1547,7 @@ func BlitSurfaceUncheckedScaled(src *Surface, srcrect *Rect, dst *Surface, dstre
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_BlitSurfaceTiled
-func BlitSurfaceTiled(src *Surface, srcrect *Rect, dst *Surface, dstrect *Rect) error {
+func (surface *Surface) BlitTiled(srcrect *Rect, dst *Surface, dstrect *Rect) error {
 	var srcr, dstr *C.SDL_Rect
 	if srcrect != nil {
 		srcr = &C.SDL_Rect{C.int(srcrect.X), C.int(srcrect.Y), C.int(srcrect.W), C.int(srcrect.H)}
@@ -1555,7 +1555,7 @@ func BlitSurfaceTiled(src *Surface, srcrect *Rect, dst *Surface, dstrect *Rect) 
 	if srcrect != nil {
 		dstr = &C.SDL_Rect{C.int(dstrect.X), C.int(dstrect.Y), C.int(dstrect.W), C.int(dstrect.H)}
 	}
-	if !C.SDL_BlitSurfaceTiled(src.internal, srcr, dst.internal, dstr) {
+	if !C.SDL_BlitSurfaceTiled(surface.internal, srcr, dst.internal, dstr) {
 		return getError()
 	}
 	return nil
@@ -1567,7 +1567,7 @@ func BlitSurfaceTiled(src *Surface, srcrect *Rect, dst *Surface, dstrect *Rect) 
 // The pixels in srcrect will be scaled and repeated as many times as needed
 // to completely fill dstrect.
 //
-// src: the [Surface] structure to be copied from.
+// surface: the [Surface] structure to be copied from.
 //
 // srcrect: the [Rect] structure representing the rectangle to be
 // copied, or nil to copy the entire surface.
@@ -1592,7 +1592,7 @@ func BlitSurfaceTiled(src *Surface, srcrect *Rect, dst *Surface, dstrect *Rect) 
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_BlitSurfaceTiledWithScale
-func BlitSurfaceTiledWithScale(src *Surface, srcrect *Rect, scale float32, scaleMode ScaleMode, dst *Surface, dstrect *Rect) error {
+func (surface *Surface) BlitTiledWithScale(srcrect *Rect, scale float32, scaleMode ScaleMode, dst *Surface, dstrect *Rect) error {
 	var srcr, dstr *C.SDL_Rect
 	if srcrect != nil {
 		srcr = &C.SDL_Rect{C.int(srcrect.X), C.int(srcrect.Y), C.int(srcrect.W), C.int(srcrect.H)}
@@ -1600,7 +1600,7 @@ func BlitSurfaceTiledWithScale(src *Surface, srcrect *Rect, scale float32, scale
 	if srcrect != nil {
 		dstr = &C.SDL_Rect{C.int(dstrect.X), C.int(dstrect.Y), C.int(dstrect.W), C.int(dstrect.H)}
 	}
-	if !C.SDL_BlitSurfaceTiledWithScale(src.internal, srcr, (C.float)(scale), (C.SDL_ScaleMode)(scaleMode), dst.internal, dstr) {
+	if !C.SDL_BlitSurfaceTiledWithScale(surface.internal, srcr, (C.float)(scale), (C.SDL_ScaleMode)(scaleMode), dst.internal, dstr) {
 		return getError()
 	}
 	return nil
@@ -1615,7 +1615,7 @@ func BlitSurfaceTiledWithScale(src *Surface, srcrect *Rect, scale float32, scale
 // into the corners of the destination rectangle. The sides and center are
 // then stretched into place to cover the remaining destination rectangle.
 //
-// src: the [Surface] structure to be copied from.
+// surface: the [Surface] structure to be copied from.
 //
 // srcrect: the [Rect] structure representing the rectangle to be used
 // for the 9-grid, or nil to use the entire surface.
@@ -1648,7 +1648,7 @@ func BlitSurfaceTiledWithScale(src *Surface, srcrect *Rect, scale float32, scale
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_BlitSurface9Grid
-func BlitSurface9Grid(src *Surface, srcrect *Rect, leftWidth int, rightWidth int, topHeight int, bottomHeight int, scale float32, scaleMode ScaleMode, dst *Surface, dstrect *Rect) error {
+func (surface *Surface) Blit9Grid(srcrect *Rect, leftWidth int, rightWidth int, topHeight int, bottomHeight int, scale float32, scaleMode ScaleMode, dst *Surface, dstrect *Rect) error {
 	var srcr, dstr *C.SDL_Rect
 	if srcrect != nil {
 		srcr = &C.SDL_Rect{C.int(srcrect.X), C.int(srcrect.Y), C.int(srcrect.W), C.int(srcrect.H)}
@@ -1656,7 +1656,7 @@ func BlitSurface9Grid(src *Surface, srcrect *Rect, leftWidth int, rightWidth int
 	if srcrect != nil {
 		dstr = &C.SDL_Rect{C.int(dstrect.X), C.int(dstrect.Y), C.int(dstrect.W), C.int(dstrect.H)}
 	}
-	if !C.SDL_BlitSurface9Grid(src.internal, srcr, (C.int)(leftWidth), (C.int)(rightWidth), (C.int)(topHeight), (C.int)(bottomHeight), (C.float)(scale), (C.SDL_ScaleMode)(scaleMode), dst.internal, dstr) {
+	if !C.SDL_BlitSurface9Grid(surface.internal, srcr, (C.int)(leftWidth), (C.int)(rightWidth), (C.int)(topHeight), (C.int)(bottomHeight), (C.float)(scale), (C.SDL_ScaleMode)(scaleMode), dst.internal, dstr) {
 		return getError()
 	}
 	return nil
@@ -1759,7 +1759,7 @@ func (surface *Surface) MapRGBA(r byte, g byte, b byte, a byte) uint32 {
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_ReadSurfacePixel
-func ReadSurfacePixel(surface *Surface, x int, y int) (r, g, b, a byte, err error) {
+func (surface *Surface) ReadPixel(x int, y int) (r, g, b, a byte, err error) {
 	if !C.SDL_ReadSurfacePixel(surface.internal, (C.int)(x), (C.int)(y), (*C.Uint8)(&r), (*C.Uint8)(&g), (*C.Uint8)(&b), (*C.Uint8)(&a)) {
 		return 0, 0, 0, 0, getError()
 	}
@@ -1790,7 +1790,7 @@ func ReadSurfacePixel(surface *Surface, x int, y int) (r, g, b, a byte, err erro
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_ReadSurfacePixelFloat
-func ReadSurfacePixelFloat(surface *Surface, x int, y int) (r, g, b, a float32, err error) {
+func (surface *Surface) ReadPixelFloat(x int, y int) (r, g, b, a float32, err error) {
 	if !C.SDL_ReadSurfacePixelFloat(surface.internal, (C.int)(x), (C.int)(y), (*C.float)(&r), (*C.float)(&g), (*C.float)(&b), (*C.float)(&a)) {
 		return 0, 0, 0, 0, getError()
 	}

@@ -148,7 +148,7 @@ func GetTouchDevices() ([]TouchID, error) {
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetTouchDeviceName
-func GetTouchDeviceName(touchID TouchID) (string, error) {
+func (touchID TouchID) Name() (string, error) {
 	name := C.SDL_GetTouchDeviceName((C.SDL_TouchID)(touchID))
 	if name == nil {
 		return "", getError()
@@ -165,7 +165,7 @@ func GetTouchDeviceName(touchID TouchID) (string, error) {
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetTouchDeviceType
-func GetTouchDeviceType(touchID TouchID) TouchDeviceType {
+func (touchID TouchID) Type() TouchDeviceType {
 	return (TouchDeviceType)(C.SDL_GetTouchDeviceType((C.SDL_TouchID)(touchID)))
 }
 
@@ -178,7 +178,7 @@ func GetTouchDeviceType(touchID TouchID) TouchDeviceType {
 // This function is available since SDL 3.2.0.
 //
 // https://wiki.libsdl.org/SDL3/SDL_GetTouchFingers
-func GetTouchFingers(touchID TouchID) ([]Finger, error) {
+func (touchID TouchID) Fingers() ([]Finger, error) {
 	var count C.int
 	fingers := C.SDL_GetTouchFingers((C.SDL_TouchID)(touchID), &count)
 	if fingers == nil {
