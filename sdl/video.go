@@ -3148,7 +3148,7 @@ const (
 // https://wiki.libsdl.org/SDL3/SDL_HitTest
 type HitTest func(win *Window, area Point) HitTestResult
 
-// export cb_HitTest
+//export cb_HitTest
 func cb_HitTest(win *C.SDL_Window, area *C.SDL_Point, data uintptr) C.SDL_HitTestResult {
 	h := cgo.Handle(data)
 	return (C.SDL_HitTestResult)(h.Value().(HitTest)((*Window)(win), Point{int(area.x), int(area.y)}))
