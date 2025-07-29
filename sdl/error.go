@@ -30,7 +30,7 @@ package sdl
 // #cgo nocallback SDL_ClearError
 // #include <SDL3/SDL.h>
 // void wrap_SDL_SetError(_GoString_ msg) {
-//     SDL_SetError("%.*s", _GoStringLen(msg), _GoStringPtr(msg));
+//     SDL_SetError("%.*s", (int)_GoStringLen(msg), _GoStringPtr(msg));
 // }
 import "C"
 
